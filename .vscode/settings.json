@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "fmpz_mpoly_q.h": "c",
+        "fmpz_mod_mpoly_q.h": "c",
+        "fmpz_mod_poly_factor.h": "c",
+        "fmpz_mod_mpoly.h": "c",
+        "fmpz_mod_poly.h": "c",
+        "stdlib.h": "c",
+        "gr.h": "c",
+        "fmpz_mod.h": "c"
+    }
+}

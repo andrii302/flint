@@ -11,6 +11,10 @@ TODO: Update this TODO
   having an `fmpz` point directly to a combined structure. This would require
   writing replacements for most `mpz` functions.
 
+* in `fmpz_mod_mpoly_q`
+  Look into `fmpz_mpoly_q` for structure, 
+  but work within the `fmpz_mod_mpoly` `fmpz_mod_types` files.
+  Try to implement multiplication, copy intialisation from `fmpz_mpoly_q_set_str_pretty` and look up for example for `examples/fmpz_mpoly_q.c`.
 
 ## `ulong_extras`
 
