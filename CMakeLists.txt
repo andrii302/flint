@@ -265,6 +265,7 @@ set(_BUILD_DIRS
 
     calcium
     fmpz_mpoly_q
+    fmpz_mod_mpoly_q
     fexpr           fexpr_builtin
     qqbar
     ca              ca_ext          ca_field        ca_vec

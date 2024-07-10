@@ -9,6 +9,7 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "fmpz_mod_mpoly.h"
 #include "fmpz_mod_mpoly_q.h"
 
 void
@@ -276,22 +277,22 @@ fmpz_mod_mpoly_q_mul(fmpz_mod_mpoly_q_t res, const fmpz_mod_mpoly_q_t x, const f
                 ctx);
 }
 
-void
-fmpz_mod_mpoly_q_mul_fmpq(fmpz_mod_mpoly_q_t res, const fmpz_mod_mpoly_q_t x, const fmpq_t y, const fmpz_mod_mpoly_ctx_t ctx)
-{
-    _fmpz_mod_mpoly_q_mul_fmpq(fmpz_mod_mpoly_q_numref(res), fmpz_mod_mpoly_q_denref(res),
-                fmpz_mod_mpoly_q_numref(x), fmpz_mod_mpoly_q_denref(x),
-                fmpq_numref(y), fmpq_denref(y),
-                ctx);
-}
+// void
+// fmpz_mod_mpoly_q_mul_fmpq(fmpz_mod_mpoly_q_t res, const fmpz_mod_mpoly_q_t x, const fmpq_t y, const fmpz_mod_mpoly_ctx_t ctx)
+// {
+//     _fmpz_mod_mpoly_q_mul_fmpq(fmpz_mod_mpoly_q_numref(res), fmpz_mod_mpoly_q_denref(res),
+//                 fmpz_mod_mpoly_q_numref(x), fmpz_mod_mpoly_q_denref(x),
+//                 fmpq_numref(y), fmpq_denref(y),
+//                 ctx);
+// }
 
-void
-fmpz_mod_mpoly_q_mul_fmpz(fmpz_mod_mpoly_q_t res, const fmpz_mod_mpoly_q_t x, const fmpz_t y, const fmpz_mod_mpoly_ctx_t ctx)
-{
-    fmpz_t one;
-    *one = 1;
-    _fmpz_mod_mpoly_q_mul_fmpq(fmpz_mod_mpoly_q_numref(res), fmpz_mod_mpoly_q_denref(res),
-                fmpz_mod_mpoly_q_numref(x), fmpz_mod_mpoly_q_denref(x),
-                y, one,
-                ctx);
-}
+// void
+// fmpz_mod_mpoly_q_mul_fmpz(fmpz_mod_mpoly_q_t res, const fmpz_mod_mpoly_q_t x, const fmpz_t y, const fmpz_mod_mpoly_ctx_t ctx)
+// {
+//     fmpz_t one;
+//     *one = 1;
+//     _fmpz_mod_mpoly_q_mul_fmpq(fmpz_mod_mpoly_q_numref(res), fmpz_mod_mpoly_q_denref(res),
+//                 fmpz_mod_mpoly_q_numref(x), fmpz_mod_mpoly_q_denref(x),
+//                 y, one,
+//                 ctx);
+// }
