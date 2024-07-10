@@ -85,8 +85,8 @@ typedef fmpz_mod_mpoly_factor_struct fmpz_mod_mpoly_factor_t[1];
 
 typedef struct
 {
-    fmpz_mod_poly_struct num;
-    fmpz_mod_poly_struct den;
+    fmpz_mod_mpoly_struct num;
+    fmpz_mod_mpoly_struct den;
 }
 fmpz_mod_mpoly_q_struct;
 

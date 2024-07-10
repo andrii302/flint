@@ -36,19 +36,19 @@ fmpz_mod_mpoly_q_print_pretty(const fmpz_mod_mpoly_q_t f, const char ** x, const
     }
 }
 
-char * fmpz_mod_mpoly_q_get_str_pretty(const fmpz_mod_mpoly_q_t f, const char ** vars, const fmpz_mod_mpoly_ctx_t ctx)
-{
-    gr_ctx_t grctx;
-    char * s;
+// char * fmpz_mod_mpoly_q_get_str_pretty(const fmpz_mod_mpoly_q_t f, const char ** vars, const fmpz_mod_mpoly_ctx_t ctx)
+// {
+//     gr_ctx_t grctx;
+//     char * s;
 
-    gr_ctx_init_fmpz_mpoly_q(grctx, ctx->minfo->nvars, ctx->minfo->ord);
-    if (vars != NULL)
-        GR_MUST_SUCCEED(gr_ctx_set_gen_names(grctx, vars));
-    GR_MUST_SUCCEED(gr_get_str(&s, f, grctx));
-    gr_ctx_clear(grctx);
+//     gr_ctx_init_fmpz_mpoly_q(grctx, ctx->minfo->nvars, ctx->minfo->ord);
+//     if (vars != NULL)
+//         GR_MUST_SUCCEED(gr_ctx_set_gen_names(grctx, vars));
+//     GR_MUST_SUCCEED(gr_get_str(&s, f, grctx));
+//     gr_ctx_clear(grctx);
 
-    return s;
-}
+//     return s;
+// }
 
 int
 fmpz_mod_mpoly_q_set_str_pretty(fmpz_mod_mpoly_q_t res, const char * s, const char ** vars, fmpz_mod_mpoly_ctx_t ctx)
@@ -56,7 +56,7 @@ fmpz_mod_mpoly_q_set_str_pretty(fmpz_mod_mpoly_q_t res, const char * s, const ch
     gr_ctx_t grctx;
     int ret;
 
-    gr_ctx_init_fmpz_mpoly_q(grctx, ctx->minfo->nvars, ctx->minfo->ord);
+    gr_ctx_init_fmpz_mod_mpoly_q(grctx, ctx->minfo->nvars, ctx->minfo->ord);
     if (vars != NULL)
         GR_MUST_SUCCEED(gr_ctx_set_gen_names(grctx, vars));
     ret = (GR_SUCCESS == gr_set_str(res, s, grctx)) ? 0 : -1;

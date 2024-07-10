@@ -1,6 +1,7 @@
 {
     "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
-        "fmpz_mod_mpoly_q.h": "c"
+        "fmpz_mod_mpoly_q.h": "c",
+        "gr_vec.h": "c"
     }
 }
