@@ -32,7 +32,7 @@ extern "C" {
 #include "fmpz_vec.h"
 #include "fmpz_mod_mpoly.h"
 #include "acb_types.h"
-#include "mpoly_types.h"
+#include "fmpz_mod_types.h"
 
 #define fmpz_mod_mpoly_q_numref(x) (&((x)->num))
 #define fmpz_mod_mpoly_q_denref(x) (&((x)->den))
@@ -41,7 +41,7 @@ extern "C" {
 
 void fmpz_mod_mpoly_q_init(fmpz_mod_mpoly_q_t res, const fmpz_mod_mpoly_ctx_t ctx);
 
-// void fmpz_mod_mpoly_q_clear(fmpz_mod_mpoly_q_t res, const fmpz_mod_mpoly_ctx_t ctx);
+void fmpz_mod_mpoly_q_clear(fmpz_mod_mpoly_q_t res, const fmpz_mod_mpoly_ctx_t ctx);
 
 // // /* Assignment */
 
