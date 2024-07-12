@@ -16,9 +16,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <flint/flint.h>
-#include <flint/fmpz.h>
-#include <flint/ulong_extras.h>
+#include "flint.h"
+#include "fmpz.h"
+#include "ulong_extras.h"
 
 int main(int argc, char* argv[])
 {
@@ -29,8 +29,8 @@ int main(int argc, char* argv[])
     fmpz_comb_t comb;
     fmpz_comb_temp_t comb_temp;
 
-    ulong * primes;
-    ulong * residues;
+    mp_limb_t * primes;
+    mp_limb_t * residues;
 
     slong num_primes;
 
@@ -53,8 +53,8 @@ int main(int argc, char* argv[])
 
     fmpz_set_str(x, argv[1], 10);
 
-    primes = flint_malloc(num_primes * sizeof(ulong));
-    residues = flint_malloc(num_primes * sizeof(ulong));
+    primes = flint_malloc(num_primes * sizeof(mp_limb_t));
+    residues = flint_malloc(num_primes * sizeof(mp_limb_t));
 
     primes[0] = 2;
     for (i = 1; i < num_primes; i++)

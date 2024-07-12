@@ -33,7 +33,7 @@ void mpoly_monomial_evals_nmod(
     const nmod_t fpctx)
 {
     slong i, k;
-    ulong * p;
+    mp_limb_t * p;
     ulong mask = (-UWORD(1)) >> (FLINT_BITS - Abits);
     slong N = mpoly_words_per_exp_sp(Abits, mctx);
     slong * off, * shift;
@@ -91,7 +91,7 @@ void mpoly1_monomial_evals_nmod(
     ulong mask = (-UWORD(1)) >> (FLINT_BITS - Abits);
     slong N = mpoly_words_per_exp_sp(Abits, mctx);
     slong * off, * shift;
-    ulong * p;
+    mp_limb_t * p;
     TMP_INIT;
 
     FLINT_ASSERT(1 < m && m <= mctx->nvars);
@@ -163,7 +163,7 @@ void mpoly2_monomial_evals_nmod(
     ulong mask = (-UWORD(1)) >> (FLINT_BITS - Abits);
     slong N = mpoly_words_per_exp_sp(Abits, mctx);
     slong * off, * shift;
-    ulong * p;
+    mp_limb_t * p;
     TMP_INIT;
 
     FLINT_ASSERT(2 < m && m <= mctx->nvars);
@@ -281,7 +281,7 @@ int n_polyun_zip_solve(
 {
     int success;
     slong Ai, i, n;
-    ulong * Acoeffs = A->coeffs;
+    mp_limb_t * Acoeffs = A->coeffs;
     n_poly_t t;
 
     n_poly_init(t);

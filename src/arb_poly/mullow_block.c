@@ -184,7 +184,7 @@ _mag_vec_get_fmpz_2exp_blocks(fmpz * coeffs,
             }
             else
             {
-                ulong man;
+                mp_limb_t man;
                 double c;
 
                 man = MAG_MAN(cur);

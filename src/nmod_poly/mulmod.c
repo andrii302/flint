@@ -12,11 +12,11 @@
 #include "nmod_vec.h"
 #include "nmod_poly.h"
 
-void _nmod_poly_mulmod(nn_ptr res, nn_srcptr poly1, slong len1,
-                             nn_srcptr poly2, slong len2, nn_srcptr f,
+void _nmod_poly_mulmod(mp_ptr res, mp_srcptr poly1, slong len1,
+                             mp_srcptr poly2, slong len2, mp_srcptr f,
                             slong lenf, nmod_t mod)
 {
-    nn_ptr T, Q;
+    mp_ptr T, Q;
     slong lenT, lenQ;
 
     lenT = len1 + len2 - 1;
@@ -39,7 +39,7 @@ nmod_poly_mulmod(nmod_poly_t res,
     const nmod_poly_t poly1, const nmod_poly_t poly2, const nmod_poly_t f)
 {
     slong len1, len2, lenf;
-    nn_ptr fcoeffs;
+    mp_ptr fcoeffs;
 
     lenf = f->length;
     len1 = poly1->length;
@@ -60,7 +60,7 @@ nmod_poly_mulmod(nmod_poly_t res,
     {
         if (f == res)
         {
-            fcoeffs = flint_malloc(sizeof(ulong) * lenf);
+            fcoeffs = flint_malloc(sizeof(mp_limb_t) * lenf);
             _nmod_vec_set(fcoeffs, f->coeffs, lenf);
         }
         else

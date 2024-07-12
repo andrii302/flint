@@ -9,16 +9,15 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "gmpcompat.h"
-#include "arb.h"
 #include "arb_hypgeom.h"
+#include "gmpcompat.h"
 
 void
 arb_hypgeom_legendre_p_ui_rec(arb_t res, arb_t res_prime, ulong n, const arb_t x, slong prec)
 {
     slong wp;
     ulong k, den;
-    ulong denlo, denhi;
+    mp_limb_t denlo, denhi;
     mpz_t p0, p1, xx, tt;
     fmpz_t fxx;
     int error;

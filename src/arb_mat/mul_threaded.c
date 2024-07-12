@@ -12,7 +12,6 @@
 
 #include "thread_pool.h"
 #include "thread_support.h"
-#include "arb.h"
 #include "arb_mat.h"
 
 typedef struct

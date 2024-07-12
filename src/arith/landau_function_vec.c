@@ -22,8 +22,8 @@
 
 void arith_landau_function_vec(fmpz * res, slong len)
 {
-    ulong p, pmax;
-    ulong pk, pkhi;
+    mp_limb_t p, pmax;
+    mp_limb_t pk, pkhi;
     fmpz_t a;
     ulong k, n;
 

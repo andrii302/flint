@@ -12,6 +12,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "test_helpers.h"
+#include "flint.h"
 
 TEST_FUNCTION_START(memory_manager, state)
 {

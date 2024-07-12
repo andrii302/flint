@@ -82,7 +82,7 @@ void fmpz_mpoly_interp_lift_p(
 int fmpz_mpoly_interp_mcrt_p(
     flint_bitcnt_t * coeffbits_,
     fmpz_mpoly_t H,
-    const fmpz_mpoly_ctx_t FLINT_UNUSED(ctx),
+    const fmpz_mpoly_ctx_t ctx,
     const fmpz_t m,
     const nmod_mpoly_t A,
     const nmod_mpoly_ctx_t ctxp)
@@ -128,7 +128,7 @@ void fmpz_mpoly_interp_reduce_p_mpolyn(
     slong N = mpoly_words_per_exp_sp(A->bits, ctx->minfo);
     slong offset, shift, k;
     ulong mask;
-    ulong v;
+    mp_limb_t v;
     fmpz * Acoeff = A->coeffs;
     ulong * Aexp = A->exps;
     slong Alen = A->length;

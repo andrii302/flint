@@ -12,7 +12,7 @@
 #include "test_helpers.h"
 #include "fmpz_poly.h"
 
-static const ulong known_values[] =
+static const mp_limb_t known_values[] =
 {
     UWORD(2147483629),
     UWORD(1073742093),
@@ -30,7 +30,7 @@ static const ulong known_values[] =
 TEST_FUNCTION_START(fmpz_poly_swinnerton_dyer, state)
 {
     fmpz_poly_t S;
-    ulong r;
+    mp_limb_t r;
     slong n;
 
     for (n = 0; n <= 10; n++)

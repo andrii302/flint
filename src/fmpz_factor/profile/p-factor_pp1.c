@@ -10,6 +10,7 @@
 */
 
 #include "profiler.h"
+#include "flint.h"
 #include "fmpz.h"
 #include "fmpz_factor.h"
 #include "ulong_extras.h"
@@ -55,7 +56,7 @@ int main(void)
          flint_printf("Factor not found!\n");
    } while(1);
 
-   flint_rand_clear(state);
+   flint_randclear(state);
 
    fmpz_clear(n);
    fmpz_clear(p);

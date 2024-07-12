@@ -9,12 +9,16 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include <string.h>
+#include <stdlib.h>
+
 /* Include functions *********************************************************/
 
 #include "t-addmod.c"
 #include "t-cbrt_binary_search.c"
 #include "t-cbrt.c"
 #include "t-cbrt_chebyshev_approx.c"
+#include "t-cbrt_newton_iteration.c"
 #include "t-cbrtrem.c"
 #include "t-clog_2exp.c"
 #include "t-clog.c"
@@ -27,7 +31,6 @@
 #include "t-divrem2_preinv.c"
 #include "t-euler_phi.c"
 #include "t-factor.c"
-#include "t-factor_evaluate.c"
 #include "t-factor_ecm.c"
 #include "t-factorial_fast_mod2_preinv.c"
 #include "t-factorial_mod2_preinv.c"
@@ -112,6 +115,7 @@ test_struct tests[] =
     TEST_FUNCTION(n_cbrt_binary_search),
     TEST_FUNCTION(n_cbrt),
     TEST_FUNCTION(n_cbrt_chebyshev_approx),
+    TEST_FUNCTION(n_cbrt_newton_iteration),
     TEST_FUNCTION(n_cbrtrem),
     TEST_FUNCTION(n_clog_2exp),
     TEST_FUNCTION(n_clog),
@@ -124,7 +128,6 @@ test_struct tests[] =
     TEST_FUNCTION(n_divrem2_preinv),
     TEST_FUNCTION(n_euler_phi),
     TEST_FUNCTION(n_factor),
-    TEST_FUNCTION(n_factor_evaluate),
     TEST_FUNCTION(n_factor_ecm),
     TEST_FUNCTION(n_factorial_fast_mod2_preinv),
     TEST_FUNCTION(n_factorial_mod2_preinv),

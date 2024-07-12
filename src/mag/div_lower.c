@@ -11,10 +11,6 @@
 
 #include "mag.h"
 
-#if !FLINT64
-# include "longlong.h"
-#endif
-
 void
 mag_div_lower(mag_t z, const mag_t x, const mag_t y)
 {
@@ -27,13 +23,13 @@ mag_div_lower(mag_t z, const mag_t x, const mag_t y)
     }
     else
     {
-        ulong q;
+        mp_limb_t q;
         slong fix;
 
 #if FLINT_BITS == 64
         q = (MAG_MAN(x) << MAG_BITS) / MAG_MAN(y);
 #else
-        ulong hi, lo, r;
+        mp_limb_t hi, lo, r;
         lo = MAG_MAN(x) << MAG_BITS;
         hi = MAG_MAN(x) >> (FLINT_BITS - MAG_BITS);
         udiv_qrnnd(q, r, hi, lo, MAG_MAN(y));

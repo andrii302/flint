@@ -22,16 +22,12 @@ pthread_mutex_t fmpz_lock;
 /* Always free larger mpz's to avoid wasting too much heap space */
 #define FLINT_MPZ_MAX_CACHE_LIMBS 64
 
-#if FLINT_MPZ_MAX_CACHE_LIMBS < MPZ_MIN_ALLOC
-# error
-#endif
-
 /* The number of new mpz's allocated at a time */
 #define MPZ_BLOCK 64
 
 /* there's no point using TLS here as GC doesn't support it */
-mpz_ptr * mpz_free_arr = NULL;
-mpz_ptr * mpz_arr = NULL;
+__mpz_struct ** mpz_free_arr = NULL;
+__mpz_struct ** mpz_arr = NULL;
 ulong mpz_num = 0;
 ulong mpz_alloc = 0;
 ulong mpz_free_num = 0;
@@ -44,9 +40,9 @@ void fmpz_lock_init()
 }
 #endif
 
-mpz_ptr _fmpz_new_mpz(void)
+__mpz_struct * _fmpz_new_mpz(void)
 {
-    mpz_ptr z = NULL;
+    __mpz_struct * z = NULL;
 
 #if FLINT_USES_PTHREAD
     pthread_once(&fmpz_initialised, fmpz_lock_init);
@@ -61,12 +57,12 @@ mpz_ptr _fmpz_new_mpz(void)
 
         if (mpz_num == mpz_alloc) /* store pointer to prevent gc cleanup */
         {
-            mpz_alloc = FLINT_MAX(MPZ_BLOCK, 2 * mpz_alloc);
-            mpz_arr = flint_realloc(mpz_arr, mpz_alloc * sizeof(mpz_ptr));
+            mpz_alloc = FLINT_MAX(64, mpz_alloc * 2);
+            mpz_arr = flint_realloc(mpz_arr, mpz_alloc * sizeof(__mpz_struct *));
         }
         mpz_arr[mpz_num++] = z;
 
-        mpz_init2(z, MPZ_MIN_ALLOC * FLINT_BITS);
+        mpz_init(z);
     }
 
 #if FLINT_USES_PTHREAD
@@ -78,12 +74,10 @@ mpz_ptr _fmpz_new_mpz(void)
 
 void _fmpz_clear_mpz(fmpz f)
 {
-    mpz_ptr ptr = COEFF_TO_PTR(f);
-
-    FLINT_ASSERT(ptr->_mp_alloc >= MPZ_MIN_ALLOC);
+    __mpz_struct * ptr = COEFF_TO_PTR(f);
 
     if (ptr->_mp_alloc > FLINT_MPZ_MAX_CACHE_LIMBS)
-        mpz_realloc(ptr, MPZ_MIN_ALLOC);
+        mpz_realloc2(ptr, 1);
 
 #if FLINT_USES_PTHREAD
     pthread_mutex_lock(&fmpz_lock);
@@ -91,8 +85,8 @@ void _fmpz_clear_mpz(fmpz f)
 
     if (mpz_free_num == mpz_free_alloc)
     {
-        mpz_free_alloc = FLINT_MAX(MPZ_BLOCK, 2 * mpz_free_alloc);
-        mpz_free_arr = flint_realloc(mpz_free_arr, mpz_free_alloc * sizeof(mpz_ptr));
+        mpz_free_alloc = FLINT_MAX(64, mpz_free_alloc * 2);
+        mpz_free_arr = flint_realloc(mpz_free_arr, mpz_free_alloc * sizeof(__mpz_struct *));
     }
 
     mpz_free_arr[mpz_free_num++] = ptr;
@@ -131,11 +125,11 @@ void _fmpz_cleanup(void)
 #endif
 }
 
-mpz_ptr _fmpz_promote(fmpz_t f)
+__mpz_struct * _fmpz_promote(fmpz_t f)
 {
     if (!COEFF_IS_MPZ(*f)) /* f is small so promote it first */
     {
-        mpz_ptr mf = _fmpz_new_mpz();
+        __mpz_struct * mf = _fmpz_new_mpz();
         (*f) = PTR_TO_COEFF(mf);
         return mf;
     }
@@ -143,12 +137,12 @@ mpz_ptr _fmpz_promote(fmpz_t f)
         return COEFF_TO_PTR(*f);
 }
 
-mpz_ptr _fmpz_promote_val(fmpz_t f)
+__mpz_struct * _fmpz_promote_val(fmpz_t f)
 {
     fmpz c = (*f);
     if (!COEFF_IS_MPZ(c)) /* f is small so promote it */
     {
-        mpz_ptr mf = _fmpz_new_mpz();
+        __mpz_struct * mf = _fmpz_new_mpz();
         (*f) = PTR_TO_COEFF(mf);
         flint_mpz_set_si(mf, c);
         return mf;
@@ -159,7 +153,7 @@ mpz_ptr _fmpz_promote_val(fmpz_t f)
 
 void _fmpz_demote_val(fmpz_t f)
 {
-    mpz_ptr mf = COEFF_TO_PTR(*f);
+    __mpz_struct * mf = COEFF_TO_PTR(*f);
     int size = mf->_mp_size;
 
     if (size == 1 || size == -1)
@@ -183,18 +177,19 @@ void _fmpz_demote_val(fmpz_t f)
 
 void _fmpz_init_readonly_mpz(fmpz_t f, const mpz_t z)
 {
-    mpz_ptr ptr;
-    *f = WORD(0);
-    ptr = _fmpz_promote(f);
+   __mpz_struct *ptr;
+   *f = WORD(0);
+   ptr = _fmpz_promote(f);
 
-    mpz_clear(ptr);
-    *ptr = *z;
+   mpz_clear(ptr);
+   *ptr = *z;
 }
 
 void _fmpz_clear_readonly_mpz(mpz_t z)
 {
-    int size = z->_mp_size;
-
-    if (size == 0 || ((size == 1 || size == -1) && (z->_mp_d[0] <= COEFF_MAX)))
+    if (((z->_mp_size == 1 || z->_mp_size == -1) && (z->_mp_d[0] <= COEFF_MAX))
+        || (z->_mp_size == 0))
+    {
         mpz_clear(z);
+    }
 }

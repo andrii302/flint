@@ -9,15 +9,16 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "ulong_extras.h"
 
-ulong n_mod_precomp(ulong a, ulong n, double npre)
+mp_limb_t n_mod_precomp(mp_limb_t a, mp_limb_t n, double npre)
 {
-    ulong quot, rem;
+    mp_limb_t quot, rem;
 
-    quot = (ulong) ((double) a * npre);
+    quot = (mp_limb_t) ((double) a * npre);
     rem  = a - quot*n;
     if ((slong) rem < 0) /* unlikely */
        rem += n;
-    return rem - (n & (((slong) (n - rem - 1)) >> (FLINT_BITS-1)));
+    return rem - (n & (((mp_limb_signed_t) (n - rem - 1)) >> (FLINT_BITS-1)));
 }

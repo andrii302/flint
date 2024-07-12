@@ -11,7 +11,6 @@
 */
 
 #include "fmpz.h"
-#include "mpoly.h"
 #include "gr_mpoly.h"
 
 int gr_mpoly_set_coeff_scalar_fmpz(

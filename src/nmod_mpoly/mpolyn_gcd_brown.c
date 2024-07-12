@@ -28,7 +28,7 @@ int nmod_mpolyn_gcd_brown_smprime_bivar(
 {
     int success;
     slong bound;
-    ulong alpha, temp, gammaevalp, gammaevalm;
+    mp_limb_t alpha, temp, gammaevalp, gammaevalm;
     n_poly_struct * Aevalp, * Bevalp, * Gevalp, * Abarevalp, * Bbarevalp;
     n_poly_struct * Aevalm, * Bevalm, * Gevalm, * Abarevalm, * Bbarevalm;
     nmod_mpolyn_struct * T;
@@ -218,11 +218,11 @@ choose_prime: /* primes are v - alpha, v + alpha */
     if (n_poly_degree(modulus) > 0)
     {
         FLINT_ASSERT(G->length > 0);
-        if ((ulong) n_poly_degree(Gevalp) > ((G->exps + N*0)[off]>>shift))
+        if (n_poly_degree(Gevalp) > ((G->exps + N*0)[off]>>shift))
         {
             goto choose_prime;
         }
-        else if ((ulong) n_poly_degree(Gevalp) < ((G->exps + N*0)[off]>>shift))
+        else if (n_poly_degree(Gevalp) < ((G->exps + N*0)[off]>>shift))
         {
             n_poly_one(modulus);
         }
@@ -338,7 +338,7 @@ int nmod_mpolyn_gcd_brown_smprime(
     slong bound;
     slong upper_limit;
     slong offset, shift;
-    ulong alpha, temp, gammaevalp, gammaevalm;
+    mp_limb_t alpha, temp, gammaevalp, gammaevalm;
     nmod_mpolyn_struct * Aevalp, * Bevalp, * Gevalp, * Abarevalp, * Bbarevalp;
     nmod_mpolyn_struct * Aevalm, * Bevalm, * Gevalm, * Abarevalm, * Bbarevalm;
     nmod_mpolyn_struct * T1, * T2;

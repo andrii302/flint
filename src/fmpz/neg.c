@@ -9,7 +9,7 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include <gmp.h>
+#include "flint.h"
 #include "fmpz.h"
 
 void
@@ -24,7 +24,7 @@ fmpz_neg(fmpz_t f1, const fmpz_t f2)
     else                        /* coeff is large */
     {
         /* No need to retain value in promotion, as if aliased, both already large */
-        mpz_ptr mpz_res = _fmpz_promote(f1);
+        __mpz_struct *mpz_res = _fmpz_promote(f1);
         mpz_neg(mpz_res, COEFF_TO_PTR(*f2));
     }
 }

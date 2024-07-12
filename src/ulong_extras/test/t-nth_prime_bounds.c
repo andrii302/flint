@@ -15,7 +15,7 @@
 #define check_prime_bounds(n, ans) \
 do { \
     int ok, reasonable; \
-    ulong lo, hi; \
+    mp_limb_t lo, hi; \
     n_nth_prime_bounds(&lo, &hi, n); \
  \
     ok = lo <= ans && ans <= hi; \

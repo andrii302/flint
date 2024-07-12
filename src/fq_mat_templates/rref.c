@@ -14,6 +14,7 @@
 
 #include "templates.h"
 
+#include "flint.h"
 #include "perm.h"
 
 slong

@@ -60,7 +60,7 @@ static void n_bpoly_mod_make_monic_series(
 
 static void _n_bpoly_set_poly_gen0(
     n_bpoly_t A,
-    const ulong * Bcoeffs, slong Blength)
+    const mp_limb_t * Bcoeffs, slong Blength)
 {
     slong i;
     n_bpoly_fit_length(A, Blength);
@@ -73,7 +73,7 @@ static void _n_bpoly_set_poly_gen0(
 static void n_bpoly_mod_eval(
     nmod_poly_t E,
     const n_bpoly_t A,
-    ulong alpha,
+    mp_limb_t alpha,
     nmod_t ctx)
 {
     slong i;
@@ -517,13 +517,13 @@ static void _n_bpoly_mod_lift_build_steps(n_bpoly_mod_lift_t L, nmod_t ctx)
 /* linear lifting has large memory requirements wrt r */
 static int _use_linear_cutoff(slong r, slong degx)
 {
-    return r < 30 + 5 * (slong) FLINT_BIT_COUNT(degx);
+    return r < 30 + 5*FLINT_BIT_COUNT(degx);
 }
 
 /* evaluation has even large memory requirements wrt r */
 static int _try_eval_cutoff(slong r, slong degx)
 {
-    return r < 20 + 2 * (slong) FLINT_BIT_COUNT(degx);
+    return r < 20 + 2*FLINT_BIT_COUNT(degx);
 }
 
 static void n_bpoly_mod_lift_start(
@@ -674,7 +674,7 @@ void n_bpoly_mod_lift_combine(
     }
     else
     {
-        if (!L->Eok && r < 20 + 2 * (slong) FLINT_BIT_COUNT(degx))
+        if (!L->Eok && r < 20 + 2*FLINT_BIT_COUNT(degx))
             L->Eok = nmod_eval_interp_set_degree_modulus(L->E, degx, ctx);
 
         A = L->tmp->coeffs;
@@ -1091,10 +1091,10 @@ static void _lattice(
     n_bpoly_struct * ld;
     nmod_mat_t M, T1, T2;
     int nlimbs;
-    ulong * trow;
+    mp_limb_t * trow;
 
     nlimbs = _nmod_vec_dot_bound_limbs(r, ctx);
-    trow = FLINT_ARRAY_ALLOC(r, ulong);
+    trow = FLINT_ARRAY_ALLOC(r, mp_limb_t);
     n_bpoly_init(Q);
     n_bpoly_init(R);
     n_bpoly_init(dg);
@@ -1171,7 +1171,7 @@ static int _zassenhaus(
     const zassenhaus_prune_t zas,
     slong limit,
     n_tpoly_t F,
-    ulong malpha,
+    mp_limb_t malpha,
     const nmod_mat_t N,
     n_bpoly_struct * const * g,
     slong r,
@@ -1348,7 +1348,7 @@ int n_bpoly_mod_factor_smprime(
     slong final_order, lift_order, lattice_order;
     slong * CLD;
     nmod_poly_t Aeval;
-    ulong alpha_best, alpha_tmp;
+    mp_limb_t alpha_best, alpha_tmp;
     nmod_poly_factor_t local_fac_best, local_fac_tmp;
     int local_fac_tries = 0;
     n_bpoly_t monicA;

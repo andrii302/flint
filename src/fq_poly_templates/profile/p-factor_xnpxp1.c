@@ -11,6 +11,7 @@
 
 #ifdef T
 
+#include "flint.h"
 #include "templates.h"
 
 #include "profiler.h"

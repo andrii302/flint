@@ -74,7 +74,7 @@ dlog_rho(const dlog_rho_t t, ulong b)
     ulong x[2], e[2], f[2], g;
     flint_rand_t state;
 
-    flint_rand_init(state);
+    flint_randinit(state);
 
     do {
 
@@ -105,7 +105,7 @@ dlog_rho(const dlog_rho_t t, ulong b)
 
     } while (e[0] == e[1] && f[0] == f[1]);
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 
     /* e = f * log(b) */
     e[0] = nmod_sub(e[0], e[1], t->n);

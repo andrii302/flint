@@ -9,16 +9,12 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "gr.h"
 #include "gr_mat.h"
 
 int
 gr_mat_lu_generic(slong * rank, slong * P, gr_mat_t LU, const gr_mat_t A, int rank_check, gr_ctx_t ctx)
 {
-    if (A->r < 5 || A->c < 5)
-        return gr_mat_lu_classical(rank, P, LU, A, rank_check, ctx);
-    else
-        return gr_mat_lu_recursive(rank, P, LU, A, rank_check, ctx);
+    return gr_mat_lu_recursive(rank, P, LU, A, rank_check, 4, ctx);
 }
 
 int

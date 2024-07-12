@@ -13,12 +13,12 @@
 #include "nmod.h"
 #include "nmod_poly.h"
 
-void _nmod_poly_rem_q1(nn_ptr R,
-                       nn_srcptr A, slong lenA, nn_srcptr B, slong lenB,
+void _nmod_poly_rem_q1(mp_ptr R,
+                       mp_srcptr A, slong lenA, mp_srcptr B, slong lenB,
                        nmod_t mod)
 {
     slong i;
-    ulong invL, t, q0, q1, t2, t1, t0, s1, s0;
+    mp_limb_t invL, t, q0, q1, t1, t0, s1, s0;
 
     FLINT_ASSERT(lenA == lenB + 1);
     invL = (B[lenB-1] == 1) ? 1 : n_invmod(B[lenB-1], mod.n);
@@ -61,23 +61,16 @@ void _nmod_poly_rem_q1(nn_ptr R,
     {
         for (i = 1; i < lenB - 1; i++)
         {
-            umul_ppmm(t1, t0, q1, B[i - 1]);
-            umul_ppmm(s1, s0, q0, B[i]);
-            add_ssaaaa(t1, t0, t1, t0, 0, A[i]);
-            add_sssaaaaaa(t2, t1, t0, 0, t1, t0, 0, s1, s0);
-            if (t2 != 0)
-                /* Note: should just be t1 -= mod.n, but with GCC
-                   on Zen3 that version runs noticeably slower. */
-                sub_ddmmss(t2, t1, t2, t1, 0, mod.n);
-            t1 = FLINT_MIN(t1, t1 - mod.n);
-            FLINT_ASSERT(t1 < mod.n);
-            NMOD_RED2(R[i], t1, t0, mod);
+            t = A[i];
+            NMOD_ADDMUL(t, q1, B[i - 1], mod);
+            NMOD_ADDMUL(t, q0, B[i], mod);
+            R[i] = t;
         }
     }
 }
 
-void _nmod_poly_rem(nn_ptr R, nn_srcptr A, slong lenA,
-                              nn_srcptr B, slong lenB, nmod_t mod)
+void _nmod_poly_rem(mp_ptr R, mp_srcptr A, slong lenA,
+                              mp_srcptr B, slong lenB, nmod_t mod)
 {
     if (lenA - lenB == 1)
     {
@@ -85,11 +78,11 @@ void _nmod_poly_rem(nn_ptr R, nn_srcptr A, slong lenA,
     }
     else if (lenB >= 2)
     {
-        nn_ptr Q;
+        mp_ptr Q;
         TMP_INIT;
 
         TMP_START;
-        Q = TMP_ALLOC((lenA - lenB + 1) * sizeof(ulong));
+        Q = TMP_ALLOC((lenA - lenB + 1) * sizeof(mp_limb_t));
         _nmod_poly_divrem(Q, R, A, lenA, B, lenB, mod);
         TMP_END;
     }
@@ -99,7 +92,7 @@ void nmod_poly_rem(nmod_poly_t R, const nmod_poly_t A, const nmod_poly_t B)
 {
     const slong lenA = A->length, lenB = B->length;
     nmod_poly_t tR;
-    nn_ptr r;
+    mp_ptr r;
 
     if (lenB == 0)
     {

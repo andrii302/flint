@@ -45,7 +45,7 @@ _fq_nmod_unrank(fq_nmod_t x, ulong r, const fq_nmod_ctx_t ctx)
 }
 
 static int
-n_is_prime_power(ulong * p, ulong n)
+n_is_prime_power(mp_limb_t * p, mp_limb_t n)
 {
     n_factor_t fac;
 
@@ -128,7 +128,7 @@ fmpz_mat_jacobsthal(fmpz_mat_t Q)
 /* 2 -- n = 2^v * 2*(p^e + 1) */
 /* 3 -- n = 2^v */
 static int
-paley_construction(ulong * q, ulong n)
+paley_construction(mp_limb_t * q, mp_limb_t n)
 {
     int i, v;
 
@@ -169,12 +169,13 @@ fmpz_mat_set2x2(fmpz_mat_t A, slong i, slong j,
 int
 fmpz_mat_hadamard(fmpz_mat_t A)
 {
-    ulong m, n, q;
+    slong n, m, i, j;
+    mp_limb_t q;
     int kind;
 
     n = fmpz_mat_nrows(A);
 
-    if ((slong) n != fmpz_mat_ncols(A))
+    if (n != fmpz_mat_ncols(A))
         return 0;
 
     if (n == 0)
@@ -199,8 +200,6 @@ fmpz_mat_hadamard(fmpz_mat_t A)
 
         if (kind == 1)
         {
-            ulong i, j;
-
             fmpz_zero(fmpz_mat_entry(A, 0, 0));
 
             for (i = 0; i < q; i++)
@@ -222,8 +221,6 @@ fmpz_mat_hadamard(fmpz_mat_t A)
         }
         else
         {
-            ulong i, j;
-
             for (i = 0; i < q + 1; i++)
             {
                 for (j = 0; j < q + 1; j++)
@@ -246,7 +243,6 @@ fmpz_mat_hadamard(fmpz_mat_t A)
 
     for ( ; m < n; m *= 2)
     {
-        ulong i;
         for (i = 0; i < m; i++)
         {
             _fmpz_vec_set(A->rows[i] + m, A->rows[i], m);

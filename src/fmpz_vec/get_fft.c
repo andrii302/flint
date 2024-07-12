@@ -10,16 +10,15 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "mpn_extras.h"
 #include "thread_support.h"
 #include "fmpz.h"
 #include "fmpz_vec.h"
 
-static void _fmpz_vec_get_fft_coeff(ulong ** coeffs_f,
+static void _fmpz_vec_get_fft_coeff(mp_limb_t ** coeffs_f,
                        const fmpz * coeffs_m, slong l, slong i)
 {
     slong size_f = l + 1;
-    ulong * coeff;
+    mp_limb_t * coeff;
     slong size_j, c;
     int signed_c;
     c = coeffs_m[i];
@@ -33,14 +32,14 @@ static void _fmpz_vec_get_fft_coeff(ulong ** coeffs_f,
         {
             signed_c = 1;
             c = -c;
-            coeff = (ulong *) &c;
+            coeff = (mp_limb_t *) &c;
         }
         else
-            coeff = (ulong *) coeffs_m + i;
+            coeff = (mp_limb_t *) coeffs_m + i;
     }
     else /* coeff is an mpz_t */
     {
-        mpz_ptr mc = COEFF_TO_PTR(c);
+        __mpz_struct * mc = COEFF_TO_PTR(c);
         size_j = mc->_mp_size;
         if (size_j < 0)
         {
@@ -64,7 +63,7 @@ static void _fmpz_vec_get_fft_coeff(ulong ** coeffs_f,
 
 typedef struct
 {
-    ulong ** coeffs_f;
+    mp_limb_t ** coeffs_f;
     const fmpz * coeffs_m;
     slong limbs;
 }
@@ -76,7 +75,7 @@ worker(slong i, work_t * work)
     _fmpz_vec_get_fft_coeff(work->coeffs_f, work->coeffs_m, work->limbs, i);
 }
 
-void _fmpz_vec_get_fft(ulong ** coeffs_f,
+void _fmpz_vec_get_fft(mp_limb_t ** coeffs_f,
                        const fmpz * coeffs_m, slong limbs, slong length)
 {
     work_t work;

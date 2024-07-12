@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "fmpz.h"
+#include "ulong_extras.h"
 #include "gr.h"
 #include "gr_vec.h"
 #include "gr_poly.h"
@@ -51,11 +52,6 @@ int _gr_gr_poly_ctx_set_gen_name(gr_ctx_t ctx, const char * s)
     POLYNOMIAL_CTX(ctx)->var = flint_realloc(POLYNOMIAL_CTX(ctx)->var, len + 1);
     memcpy(POLYNOMIAL_CTX(ctx)->var, s, len + 1);
     return GR_SUCCESS;
-}
-
-int _gr_gr_poly_ctx_set_gen_names(gr_ctx_t ctx, const char ** s)
-{
-    return _gr_gr_poly_ctx_set_gen_name(ctx, s[0]);
 }
 
 void
@@ -511,8 +507,7 @@ gr_method_tab_input _gr_poly_methods_input[] =
     {GR_METHOD_CTX_IS_INTEGRAL_DOMAIN,  (gr_funcptr) polynomial_ctx_is_integral_domain},
     {GR_METHOD_CTX_IS_FIELD,            (gr_funcptr) gr_generic_ctx_predicate_false},
     {GR_METHOD_CTX_IS_THREADSAFE,       (gr_funcptr) polynomial_ctx_is_threadsafe},
-    {GR_METHOD_CTX_SET_GEN_NAME,        (gr_funcptr) _gr_gr_poly_ctx_set_gen_name},
-    {GR_METHOD_CTX_SET_GEN_NAMES,       (gr_funcptr) _gr_gr_poly_ctx_set_gen_names},
+    {GR_METHOD_CTX_SET_GEN_NAME, (gr_funcptr) _gr_gr_poly_ctx_set_gen_name},
 
     {GR_METHOD_INIT,        (gr_funcptr) polynomial_init},
     {GR_METHOD_CLEAR,       (gr_funcptr) polynomial_clear},

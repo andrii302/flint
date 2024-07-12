@@ -13,10 +13,8 @@
 #ifndef TEST_HELPERS_H
 #define TEST_HELPERS_H
 
-#include <time.h> /* clock */
-#include <string.h> /* strlen, strcmp, strncmp */
-#include <stdlib.h> /* strtol */
-#include <limits.h> /* LONG_MIN */
+#include <time.h>
+#include <string.h>
 #include "templates.h"
 #include "flint.h"
 

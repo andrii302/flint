@@ -9,9 +9,8 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "arb.h"
-#include "arb_hypgeom.h"
 #include "acb_dirichlet.h"
+#include "arb_hypgeom.h"
 
 static void
 _platt_lemma_A11_X(arb_t out,

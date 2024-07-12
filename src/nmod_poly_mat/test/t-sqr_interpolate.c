@@ -23,7 +23,7 @@ TEST_FUNCTION_START(nmod_poly_mat_sqr_interpolate, state)
     {
         nmod_poly_mat_t A, C;
         nmod_mat_t a, c, d;
-        ulong x, mod;
+        mp_limb_t x, mod;
         slong m, deg;
 
         mod = n_randtest_prime(state, 0);
@@ -76,7 +76,7 @@ TEST_FUNCTION_START(nmod_poly_mat_sqr_interpolate, state)
     {
         nmod_poly_mat_t A, B;
         slong m, deg;
-        ulong mod;
+        mp_limb_t mod;
 
         mod = n_randtest_prime(state, 0);
         m = n_randint(state, 20);

@@ -17,15 +17,15 @@
 #endif
 
 void _n_fq_poly_mul_(
-    ulong * A,  /* length d*(Blen + Clen - 1) */
-    const ulong * B, slong Blen,
-    const ulong * C, slong Clen,
+    mp_limb_t * A,  /* length d*(Blen + Clen - 1) */
+    const mp_limb_t * B, slong Blen,
+    const mp_limb_t * C, slong Clen,
     const fq_nmod_ctx_t ctx,
     n_poly_stack_t St)
 {
     slong d = fq_nmod_ctx_degree(ctx);
     slong Alen = Blen + Clen - 1;
-    ulong * tmp, * u;
+    mp_limb_t * tmp, * u;
     slong i, j;
 
     FLINT_ASSERT(Blen > 0);
@@ -62,7 +62,7 @@ void _n_fq_poly_mul_(
     }
     else
     {
-        ulong * xA, * xB, * xC;
+        mp_limb_t * xA, * xB, * xC;
         slong xAlen, xBlen, xClen, start;
 
         xBlen = (2*d-1)*Blen;

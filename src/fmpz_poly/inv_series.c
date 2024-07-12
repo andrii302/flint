@@ -10,7 +10,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "longlong.h"
 #include "fmpz.h"
 #include "fmpz_vec.h"
 #include "fmpz_poly.h"
@@ -164,7 +163,7 @@ _fmpz_poly_inv_series_basecase(fmpz * Qinv, const fmpz * Q, slong Qlen, slong n)
                 }
                 else if (bits <= 2 * FLINT_BITS - 1)
                 {
-                    ulong hi, lo, shi, slo;
+                    mp_limb_t hi, lo, shi, slo;
                     slong x, y;
 
                     shi = slo = 0;
@@ -185,7 +184,7 @@ _fmpz_poly_inv_series_basecase(fmpz * Qinv, const fmpz * Q, slong Qlen, slong n)
                 }
                 else
                 {
-                    ulong hi, lo, cy, shh, shi, slo;
+                    mp_limb_t hi, lo, cy, shh, shi, slo;
                     slong x, y;
 
                     shh = shi = slo = 0;

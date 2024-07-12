@@ -16,8 +16,7 @@ fmpz_mpoly_symmetric_gens(fmpz_mpoly_t res, ulong k, slong * vars, slong n, cons
 {
     ulong * exp;
     slong * c;
-    slong nvars, i;
-    ulong j;
+    slong nvars, i, j;
 
     if (k == 0)
     {
@@ -27,7 +26,7 @@ fmpz_mpoly_symmetric_gens(fmpz_mpoly_t res, ulong k, slong * vars, slong n, cons
 
     fmpz_mpoly_zero(res, ctx);
 
-    if (k > (ulong) n)
+    if (k > n)
         return;
 
     nvars = ctx->minfo->nvars;
@@ -50,8 +49,8 @@ fmpz_mpoly_symmetric_gens(fmpz_mpoly_t res, ulong k, slong * vars, slong n, cons
         for (i = 0; i < n; i++)
             exp[vars[i]] = 0;
 
-        for (j = 0; j < k; j++)
-            exp[vars[c[j]]] = 1;
+        for (i = 0; i < k; i++)
+            exp[vars[c[i]]] = 1;
 
         fmpz_mpoly_push_term_ui_ui(res, 1, exp, ctx);
 

@@ -12,19 +12,18 @@
 */
 
 #include "ulong_extras.h"
-#include "mpn_extras.h"
 #include "nmod_vec.h"
 #include "nmod_poly.h"
 #include "nmod_mat.h"
 
 void
 _nmod_poly_compose_mod_brent_kung_vec_preinv(nmod_poly_struct * res,
-        const nmod_poly_struct * polys, slong FLINT_UNUSED(lenpolys), slong l,
-        nn_srcptr g, slong glen, nn_srcptr poly, slong len,
-        nn_srcptr polyinv, slong leninv, nmod_t mod)
+                const nmod_poly_struct * polys, slong lenpolys, slong l,
+                         mp_srcptr g, slong glen, mp_srcptr poly, slong len,
+                                   mp_srcptr polyinv, slong leninv, nmod_t mod)
 {
     nmod_mat_t A, B, C;
-    nn_ptr t, h;
+    mp_ptr t, h;
     slong i, j, k, n, m, len2 = l, len1;
 
     n = len - 1;

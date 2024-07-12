@@ -44,7 +44,7 @@ nmod_poly_mat_det_interpolate(nmod_poly_t det, const nmod_poly_mat_t A)
     slong i, l, n, len;
 
     nmod_mat_t X;
-    nn_ptr x, d;
+    mp_ptr x, d;
 
     n = A->r;
 
@@ -66,7 +66,7 @@ nmod_poly_mat_det_interpolate(nmod_poly_t det, const nmod_poly_mat_t A)
     len = n*(l - 1) + 1;
 
     /* Not enough points to interpolate */
-    if ((ulong) len > nmod_poly_mat_modulus(A))
+    if (len > nmod_poly_mat_modulus(A))
     {
         nmod_poly_mat_det_fflu(det, A);
         return;

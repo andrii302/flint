@@ -38,16 +38,7 @@ gr_poly_inv_series(gr_poly_t Qinv, const gr_poly_t Q, slong len, gr_ctx_t ctx)
     Qlen = Q->length;
 
     if (Qlen == 0)
-    {
-        truth_t is_zero = gr_ctx_is_zero_ring(ctx);
-
-        if (is_zero == T_TRUE)
-            return gr_poly_zero(Qinv, ctx);
-        else if (is_zero == T_FALSE)
-            return GR_DOMAIN;
-        else
-            return GR_UNABLE;
-    }
+        return GR_DOMAIN;
 
     if (Qlen == 1)
         len = 1;

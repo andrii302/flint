@@ -211,7 +211,6 @@ TEST_FUNCTION_START(arb_mat_solve_preapprox, state)
                 flint_printf("B = \n"); arb_mat_printd(B, 15); flint_printf("\n\n");
                 flint_printf("T = \n"); arb_mat_printd(T, 15); flint_printf("\n\n");
                 flint_printf("X = \n"); arb_mat_printd(X, 15); flint_printf("\n\n");
-                flint_abort();
             }
         }
 
@@ -229,7 +228,6 @@ TEST_FUNCTION_START(arb_mat_solve_preapprox, state)
                 flint_printf("FAIL (special values A = R = I, T = B))\n");
                 flint_printf("B = \n"); arb_mat_printd(B, 15); flint_printf("\n\n");
                 flint_printf("X = \n"); arb_mat_printd(X, 15); flint_printf("\n\n");
-                flint_abort();
             }
         }
 

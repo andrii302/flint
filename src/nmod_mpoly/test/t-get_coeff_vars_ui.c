@@ -53,7 +53,7 @@ TEST_FUNCTION_START(nmod_mpoly_get_coeff_vars_ui, state)
         slong vars[1];
         ulong exps[1];
         slong var1;
-        ulong modulus;
+        mp_limb_t modulus;
 
         modulus = UWORD(2) + n_randint(state, -UWORD(2));
         nvars = 1 + n_randint(state, 20);
@@ -116,7 +116,7 @@ TEST_FUNCTION_START(nmod_mpoly_get_coeff_vars_ui, state)
         slong vars[2];
         ulong exps[2];
         slong var1, var2;
-        ulong modulus;
+        mp_limb_t modulus;
 
         modulus = UWORD(2) + n_randint(state, -UWORD(2));
         nvars = 2 + n_randint(state, 20);

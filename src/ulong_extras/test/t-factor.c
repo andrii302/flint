@@ -14,12 +14,11 @@
 
 TEST_FUNCTION_START(n_factor, state)
 {
-    int result;
-    slong ix;
+    int i, j, result;
 
-    for (ix = 0; ix < 1000 * flint_test_multiplier(); ix++)
+    for (i = 0; i < 1000 * flint_test_multiplier(); i++)
     {
-        ulong n1, n2;
+        mp_limb_t n1, n2;
         n_factor_t factors;
         int type;
 
@@ -40,7 +39,11 @@ TEST_FUNCTION_START(n_factor, state)
 
         n_factor(&factors, n1, 0);
 
-        n2 = n_factor_evaluate(&factors);
+        n2 = UWORD(1);
+        for (j = 0; j < factors.num; j++)
+        {
+            n2 *= n_pow(factors.p[j], factors.exp[j]);
+        }
 
         result = (n1 == n2);
         if (!result)

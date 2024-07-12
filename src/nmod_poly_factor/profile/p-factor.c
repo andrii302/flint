@@ -13,6 +13,7 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "flint.h"
 #include "ulong_extras.h"
 #include "nmod_poly.h"
 #include "nmod_poly_factor.h"
@@ -32,7 +33,7 @@ int main(void)
 {
     nmod_poly_t f, g;
     nmod_poly_factor_t res;
-    ulong modulus;
+    mp_limb_t modulus;
     int i, j, k, n, num;
     double t, T1, T2, T3, T4;
 
@@ -330,6 +331,6 @@ int main(void)
         }
     }
 
-    flint_rand_clear(state);
+    flint_randclear(state);
     return 0;
 }

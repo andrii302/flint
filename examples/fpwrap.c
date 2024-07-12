@@ -1,6 +1,6 @@
 /* This file is public domain. Author: Fredrik Johansson. */
 
-#include <flint/arb_fpwrap.h>
+#include "arb_fpwrap.h"
 
 int main(void)
 {

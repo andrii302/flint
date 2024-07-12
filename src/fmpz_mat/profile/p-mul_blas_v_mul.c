@@ -10,11 +10,12 @@
 */
 
 #include "flint.h"
-
-#if FLINT_USES_BLAS
-#include <cblas.h>
 #include "fmpz_mat.h"
 #include "profiler.h"
+
+#if FLINT_USES_BLAS
+
+#include "cblas.h"
 
 int main(void)
 {
@@ -97,8 +98,10 @@ int main(void)
 }
 
 #else
+
 int main(void)
 {
     return 0;
 }
+
 #endif

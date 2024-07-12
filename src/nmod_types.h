@@ -20,10 +20,10 @@ extern "C" {
 
 typedef struct
 {
-    ulong * entries;
+    mp_limb_t * entries;
     slong r;
     slong c;
-    ulong ** rows;
+    mp_limb_t ** rows;
     nmod_t mod;
 }
 nmod_mat_struct;
@@ -32,7 +32,7 @@ typedef nmod_mat_struct nmod_mat_t[1];
 
 typedef struct
 {
-    nn_ptr coeffs;
+    mp_ptr coeffs;
     slong alloc;
     slong length;
     nmod_t mod;
@@ -58,7 +58,7 @@ typedef struct
     slong r;
     slong c;
     nmod_poly_struct ** rows;
-    ulong modulus;
+    mp_limb_t modulus;
 }
 nmod_poly_mat_struct;
 
@@ -66,11 +66,11 @@ typedef nmod_poly_mat_struct nmod_poly_mat_t[1];
 
 typedef struct
 {
-    ulong * coeffs;
+    mp_limb_t * coeffs;
     ulong * exps;
     slong length;
     flint_bitcnt_t bits;    /* number of bits per exponent */
-    slong coeffs_alloc;     /* abs size in ulong units */
+    slong coeffs_alloc;     /* abs size in mp_limb_t units */
     slong exps_alloc;       /* abs size in ulong units */
 } nmod_mpoly_struct;
 
@@ -78,7 +78,7 @@ typedef nmod_mpoly_struct nmod_mpoly_t[1];
 
 typedef struct
 {
-    ulong constant;
+    mp_limb_t constant;
     nmod_mpoly_struct * poly;
     fmpz * exp;
     slong num;

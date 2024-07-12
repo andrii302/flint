@@ -22,7 +22,7 @@ TEST_FUNCTION_START(nmod_poly_divrem_basecase, state)
     {
         nmod_poly_t a, b, q, r, prod;
 
-        ulong n;
+        mp_limb_t n;
         do
         {
             n = n_randtest_not_zero(state);
@@ -69,7 +69,7 @@ TEST_FUNCTION_START(nmod_poly_divrem_basecase, state)
     {
         nmod_poly_t a, b, q, r;
 
-        ulong n;
+        mp_limb_t n;
         do
         {
             n = n_randtest(state);
@@ -112,7 +112,7 @@ TEST_FUNCTION_START(nmod_poly_divrem_basecase, state)
     {
         nmod_poly_t a, b, q, r;
 
-        ulong n;
+        mp_limb_t n;
         do
         {
             n = n_randtest(state);
@@ -155,7 +155,7 @@ TEST_FUNCTION_START(nmod_poly_divrem_basecase, state)
     {
         nmod_poly_t a, b, q, r;
 
-        ulong n;
+        mp_limb_t n;
         do
         {
             n = n_randtest(state);
@@ -198,7 +198,7 @@ TEST_FUNCTION_START(nmod_poly_divrem_basecase, state)
     {
         nmod_poly_t a, b, q, r;
 
-        ulong n;
+        mp_limb_t n;
         do
         {
             n = n_randtest(state);

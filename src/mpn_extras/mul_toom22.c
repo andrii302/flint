@@ -2,7 +2,7 @@
     Copyright 2006-2010, 2012, 2014, 2018, 2020 Free Software Foundation, Inc.
     Contributed to the GNU project by Torbjorn Granlund.
 
-    Copyright (C) 2024 Fredrik Johansson
+    Copyright 2024 Fredrik Johansson
 
     This file is part of FLINT.
 
@@ -50,7 +50,11 @@ You should have received copies of the GNU General Public License and the
 GNU Lesser General Public License along with the GNU MP Library.  If not,
 see https://www.gnu.org/licenses/.  */
 
+#include "flint.h"
 #include "mpn_extras.h"
+
+/* Unoptimized */
+#define MPN_INCR_U(ptr, size, n)   mpn_add_1((ptr), (ptr), (size), (n))
 
 /* Evaluate in: -1, 0, +inf
 
@@ -68,7 +72,7 @@ see https://www.gnu.org/licenses/.  */
 #define TOOM22_MUL_N_REC(p, a, b, n, ws) \
     do { \
         if (FLINT_HAVE_MUL_N_FUNC(n)) \
-            FLINT_MPN_MUL_N_HARD(p, a, b, n); \
+            flint_mpn_mul_n_func_tab[n](p, a, b); \
         else \
             flint_mpn_mul_toom22(p, a, n, b, n, ws); \
     } while (0)
@@ -82,7 +86,7 @@ see https://www.gnu.org/licenses/.  */
 #define TOOM22_MUL_REC(p, a, an, b, bn, ws) \
     do { \
         if (FLINT_HAVE_MUL_FUNC(an, bn)) \
-            FLINT_MPN_MUL_HARD(p, a, an, b, bn); \
+            flint_mpn_mul_func_tab[an][bn](p, a, b); \
         else if (bn <= 12 || 4 * an >= 5 * bn) \
             flint_mpn_mul(p, a, an, b, bn); \
         else \

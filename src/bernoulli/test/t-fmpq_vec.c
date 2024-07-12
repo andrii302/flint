@@ -20,7 +20,7 @@ TEST_FUNCTION_START(bernoulli_fmpq_vec, state)
 {
     slong iter;
     slong n, bound;
-    ulong p, pinv, m1, m2;
+    mp_limb_t p, pinv, m1, m2;
     nmod_poly_t A;
 
     bound = 1000 * FLINT_MIN(1.0, 0.1 * flint_test_multiplier());

@@ -20,7 +20,12 @@
 # include <stdarg.h>
 #endif
 
-#include <stddef.h>
+#if defined(__CYGWIN__)
+# include <sys/param.h>
+#endif
+
+#include <limits.h>
+#include <gmp.h>
 #ifdef BUILDING_FLINT
 # include "config.h"
 #else
@@ -87,17 +92,9 @@ FLINT_DLL extern char flint_version[];
 struct __FLINT_FILE;
 typedef struct __FLINT_FILE FLINT_FILE;
 
-#if FLINT_LONG_LONG
-typedef unsigned long long int ulong;
-typedef long long int slong;
-#else
-typedef unsigned long int ulong;
-typedef long int slong;
-#endif
-
-typedef ulong flint_bitcnt_t;
-typedef ulong * nn_ptr;
-typedef const ulong * nn_srcptr;
+#define ulong mp_limb_t
+#define slong mp_limb_signed_t
+#define flint_bitcnt_t ulong
 
 #if FLINT_WANT_ASSERT
 # define FLINT_ASSERT(param) assert(param)
@@ -108,13 +105,7 @@ typedef const ulong * nn_srcptr;
 #if defined(__GNUC__)
 # define FLINT_FORCE_INLINE static __attribute__((always_inline)) inline
 # define FLINT_STATIC_NOINLINE static __attribute__((noinline))
-# if !FLINT_WANT_ASSERT
-#  define FLINT_UNUSED(x) UNUSED_ ## x __attribute__((unused))
-# else
-   /* NOTE: This may or may not be required as some function inputs may be used
-    * for assertions. */
-#  define FLINT_UNUSED(x) x
-# endif
+# define FLINT_UNUSED(x) UNUSED_ ## x __attribute__((unused))
 # define FLINT_SET_BUT_UNUSED(x) x __attribute__((unused))
 # define FLINT_CONST __attribute__ ((const))
 # define FLINT_WARN_UNUSED __attribute__((warn_unused_result))
@@ -128,9 +119,6 @@ typedef const ulong * nn_srcptr;
 # define FLINT_OPTIMIZE(x) FLINT_OPTIMIZE_NESTED_1(x)
 # define FLINT_CONSTANT_P __builtin_constant_p
 # define FLINT_UNREACHABLE __builtin_unreachable()
-# define FLINT_RETURNS_NONNULL __attribute__((returns_nonnull))
-# define FLINT_MALLOC __attribute__((malloc))
-# define FLINT_DEPRECATED __attribute__((deprecated))
 #else
 # define __attribute__(x)
 # if defined(_MSC_VER)
@@ -151,9 +139,6 @@ typedef const ulong * nn_srcptr;
 # define FLINT_POP_OPTIONS
 # define FLINT_OPTIMIZE(x)
 # define FLINT_CONSTANT_P(x) 0
-# define FLINT_RETURNS_NONNULL
-# define FLINT_MALLOC
-# define FLINT_DEPRECATED
 #endif
 
 #if defined(__cplusplus)
@@ -174,46 +159,50 @@ typedef const ulong * nn_srcptr;
 # define FLINT_TLS_PREFIX
 #endif
 
-#if FLINT_LONG_LONG
+#if defined(_LONG_LONG_LIMB)
 # define _WORD_FMT "ll"
 # define WORD_FMT "%ll"
 # define WORD_WIDTH_FMT "%*ll"
 # define WORD(xx) (xx##LL)
 # define UWORD(xx) (xx##ULL)
+# ifndef FLINT_NO_WORDMAC
+#  define UWORD_MAX ULLONG_MAX
+#  define UWORD_MIN ULLONG_MIN
+#  define WORD_MAX LLONG_MAX
+#  define WORD_MIN LLONG_MIN
+# endif
 #else
 # define _WORD_FMT "l"
 # define WORD_FMT "%l"
 # define WORD_WIDTH_FMT "%*l"
 # define WORD(xx) (xx##L)
 # define UWORD(xx) (xx##UL)
+# ifndef FLINT_NO_WORDMAC
+#  define UWORD_MAX ULONG_MAX
+#  define UWORD_MIN ULONG_MIN
+#  define WORD_MAX LONG_MAX
+#  define WORD_MIN LONG_MIN
+# endif
 #endif
 
-#if FLINT_BITS == 64
+#if GMP_LIMB_BITS == 64
+# define FLINT_BITS 64
 # define FLINT_D_BITS 53
 # define FLINT64 1
-# ifndef FLINT_NO_WORDMAC
-#  define UWORD_MAX UWORD(18446744073709551615)
-#  define UWORD_MIN UWORD(0)
-#  define WORD_MAX WORD(9223372036854775807)
-#  define WORD_MIN (-WORD_MAX - WORD(1))
-# endif
 #else
+# define FLINT_BITS 32
 # define FLINT_D_BITS 31
-# ifndef FLINT_NO_WORDMAC
-#  define UWORD_MAX UWORD(4294967295)
-#  define UWORD_MIN UWORD(0)
-#  define WORD_MAX WORD(2147483647)
-#  define WORD_MIN (-WORD_MAX - WORD(1))
-# endif
 #endif
+
+#include "longlong.h"
 
 /* memory ********************************************************************/
 
-FLINT_WARN_UNUSED FLINT_MALLOC FLINT_RETURNS_NONNULL void * flint_malloc(size_t size);
-FLINT_WARN_UNUSED FLINT_RETURNS_NONNULL void * flint_realloc(void * ptr, size_t size);
-FLINT_WARN_UNUSED FLINT_RETURNS_NONNULL void * flint_calloc(size_t num, size_t size);
+void * flint_malloc(size_t size);
+void * flint_realloc(void * ptr, size_t size);
+void * flint_calloc(size_t num, size_t size);
 void flint_free(void * ptr);
-FLINT_WARN_UNUSED FLINT_MALLOC FLINT_RETURNS_NONNULL void * flint_aligned_alloc(size_t alignment, size_t size);
+void * flint_aligned_alloc(size_t alignment, size_t size);
 void flint_aligned_free(void * ptr);
 
 typedef void (*flint_cleanup_function_t)(void);
@@ -271,21 +260,18 @@ FLINT_CONST double flint_test_multiplier(void);
 
 typedef struct
 {
-    void * __gmp_state;
-    ulong __randval;
-    ulong __randval2;
-}
-flint_rand_struct;
+    gmp_randstate_t gmp_state;
+    int gmp_init;
+    mp_limb_t __randval;
+    mp_limb_t __randval2;
+} flint_rand_s;
 
-typedef flint_rand_struct flint_rand_t[1];
-
-/* Assumes that flint_rand_init has been called for state */
-#define FLINT_RAND_GMP_STATE_IS_INITIALISED(state) ((state)->__gmp_state != NULL)
+typedef flint_rand_s flint_rand_t[1];
 
 FLINT_INLINE
-void flint_rand_init(flint_rand_t state)
+void flint_randinit(flint_rand_t state)
 {
-    state->__gmp_state = NULL;
+   state->gmp_init = 0;
 #if FLINT64
     state->__randval = UWORD(13845646450878251009);
     state->__randval2 = UWORD(13142370077570254774);
@@ -296,63 +282,67 @@ void flint_rand_init(flint_rand_t state)
 }
 
 FLINT_INLINE
-void flint_rand_set_seed(flint_rand_t state, ulong seed1, ulong seed2)
+void flint_randseed(flint_rand_t state, ulong seed1, ulong seed2)
 {
-    state->__randval = seed1;
-    state->__randval2 = seed2;
+   state->__randval = seed1;
+   state->__randval2 = seed2;
 }
 
 FLINT_INLINE
-void flint_rand_get_seed(ulong * seed1, ulong * seed2, flint_rand_t state)
+void flint_get_randseed(ulong * seed1, ulong * seed2, flint_rand_t state)
 {
-    *seed1 = state->__randval;
-    *seed2 = state->__randval2;
+   *seed1 = state->__randval;
+   *seed2 = state->__randval2;
 }
 
-void _flint_rand_init_gmp_state(flint_rand_t);
-void _flint_rand_clear_gmp_state(flint_rand_t);
 
 FLINT_INLINE
-void flint_rand_clear(flint_rand_t state)
+void _flint_rand_init_gmp(flint_rand_t state)
 {
-    if (FLINT_RAND_GMP_STATE_IS_INITIALISED(state))
-        _flint_rand_clear_gmp_state(state);
+    if (!state->gmp_init)
+    {
+        gmp_randinit_default(state->gmp_state);
+        state->gmp_init = 1;
+    }
 }
 
-FLINT_DEPRECATED void flint_randinit(flint_rand_t);
-FLINT_DEPRECATED void flint_randclear(flint_rand_t);
-FLINT_DEPRECATED void flint_randseed(flint_rand_t, ulong, ulong);
-FLINT_DEPRECATED void flint_get_randseed(ulong *, ulong *, flint_rand_t);
-FLINT_DEPRECATED void _flint_rand_init_gmp(flint_rand_t);
-FLINT_DEPRECATED flint_rand_struct * flint_rand_alloc(void);
-FLINT_DEPRECATED void flint_rand_free(flint_rand_struct * state);
+FLINT_INLINE
+void flint_randclear(flint_rand_t state)
+{
+    if (state->gmp_init)
+        gmp_randclear(state->gmp_state);
+}
+
+FLINT_INLINE
+flint_rand_s * flint_rand_alloc(void)
+{
+    return (flint_rand_s *) flint_malloc(sizeof(flint_rand_s));
+}
+
+FLINT_INLINE
+void flint_rand_free(flint_rand_s * state)
+{
+    flint_free(state);
+}
 
 /* defined in ulong_extras, but used throughout the test code */
-ulong n_randlimb(flint_rand_t);
+ulong n_randint(flint_rand_t, ulong);
 ulong n_randtest(flint_rand_t);
 ulong n_randtest_not_zero(flint_rand_t);
 
-FLINT_INLINE ulong n_randint(flint_rand_t state, ulong limit)
-{
-    if (limit == UWORD(0))
-        return n_randlimb(state);
-    else
-        return n_randlimb(state) % limit;
-}
-
 #if FLINT_USES_GC
-# define FLINT_GC_INIT() GC_init()
+#define FLINT_GC_INIT() GC_init()
 #else
-# define FLINT_GC_INIT()
+#define FLINT_GC_INIT()
 #endif
 
 #define FLINT_TEST_INIT(xxx) \
    flint_rand_t xxx; \
    FLINT_GC_INIT(); \
-   flint_rand_init(xxx)
+   flint_randinit(xxx)
 
 #define FLINT_TEST_CLEANUP(xxx) \
-   flint_rand_clear(xxx); \
+   flint_randclear(xxx); \
    flint_cleanup_master();
 
 /* comparison macros *********************************************************/
@@ -363,6 +353,57 @@ FLINT_INLINE ulong n_randint(flint_rand_t state, ulong limit)
 #define FLINT_SIGN_EXT(x) (-(ulong)((slong)(x) < 0))
 #define FLINT_SGN(x) ((0 < (slong)(x)) - ((slong)(x) < 0))
 #define FLINT_SWAP(T, x, y) do { T _swap_t = (x); (x) = (y); (y) = _swap_t; } while(0)
+
+#define r_shift(in, shift) \
+    ((shift == FLINT_BITS) ? WORD(0) : ((in) >> (shift)))
+
+#define l_shift(in, shift) \
+    ((shift == FLINT_BITS) ? WORD(0) : ((in) << (shift)))
+
+/* Beware when using the unsigned return value in signed arithmetic */
+static inline
+mp_limb_t FLINT_BIT_COUNT(mp_limb_t x)
+{
+   mp_limb_t zeros = FLINT_BITS;
+   if (x) zeros = flint_clz(x);
+   return FLINT_BITS - zeros;
+}
+
+#define FLINT_FLOG2(k)  (FLINT_BIT_COUNT(k) - 1)
+
+#define FLINT_CLOG2(k)  FLINT_BIT_COUNT((k) - 1)
+
+/* mpn macros ****************************************************************/
+
+#define flint_mpn_zero(xxx, nnn) \
+    do \
+    { \
+        slong ixxx; \
+        for (ixxx = 0; ixxx < (nnn); ixxx++) \
+            (xxx)[ixxx] = UWORD(0); \
+    } while (0)
+
+#define flint_mpn_copyi(xxx, yyy, nnn) \
+   do { \
+      slong ixxx; \
+      for (ixxx = 0; ixxx < (nnn); ixxx++) \
+         (xxx)[ixxx] = (yyy)[ixxx]; \
+   } while (0)
+
+#define flint_mpn_copyd(xxx, yyy, nnn) \
+   do { \
+      slong ixxx; \
+      for (ixxx = nnn - 1; ixxx >= 0; ixxx--) \
+         (xxx)[ixxx] = (yyy)[ixxx]; \
+   } while (0)
+
+#define flint_mpn_store(xxx, nnn, yyy) \
+   do \
+   { \
+      slong ixxx; \
+      for (ixxx = 0; ixxx < nnn; ixxx++) \
+         (xxx)[ixxx] = yyy; \
+   } while (0)
 
 /* allocation macros *********************************************************/
 
@@ -442,12 +483,26 @@ typedef enum
 
 FLINT_NORETURN void flint_throw(flint_err_t exc, const char * msg, ...);
 
+/* checked multiplication ****************************************************/
+
+FLINT_INLINE slong flint_mul_sizes(slong x, slong y)
+{
+    ulong hi, lo;
+
+    umul_ppmm(hi, lo, (ulong) x, (ulong) y);
+
+    if (hi != 0 || lo > WORD_MAX)
+        flint_throw(FLINT_OVERFLOW, "Overflow creating size %wd x %wd object.\n", x, y);
+
+    return lo;
+}
+
 /* FLINT generic type definitions ********************************************/
 
 typedef struct
 {
-   ulong n;
-   ulong ninv;
+   mp_limb_t n;
+   mp_limb_t ninv;
    flint_bitcnt_t norm;
 }
 nmod_t;
@@ -478,16 +533,9 @@ typedef fmpq fmpq_t[1];
 
 /* Conversions between mpz_ptr and fmpz_t */
 #define PTR_TO_COEFF(x) (((ulong) (x) >> 2) | (WORD(1) << (FLINT_BITS - 2)))
-#define COEFF_TO_PTR(x) ((mpz_ptr) ((ulong) (x) << 2))
+#define COEFF_TO_PTR(x) ((mpz_ptr) (((ulong)x) << 2))
 
 #define COEFF_IS_MPZ(x) (((x) >> SMALL_FMPZ_BITCOUNT_MAX) == WORD(1))
-
-/* The minimum number of limbs that the fmpz collector should spit out */
-#define MPZ_MIN_ALLOC 2
-
-/* NOTE: Never allocate less than MPZ_MIN_ALLOC */
-#define FLINT_MPZ_REALLOC(ptr, sz) ((int) (sz) > ((ptr)->_mp_alloc) ? (mp_ptr) mpz_realloc(ptr, sz) : (ptr)->_mp_d)
-#define FLINT_MPZ_REALLOC_TIGHT(ptr, sz) ((mp_ptr) mpz_realloc(ptr, FLINT_MAX(sz, MPZ_MIN_ALLOC)))
 
 #ifdef __cplusplus
 }

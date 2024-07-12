@@ -10,8 +10,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include <gmp.h>
-#include "longlong.h"
 #include "fmpz.h"
 #include "fmpz_vec.h"
 
@@ -19,8 +17,8 @@ slong
 _fmpz_vec_max_bits(const fmpz * vec, slong len)
 {
     slong i, sign, max_limbs;
-    ulong max_limb;
-    slong limbs;
+    mp_limb_t max_limb;
+    mp_size_t limbs;
 
     sign = 1;
     max_limb = 0;
@@ -54,7 +52,7 @@ bignum:
 
         if (COEFF_IS_MPZ(c))
         {
-            mpz_ptr z = COEFF_TO_PTR(c);
+            __mpz_struct * z = COEFF_TO_PTR(c);
             limbs = z->_mp_size;
 
             if (limbs < 0)

@@ -70,8 +70,7 @@ _fmpz_poly_eulerian_polynomial_series(fmpz * res, ulong n)
 void
 _fmpz_poly_eulerian_polynomial_rec(fmpz * res, ulong n)
 {
-    slong jx;
-    ulong ix;
+    slong ix, jx;
 
     fmpz_one(res);
     for (ix = 1; ix <= FLINT_MIN(n / 2, SMALL_BOUND / 2); ix++)
@@ -102,7 +101,7 @@ _fmpz_poly_eulerian_polynomial_rec(fmpz * res, ulong n)
 void
 _fmpz_poly_eulerian_polynomial(fmpz * res, ulong n)
 {
-    ulong ix;
+    slong ix;
 
     if (n < 32)
         _fmpz_poly_eulerian_polynomial_rec(res, n);

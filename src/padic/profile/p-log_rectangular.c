@@ -20,6 +20,7 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "flint.h"
 #include "fmpz.h"
 #include "padic.h"
 
@@ -107,7 +108,7 @@ for (l = 0; l < FLINT_MIN(16, len); l++)
 
     fmpz_clear(p);
     padic_ctx_clear(ctx);
-    flint_rand_clear(state);
+    flint_randclear(state);
 }
 
     flint_printf("Output as a list:\n");

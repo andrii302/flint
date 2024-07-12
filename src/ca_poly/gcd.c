@@ -12,7 +12,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "arb_mat.h"
 #include "acb_mat.h"
 #include "ca_poly.h"
 

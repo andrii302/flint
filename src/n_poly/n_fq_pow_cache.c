@@ -9,14 +9,13 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include <gmp.h>
 #include "fmpz.h"
 #include "fq_nmod.h"
 #include "n_poly.h"
 
 /* hold positive and negative powers of b */
 void n_fq_pow_cache_start_n_fq(
-    const ulong * b,
+    const mp_limb_t * b,
     n_poly_t pos,       /* b^0, b^1, b^2, ..., b^50 */
     n_poly_t bin,       /* b^1, b^2, b^3,  b^4, b^8, b^12, ... */
     n_poly_t neg,       /* b^-0, b^-1, b^-2, ..., b^-50 */
@@ -49,18 +48,18 @@ void n_fq_pow_cache_start_fq_nmod(
 
 /* r = a*b^e */
 static void n_fq_pow_cache_mulpow_ui_array_bin(
-    ulong * r,
-    const ulong * a,
-    ulong * elimbs, slong elen,
+    mp_limb_t * r,
+    const mp_limb_t * a,
+    mp_limb_t * elimbs, slong elen,
     n_poly_t bin,
-    const ulong * b,
+    const mp_limb_t * b,
     const fq_nmod_ctx_t ctx,
-    ulong * tmp)    /* size d*N_FQ_MUL_ITCH */
+    mp_limb_t * tmp)    /* size d*N_FQ_MUL_ITCH */
 {
     slong d = fq_nmod_ctx_degree(ctx);
-    const ulong * s = a; /* source */
+    const mp_limb_t * s = a; /* source */
     slong ei = 0, i = 0;
-    ulong e = (ei < elen) ? elimbs[ei] : 0;
+    mp_limb_t e = (ei < elen) ? elimbs[ei] : 0;
     int bits_left = FLINT_BITS;
 
     /* complicated code needed if an odd number of bits per limb */
@@ -131,8 +130,8 @@ static void n_fq_pow_cache_mulpow_ui_array_bin(
 
 /* r =  a*b^e */
 void n_fq_pow_cache_mulpow_ui(
-    ulong * r,
-    const ulong * a,
+    mp_limb_t * r,
+    const mp_limb_t * a,
     ulong e,
     n_poly_t pos,
     n_poly_t bin,
@@ -183,8 +182,8 @@ void n_fq_pow_cache_mulpow_ui(
 
 /* r =  a*b^-e */
 void n_fq_pow_cache_mulpow_neg_ui(
-    ulong * r,
-    const ulong * a,
+    mp_limb_t * r,
+    const mp_limb_t * a,
     ulong e,
     n_poly_t pos,
     n_poly_t bin,
@@ -192,7 +191,7 @@ void n_fq_pow_cache_mulpow_neg_ui(
     const fq_nmod_ctx_t ctx)
 {
     slong i, d = fq_nmod_ctx_degree(ctx);
-    ulong * tmp;
+    mp_limb_t * tmp;
     fmpz_t f;
 
     FLINT_ASSERT(pos->length >= 2);
@@ -243,8 +242,8 @@ void n_fq_pow_cache_mulpow_neg_ui(
 
 /* r = a*b^-e */
 void n_fq_pow_cache_mulpow_fmpz(
-    ulong * r,
-    const ulong * a,
+    mp_limb_t * r,
+    const mp_limb_t * a,
     const fmpz_t e,
     n_poly_t pos,
     n_poly_t bin,

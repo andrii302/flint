@@ -10,7 +10,6 @@
 */
 
 #include "fmpq.h"
-#include "mpoly.h"
 #include "gr_mpoly.h"
 
 int gr_mpoly_set_scalar(gr_mpoly_t A,

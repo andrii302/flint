@@ -9,11 +9,12 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "ulong_extras.h"
 
-const ulong * n_primes_arr_readonly(ulong num_primes)
+const mp_limb_t * n_primes_arr_readonly(ulong num_primes)
 {
-    slong m;
+    int m;
 
     if (num_primes < 1)
         return NULL;

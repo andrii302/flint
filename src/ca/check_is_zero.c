@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "calcium.h"
 #include "ca.h"
 
 truth_t

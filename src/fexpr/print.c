@@ -10,7 +10,6 @@
 */
 
 #include <stdio.h>
-#include "calcium.h"
 #include "fexpr.h"
 #include "fexpr_builtin.h"
 

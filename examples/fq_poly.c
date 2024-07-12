@@ -16,9 +16,9 @@
 
 #include <time.h>
 #include <stdlib.h>
-#include <flint/fmpz.h>
-#include <flint/fq.h>
-#include <flint/fq_poly.h>
+#include "fmpz.h"
+#include "fq.h"
+#include "fq_poly.h"
 
 int main(void)
 {
@@ -158,6 +158,9 @@ int main(void)
         fmpz_clear(p);
     }
 
+    fq_poly_clear(f, ctx);
+    fq_poly_clear(g, ctx);
+    fq_poly_clear(h, ctx);
     FLINT_TEST_CLEANUP(state);
 
     return 0;

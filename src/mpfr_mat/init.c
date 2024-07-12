@@ -10,29 +10,19 @@
 */
 
 #include <mpfr.h>
-#include "long_extras.h"
+#include "flint.h"
 #include "mpfr_mat.h"
 
 void
 mpfr_mat_init(mpfr_mat_t mat, slong rows, slong cols, mpfr_prec_t prec)
 {
-    mat->r = rows;
-    mat->c = cols;
-    mat->prec = prec;
 
-    if (rows != 0 && cols != 0)
+    if (rows != 0 && cols != 0)       /* Allocate space for r*c small entries */
     {
         slong i;
-        slong num;
-        int of;
-
-        of = z_mul_checked(&num, rows, cols);
-
-        if (of)
-            flint_throw(FLINT_ERROR, "Overflow creating a %wd x %wd object\n", rows, cols);
-
-        mat->entries = flint_malloc(num * sizeof(__mpfr_struct));
-        mat->rows = flint_malloc(rows * sizeof(__mpfr_struct *));
+        mat->entries =
+            (__mpfr_struct *) flint_malloc(flint_mul_sizes(rows, cols) * sizeof(__mpfr_struct));
+        mat->rows = (__mpfr_struct **) flint_malloc(rows * sizeof(__mpfr_struct *));  /* Initialise rows */
 
         for (i = 0; i < rows * cols; i++)
             mpfr_init2(mat->entries + i, prec);
@@ -41,4 +31,8 @@ mpfr_mat_init(mpfr_mat_t mat, slong rows, slong cols, mpfr_prec_t prec)
     }
     else
         mat->entries = NULL;
+
+    mat->r = rows;
+    mat->c = cols;
+    mat->prec = prec;
 }

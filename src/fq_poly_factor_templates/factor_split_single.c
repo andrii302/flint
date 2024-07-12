@@ -25,10 +25,10 @@ TEMPLATE(T, poly_factor_split_single) (TEMPLATE(T, poly_t) linfactor,
     else
     {
         flint_rand_t state;
-        slong deflation;
+        ulong deflation;
         TEMPLATE(T, poly_t) pol;
 
-        flint_rand_init(state);
+        flint_randinit(state);
         TEMPLATE(T, poly_init) (pol, ctx);
         TEMPLATE(T, poly_set) (linfactor, input, ctx);
         deflation = TEMPLATE(T, poly_deflation) (input, ctx);
@@ -68,7 +68,7 @@ TEMPLATE(T, poly_factor_split_single) (TEMPLATE(T, poly_t) linfactor,
             }
         }
 
-        flint_rand_clear(state);
+        flint_randclear(state);
         TEMPLATE(T, poly_clear) (pol, ctx);
     }
 }

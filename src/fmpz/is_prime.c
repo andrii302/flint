@@ -41,8 +41,8 @@ int _fmpz_is_prime(const fmpz_t n, int proved)
    }
    else
    {
-      mpz_ptr z;
-      nn_ptr d;
+      __mpz_struct * z;
+      mp_ptr d;
       slong size, bits, trial_primes;
 
       z = COEFF_TO_PTR(*n);

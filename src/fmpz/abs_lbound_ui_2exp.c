@@ -9,14 +9,14 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include <gmp.h>
-#include "longlong.h"
+#include "flint.h"
+#include "ulong_extras.h"
 #include "fmpz.h"
 
-ulong
+mp_limb_t
 fmpz_abs_lbound_ui_2exp(slong * exp, const fmpz_t x, int bits)
 {
-    ulong m;
+    mp_limb_t m;
     slong shift, e, size;
     fmpz c = *x;
 
@@ -27,7 +27,7 @@ fmpz_abs_lbound_ui_2exp(slong * exp, const fmpz_t x, int bits)
     }
     else
     {
-        mpz_ptr z = COEFF_TO_PTR(c);
+        __mpz_struct * z = COEFF_TO_PTR(c);
         size = z->_mp_size;
         size = FLINT_ABS(size);
         e = (size - 1) * FLINT_BITS;
@@ -52,7 +52,7 @@ fmpz_abs_lbound_ui_2exp(slong * exp, const fmpz_t x, int bits)
             else
             {
                 /* read a second limb to get an accurate value */
-                ulong m2 = z->_mp_d[size - 2];
+                mp_limb_t m2 = z->_mp_d[size - 2];
                 m = (m << (-shift)) | (m2 >> (FLINT_BITS + shift));
             }
 

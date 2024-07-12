@@ -9,10 +9,9 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "arb_poly.h"
-#include "arb_hypgeom.h"
-#include "acb.h"
 #include "acb_dirichlet.h"
+#include "arb_hypgeom.h"
+#include "arb_poly.h"
 
 static void
 _arb_div_si_si(arb_t res, slong x, slong y, slong prec)

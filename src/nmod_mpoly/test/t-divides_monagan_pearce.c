@@ -23,7 +23,7 @@ TEST_FUNCTION_START(nmod_mpoly_divides_monagan_pearce, state)
         nmod_mpoly_t f, g, h, k;
         slong len, len1, len2;
         flint_bitcnt_t exp_bits, exp_bits1, exp_bits2;
-        ulong modulus;
+        mp_limb_t modulus;
 
         modulus = n_randint(state, FLINT_BITS - 1) + 1;
         modulus = n_randbits(state, modulus);
@@ -80,7 +80,7 @@ TEST_FUNCTION_START(nmod_mpoly_divides_monagan_pearce, state)
     {
         nmod_mpoly_ctx_t ctx;
         nmod_mpoly_t f, g, h, k;
-        ulong modulus;
+        mp_limb_t modulus;
         slong nvars, len, len1, len2, exp_bound, exp_bound1, exp_bound2;
         slong n;
 
@@ -145,7 +145,7 @@ TEST_FUNCTION_START(nmod_mpoly_divides_monagan_pearce, state)
     {
         nmod_mpoly_ctx_t ctx;
         nmod_mpoly_t f, g, h, k;
-        ulong modulus;
+        mp_limb_t modulus;
         slong len, len1, len2;
         slong exp_bits, exp_bits1, exp_bits2;
 
@@ -208,7 +208,7 @@ TEST_FUNCTION_START(nmod_mpoly_divides_monagan_pearce, state)
     {
         nmod_mpoly_ctx_t ctx;
         nmod_mpoly_t f, g, h;
-        ulong modulus;
+        mp_limb_t modulus;
         slong nvars, len, len1, len2, exp_bound, exp_bound1, exp_bound2;
         slong n;
 
@@ -267,7 +267,7 @@ TEST_FUNCTION_START(nmod_mpoly_divides_monagan_pearce, state)
     {
         nmod_mpoly_ctx_t ctx;
         nmod_mpoly_t f, g, h, k;
-        ulong modulus;
+        mp_limb_t modulus;
         slong len, len1, len2;
         slong exp_bits, exp_bits1, exp_bits2;
 
@@ -330,7 +330,7 @@ TEST_FUNCTION_START(nmod_mpoly_divides_monagan_pearce, state)
     {
         nmod_mpoly_ctx_t ctx;
         nmod_mpoly_t f, g, h;
-        ulong modulus;
+        mp_limb_t modulus;
         slong nvars, len, len1, len2, exp_bound, exp_bound1, exp_bound2;
         slong n;
 

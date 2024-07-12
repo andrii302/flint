@@ -17,17 +17,17 @@
 TEST_FUNCTION_START(fmpz_comb_init_clear, state)
 {
     slong i, j;
-    ulong n;
+    mp_limb_t n;
     slong num_primes;
-    ulong * primes;
-    ulong p;
+    mp_limb_t * primes;
+    mp_limb_t p;
     fmpz_comb_t comb;
 
     for (i = 0; i < 100 * flint_test_multiplier(); i++)
     {
         n = n_randint(state, 10);
         num_primes = (WORD(1) << n);
-        primes = (ulong *) flint_malloc(num_primes * sizeof(ulong));
+        primes = (mp_limb_t *) flint_malloc(num_primes * sizeof(mp_limb_t));
         p = n_nextprime((UWORD(1) << (FLINT_BITS-1)) - WORD(10000000), 0);
 
         for (j = 0; j < num_primes; j++)

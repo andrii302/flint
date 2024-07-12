@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "mpn_extras.h"
 #include "nmod.h"
 #include "fq_nmod.h"
 #include "fq_nmod_poly.h"
@@ -45,7 +44,7 @@ void n_fq_poly_init2(
     if (alloc > 0)
     {
         A->alloc = d*alloc;
-        A->coeffs = flint_malloc(A->alloc*sizeof(ulong));
+        A->coeffs = flint_malloc(A->alloc*sizeof(mp_limb_t));
     }
     else
     {
@@ -95,7 +94,7 @@ int n_fq_poly_is_one(n_poly_t A, const fq_nmod_ctx_t ctx)
 
 
 void n_fq_poly_get_coeff_n_fq(
-    ulong * c,
+    mp_limb_t * c,
     const n_fq_poly_t A,
     slong e,
     const fq_nmod_ctx_t ctx)
@@ -125,7 +124,7 @@ void n_fq_poly_get_coeff_fq_nmod(
 void n_fq_poly_set_coeff_n_fq(
     n_fq_poly_t A,
     slong j,
-    const ulong * c,
+    const mp_limb_t * c,
     const fq_nmod_ctx_t ctx)
 {
     slong d = fq_nmod_ctx_degree(ctx);
@@ -241,7 +240,7 @@ void n_fq_poly_set(
 
 void n_fq_poly_set_n_fq(
     n_poly_t A,
-    const ulong * c,
+    const mp_limb_t * c,
     const fq_nmod_ctx_t ctx)
 {
     slong d = fq_nmod_ctx_degree(ctx);
@@ -342,15 +341,15 @@ void n_fq_poly_evaluate_fq_nmod(
 
 
 void n_fq_poly_evaluate_n_fq(
-    ulong * e,
+    mp_limb_t * e,
     const n_poly_t A,
-    const ulong * c,
+    const mp_limb_t * c,
     const fq_nmod_ctx_t ctx)
 {
     slong d = fq_nmod_ctx_degree(ctx);
     slong i;
-    ulong * u = FLINT_ARRAY_ALLOC(d, ulong);
-    ulong * t = FLINT_ARRAY_ALLOC(d, ulong);
+    mp_limb_t * u = FLINT_ARRAY_ALLOC(d, mp_limb_t);
+    mp_limb_t * t = FLINT_ARRAY_ALLOC(d, mp_limb_t);
 
     _n_fq_zero(t, d);
     for (i = 0; i < A->length; i++)
@@ -367,21 +366,21 @@ void n_fq_poly_evaluate_n_fq(
 }
 
 void n_fq_poly_eval_pow(
-    ulong * ev,
+    mp_limb_t * ev,
     const n_fq_poly_t P,
     n_fq_poly_t alphapow,
     const fq_nmod_ctx_t ctx)
 {
     slong d = fq_nmod_ctx_degree(ctx);
-    const ulong * Pcoeffs = P->coeffs;
+    const mp_limb_t * Pcoeffs = P->coeffs;
     slong i, Plen = P->length;
-    ulong * alpha_powers = alphapow->coeffs;
-    ulong * t;
+    mp_limb_t * alpha_powers = alphapow->coeffs;
+    mp_limb_t * t;
     slong k;
     TMP_INIT;
 
     TMP_START;
-    t = TMP_ALLOC(d*FLINT_MAX(N_FQ_MUL_ITCH, N_FQ_LAZY_ITCH)*sizeof(ulong));
+    t = TMP_ALLOC(d*FLINT_MAX(N_FQ_MUL_ITCH, N_FQ_LAZY_ITCH)*sizeof(mp_limb_t));
 
     if (Plen > alphapow->length)
     {
@@ -462,7 +461,7 @@ void n_fq_poly_get_fq_nmod_poly(
 void n_fq_poly_scalar_mul_n_fq(
     n_poly_t A,
     const n_poly_t B,
-    const ulong * c,
+    const mp_limb_t * c,
     const fq_nmod_ctx_t ctx)
 {
     slong i, d = fq_nmod_ctx_degree(ctx);
@@ -480,7 +479,7 @@ void n_fq_poly_make_monic(
 {
     slong d = fq_nmod_ctx_degree(ctx);
     slong itch = FLINT_MAX(N_FQ_MUL_ITCH, N_FQ_INV_ITCH);
-    ulong * tmp, * inv;
+    mp_limb_t * tmp, * inv;
     slong i, Blen = B->length;
 
     if (Blen < 1)
@@ -491,7 +490,7 @@ void n_fq_poly_make_monic(
 
     n_poly_fit_length(A, d*Blen);
 
-    tmp = FLINT_ARRAY_ALLOC(d*(itch + 1), ulong);
+    tmp = FLINT_ARRAY_ALLOC(d*(itch + 1), mp_limb_t);
     inv = tmp + d*itch;
 
     _n_fq_inv(inv, B->coeffs + d*(Blen - 1), ctx, tmp);
@@ -511,17 +510,17 @@ void n_fq_poly_scalar_addmul_n_fq(
     n_fq_poly_t A,
     const n_fq_poly_t B,
     const n_fq_poly_t C,
-    const ulong * s,
+    const mp_limb_t * s,
     const fq_nmod_ctx_t ctx)
 {
     slong d = fq_nmod_ctx_degree(ctx);
     slong i;
-    ulong * Acoeffs;
-    ulong * Bcoeffs;
-    ulong * Ccoeffs;
+    mp_limb_t * Acoeffs;
+    mp_limb_t * Bcoeffs;
+    mp_limb_t * Ccoeffs;
     slong Blen = B->length;
     slong Clen = C->length;
-    ulong * t;
+    mp_limb_t * t;
     TMP_INIT;
 
     n_poly_fit_length(A, d*FLINT_MAX(Blen, Clen));
@@ -530,7 +529,7 @@ void n_fq_poly_scalar_addmul_n_fq(
     Ccoeffs = C->coeffs;
 
     TMP_START;
-    t = TMP_ALLOC(d*N_FQ_MUL_ITCH*sizeof(ulong));
+    t = TMP_ALLOC(d*N_FQ_MUL_ITCH*sizeof(mp_limb_t));
 
     if (Blen > Clen)
     {
@@ -570,14 +569,14 @@ void n_fq_poly_scalar_addmul_n_fq(
 void n_fq_poly_shift_left_scalar_submul(
     n_poly_t A,
     slong k,
-    const ulong * c,
+    const mp_limb_t * c,
     const fq_nmod_ctx_t ctx)
 {
     slong d = fq_nmod_ctx_degree(ctx);
-    ulong * Acoeffs;
+    mp_limb_t * Acoeffs;
     slong i;
     slong Alen = A->length;
-    ulong * u = FLINT_ARRAY_ALLOC(d, ulong);
+    mp_limb_t * u = FLINT_ARRAY_ALLOC(d, mp_limb_t);
 
     n_poly_fit_length(A, d*(Alen + k));
 

@@ -21,7 +21,7 @@ TEST_FUNCTION_START(aprcl_f_table, state)
     for (i = 0; i < 10 * flint_test_multiplier(); i++)
     {
         ulong len, q, p, g;
-        nn_ptr table;
+        mp_ptr table;
 
         len = n_randint(state, 16);
         while (len < 2)

@@ -1,7 +1,7 @@
 /* This file is public domain. Author: Fredrik Johansson. */
 
-#include <flint/profiler.h>
-#include <flint/ca.h>
+#include "profiler.h"
+#include "ca.h"
 
 void
 simple_ca_atan_p_q(ca_t res, ulong p, ulong q, ca_ctx_t ctx)

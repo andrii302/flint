@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include <gmp.h>
 #include "profiler.h"
 #include "fmpz.h"
 #include "fmpz_vec.h"
@@ -20,7 +19,7 @@
 void fmpz_addmul_old(fmpz_t f, const fmpz_t g, const fmpz_t h)
 {
     fmpz c1, c2;
-    mpz_ptr mf;
+    __mpz_struct * mf;
 
     c1 = *g;
 
@@ -77,7 +76,7 @@ sample_new(void * arg, ulong count)
     _fmpz_vec_clear(res, ntests);
     _fmpz_vec_clear(a, ntests);
     _fmpz_vec_clear(b, ntests);
-    flint_rand_clear(state);
+    flint_randclear(state);
 }
 
 void
@@ -111,7 +110,7 @@ sample_old(void * arg, ulong count)
     _fmpz_vec_clear(res, ntests);
     _fmpz_vec_clear(a, ntests);
     _fmpz_vec_clear(b, ntests);
-    flint_rand_clear(state);
+    flint_randclear(state);
 }
 
 slong sizes[] = { 10, 30, 60, 62, 64, 66, 80, 128, 160, 256, 512, 1024, 4096, 0 };

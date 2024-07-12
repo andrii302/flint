@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "longlong.h"
 #include "fmpz.h"
 #include "arith.h"
 
@@ -26,7 +25,7 @@
 static void
 arith_bell_number_recursive(fmpz_t res, ulong n)
 {
-    ulong t[3 * MAX_N_3LIMBS];
+    mp_limb_t t[3 * MAX_N_3LIMBS];
     slong i, k;
 
     t[0] = 1;

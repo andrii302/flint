@@ -10,7 +10,6 @@
 */
 
 #include <math.h>
-#include <gmp.h>
 #include "fexpr.h"
 #include "qqbar.h"
 #include "fmpz_factor.h"
@@ -868,8 +867,8 @@ _gr_fmpz_vec_sum(fmpz_t res, const fmpz * vec, slong len, gr_ctx_t ctx)
         ulong hi, lo;
         slong i;
         fmpz f;
-        mpz_ptr f_mpz;
-        mpz_ptr res_mpz = NULL;
+        __mpz_struct * f_mpz;
+        __mpz_struct * res_mpz = NULL;
 
         hi = lo = 0;
 

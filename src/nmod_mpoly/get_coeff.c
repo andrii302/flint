@@ -81,7 +81,7 @@ void nmod_mpoly_get_coeff_vars_ui(nmod_mpoly_t C, const nmod_mpoly_t A,
     ulong * uexp;
     ulong * tmask, * texp;
     slong nvars = ctx->minfo->nvars;
-    ulong * Ccoeff;
+    mp_limb_t * Ccoeff;
     ulong * Cexp;
     slong Clen;
     TMP_INIT;
@@ -162,8 +162,8 @@ continue_outer_sp:;
         {
             offset = mpoly_gen_offset_mp(vars[i], A->bits, ctx->minfo);
             minoffset = FLINT_MIN(minoffset, offset);
-            maxoffset = FLINT_MAX(maxoffset, (slong) (offset + wpf - 1));
-            for (j = 0; (ulong) j < wpf; j++)
+            maxoffset = FLINT_MAX(maxoffset, offset + wpf - 1);
+            for (j = 0; j < wpf; j++)
                 tmask[offset + j] = -UWORD(1);
         }
         FLINT_ASSERT(minoffset < N);

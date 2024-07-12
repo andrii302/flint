@@ -67,7 +67,7 @@ int fmpz_mpolyl_gcd_zippel(
     flint_bitcnt_t bits = G->bits;
     int success, changed;
     slong i, j, Gdegbound, Gdeg, req_zip_images;
-    ulong p, t, gammap;
+    mp_limb_t p, t, gammap;
     fmpz_t c, gamma, modulus;
     nmod_mpoly_t Ap, Bp, Gp, Abarp, Bbarp;
     nmod_mpoly_ctx_t ctxp;
@@ -169,7 +169,7 @@ outer_loop:
     for (i = 0; i < Gmarks->length; i++)
         perm[i] = i;
 
-#define length(k) (Gmarks->coeffs[(k)+1] - Gmarks->coeffs[k])
+#define length(k) Gmarks->coeffs[(k)+1] - Gmarks->coeffs[k]
 
     for (i = 1; i < Gmarks->length; i++)
         for (j = i; j > 0 && length(perm[j-1]) > length(perm[j]); j--)
@@ -180,7 +180,7 @@ outer_loop:
     for (i = 0; i < Gmarks->length; i++)
     {
         req_zip_images += length(i);
-        j = FLINT_MAX(j, (slong) length(i));
+        j = FLINT_MAX(j, length(i));
     }
 
     if (Gmarks->length > 1)

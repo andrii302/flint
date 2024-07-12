@@ -11,6 +11,7 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "gmpcompat.h"
 #include "fmpz.h"
 
@@ -36,7 +37,7 @@ fmpz_add_ui(fmpz_t res, const fmpz_t x, ulong y)
             }
             else
             {
-                mpz_ptr mpz_res = _fmpz_promote(res);
+                __mpz_struct * mpz_res = _fmpz_promote(res);
                 flint_mpz_set_si(mpz_res, b);
             }
 #else
@@ -55,10 +56,10 @@ fmpz_add_ui(fmpz_t res, const fmpz_t x, ulong y)
     {
         mpz_ptr rp;
         mpz_srcptr xp;
-        nn_ptr rd;
-        nn_srcptr xd;
-        slong xn_signed, xn;
-        ulong cy;
+        mp_ptr rd;
+        mp_srcptr xd;
+        mp_size_t xn_signed, xn;
+        mp_limb_t cy;
 
         xp = COEFF_TO_PTR(*x);
         xn_signed = xp->_mp_size;
@@ -69,7 +70,10 @@ fmpz_add_ui(fmpz_t res, const fmpz_t x, ulong y)
         else
             rp = _fmpz_promote_val(res);
 
-        rd = FLINT_MPZ_REALLOC(rp, xn + 1);
+        if (rp->_mp_alloc < xn + 1)
+            _mpz_realloc(rp, xn + 1);
+
+        rd = rp->_mp_d;
         xd = xp->_mp_d;
 
         if (xn_signed >= 0) /* positive + nonnegative */
@@ -146,7 +150,7 @@ fmpz_sub_ui(fmpz_t res, const fmpz_t x, ulong y)
             }
             else
             {
-                mpz_ptr mpz_res = _fmpz_promote(res);
+                __mpz_struct * mpz_res = _fmpz_promote(res);
                 flint_mpz_set_si(mpz_res, b);
             }
 #else
@@ -165,10 +169,10 @@ fmpz_sub_ui(fmpz_t res, const fmpz_t x, ulong y)
     {
         mpz_ptr rp;
         mpz_srcptr xp;
-        nn_ptr rd;
-        nn_srcptr xd;
-        slong xn_signed, xn;
-        ulong cy;
+        mp_ptr rd;
+        mp_srcptr xd;
+        mp_size_t xn_signed, xn;
+        mp_limb_t cy;
 
         xp = COEFF_TO_PTR(*x);
         xn_signed = xp->_mp_size;
@@ -179,7 +183,10 @@ fmpz_sub_ui(fmpz_t res, const fmpz_t x, ulong y)
         else
             rp = _fmpz_promote_val(res);
 
-        rd = FLINT_MPZ_REALLOC(rp, xn + 1);
+        if (rp->_mp_alloc < xn + 1)
+            _mpz_realloc(rp, xn + 1);
+
+        rd = rp->_mp_d;
         xd = xp->_mp_d;
 
         if (xn_signed <= 0) /* positive + nonnegative */

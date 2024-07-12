@@ -15,10 +15,6 @@
 #include "mpoly.h"
 #include "fmpz_mod_mpoly_factor.h"
 
-#if FLINT_WANT_ASSERT
-# include "longlong.h"
-#endif
-
 void fmpz_mod_polyu_init(fmpz_mod_polyu_t A)
 {
     A->length = 0;
@@ -83,10 +79,10 @@ void fmpz_mod_polyu3_degrees(
 
 /***************************************************************************/
 
-static void fmpz_mod_mpolyu_init(
+void fmpz_mod_mpolyu_init(
     fmpz_mod_mpolyu_t A,
     flint_bitcnt_t bits,
-    const fmpz_mod_mpoly_ctx_t FLINT_UNUSED(ctx))
+    const fmpz_mod_mpoly_ctx_t ctx)
 {
     A->coeffs = NULL;
     A->exps = NULL;
@@ -96,7 +92,7 @@ static void fmpz_mod_mpolyu_init(
 }
 
 
-static void fmpz_mod_mpolyu_clear(
+void fmpz_mod_mpolyu_clear(
     fmpz_mod_mpolyu_t A,
     const fmpz_mod_mpoly_ctx_t uctx)
 {
@@ -107,25 +103,25 @@ static void fmpz_mod_mpolyu_clear(
     flint_free(A->exps);
 }
 
-#if 0
-static void fmpz_mod_mpolyu_swap(
+
+void fmpz_mod_mpolyu_swap(
     fmpz_mod_mpolyu_t A,
     fmpz_mod_mpolyu_t B,
-    const fmpz_mod_mpoly_ctx_t FLINT_UNUSED(uctx))
+    const fmpz_mod_mpoly_ctx_t uctx)
 {
    fmpz_mod_mpolyu_struct t = *A;
    *A = *B;
    *B = t;
 }
 
-static void fmpz_mod_mpolyu_zero(
+void fmpz_mod_mpolyu_zero(
     fmpz_mod_mpolyu_t A,
-    const fmpz_mod_mpoly_ctx_t FLINT_UNUSED(uctx))
+    const fmpz_mod_mpoly_ctx_t uctx)
 {
     A->length = 0;
 }
 
-static int fmpz_mod_mpolyu_is_one(
+int fmpz_mod_mpolyu_is_one(
     fmpz_mod_mpolyu_t A,
     const fmpz_mod_mpoly_ctx_t uctx)
 {
@@ -134,9 +130,8 @@ static int fmpz_mod_mpolyu_is_one(
 
     return fmpz_mod_mpoly_is_one(A->coeffs + 0, uctx);
 }
-#endif
 
-static void fmpz_mod_mpolyu_fit_length(
+void fmpz_mod_mpolyu_fit_length(
     fmpz_mod_mpolyu_t A,
     slong length,
     const fmpz_mod_mpoly_ctx_t uctx)

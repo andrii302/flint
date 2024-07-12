@@ -10,13 +10,14 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "ulong_extras.h"
 
-ulong n_sqrtmod(ulong a, ulong p)
+mp_limb_t n_sqrtmod(mp_limb_t a, mp_limb_t p)
 {
     slong i, r, m, iter;
-    ulong p1, k, b, g, bpow, gpow, res;
-    ulong pinv;
+    mp_limb_t p1, k, b, g, bpow, gpow, res;
+    mp_limb_t pinv;
 
     if (a <= 1)
     {
@@ -26,7 +27,7 @@ ulong n_sqrtmod(ulong a, ulong p)
     /* just do a brute force search */
     if (p < 600)
     {
-        ulong t, t2;
+        mp_limb_t t, t2;
 
         if (p > 50 && n_jacobi_unsigned(a, p) == -1)
             return 0;

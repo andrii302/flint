@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "mpn_extras.h"
 #include "arb.h"
 
 static inline void
@@ -29,9 +28,9 @@ _arf_set_inline(arf_t y, const arf_t x)
     }
     else
     {
-        nn_ptr yptr;
-        nn_srcptr xptr;
-        slong n;
+        mp_ptr yptr;
+        mp_srcptr xptr;
+        mp_size_t n;
 
         ARF_GET_MPN_READONLY(xptr, n, x);
         ARF_GET_MPN_WRITE(yptr, n, y);

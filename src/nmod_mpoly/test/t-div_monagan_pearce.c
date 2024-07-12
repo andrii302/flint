@@ -21,7 +21,7 @@ TEST_FUNCTION_START(nmod_mpoly_div_monagan_pearce, state)
     {
         nmod_mpoly_ctx_t ctx;
         nmod_mpoly_t f, g, h, k, l;
-        ulong modulus;
+        mp_limb_t modulus;
         slong len, len1, len2;
         flint_bitcnt_t exp_bits, exp_bits1, exp_bits2;
 
@@ -105,7 +105,7 @@ TEST_FUNCTION_START(nmod_mpoly_div_monagan_pearce, state)
     {
         nmod_mpoly_ctx_t ctx;
         nmod_mpoly_t f, g, q, r, k;
-        ulong modulus;
+        mp_limb_t modulus;
         slong len, len1, len2, exp_bound, exp_bound1, exp_bound2;
         slong n;
 

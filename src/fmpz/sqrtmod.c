@@ -10,6 +10,7 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "gmpcompat.h"
 #include "fmpz.h"
 #include "ulong_extras.h"
@@ -165,7 +166,7 @@ int fmpz_sqrtmod(fmpz_t b, const fmpz_t a, const fmpz_t p)
 
     if (!COEFF_IS_MPZ(*p))  /* p, and b are small */
     {
-        ulong ans;
+        mp_limb_t ans;
 
         ans = n_sqrtmod(*b, *p);
         if (ans)
@@ -175,8 +176,8 @@ int fmpz_sqrtmod(fmpz_t b, const fmpz_t a, const fmpz_t p)
     else  /* p is large */
     {
         int ans;
-        mpz_ptr t;
-        mpz_srcptr bptr;
+        mpz_t t;
+        __mpz_struct *bptr;
 
         if (fmpz_is_even(p))
             return 0;
@@ -186,10 +187,10 @@ int fmpz_sqrtmod(fmpz_t b, const fmpz_t a, const fmpz_t p)
 
         bptr = _fmpz_promote_val(b);
 
-        t = _fmpz_new_mpz();
+        mpz_init(t);
         ans = _fmpz_sqrtmod(t, bptr, COEFF_TO_PTR(*p));
-        _fmpz_clear_mpz(PTR_TO_COEFF(bptr));
-        *b = PTR_TO_COEFF(t);
+        mpz_swap(bptr, t);
+        mpz_clear(t);
 
         _fmpz_demote_val(b);
 

@@ -15,12 +15,12 @@
 #include "mpoly.h"
 #include "nmod_mpoly.h"
 
-ulong _nmod_mpoly_eval_all_ui(
-    const ulong * Acoeffs,
+mp_limb_t _nmod_mpoly_eval_all_ui(
+    const mp_limb_t * Acoeffs,
     const ulong * Aexps,
     slong Alen,
     flint_bitcnt_t Abits,
-    const ulong * alphas,
+    const mp_limb_t * alphas,
     const mpoly_ctx_t mctx,
     nmod_t mod)
 {
@@ -32,7 +32,7 @@ ulong _nmod_mpoly_eval_all_ui(
     fmpz_t varexp_mp;
     slong * offsets, * shifts;
     n_poly_struct * caches;
-    ulong eval, t;
+    mp_limb_t eval, t;
     TMP_INIT;
 
     TMP_START;

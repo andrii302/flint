@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include <gmp.h>
 #include "fmpz.h"
 #include "mpoly.h"
 
@@ -103,9 +102,9 @@ void mpoly_pack_vec_fmpz(ulong * exp1, const fmpz * exp2, flint_bitcnt_t bits,
                 size++;
             } else
             {
-                mpz_ptr mpz = COEFF_TO_PTR(*exp2);
+                __mpz_struct * mpz = COEFF_TO_PTR(*exp2);
                 FLINT_ASSERT(mpz->_mp_size <= words_per_field);
-                while ((int) size < mpz->_mp_size)
+                while (size < mpz->_mp_size)
                     *exp1++ = mpz->_mp_d[size++];
             }
             while (size++ < words_per_field)

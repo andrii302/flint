@@ -21,16 +21,13 @@ for instructions using CMake), FLINT can be built and installed as follows:
 .. code-block:: bash
 
     ./bootstrap.sh
-    ./configure
+    ./configure --disable-static
     make -j N
     make install
 
 where ``N`` is the number of jobs number allowed to run parallel. Typically, the
 fastest way to build is to let ``N`` be the number of threads your CPU plus one,
 which can be obtained in Bash through ``$(expr $(nproc) + 1)``.
-
-By default, FLINT only builds a shared library, but a static library can be
-built by pushing ``--enable-static`` to ``configure``.
 
 We also recommend that you check that the library works as it should through
 ``make check``, or ``make -j N check`` for a parallel check, before installing.
@@ -48,6 +45,7 @@ An example of a custom configuration command would be
     ./configure                                         \
         --enable-assert                                 \
         --enable-avx2                                   \
+        --disable-static                                \
         --with-gmp-include=/home/user1/builds/includes/ \
         --with-gmp-lib=/home/user1/builds/lib/          \
         --with-mpfr=/usr                                \
@@ -146,10 +144,11 @@ This will place a coverage report in ``build/coverage``.
 Static or dynamic library only
 -------------------------------------------------------------------------------
 
-By default FLINT only builds a shared libraries by default. If you need to build
-a static library, you can pass ``--enable-static`` to ``configure``. With this,
-``--disable-shared`` can be passed as well to disable the build of a shared
-library, which will reduce the building time.
+FLINT builds static and shared libraries by default, except on
+platforms where this is not supported. If you do not require either a shared
+or static library then you may pass ``--disable-static`` or
+``--disable-shared`` to ``configure``. This can substantially speed up the
+build.
 
 AVX2 instructions
 -------------------------------------------------------------------------------

@@ -16,7 +16,7 @@
 TEST_FUNCTION_START(n_is_probabprime, state)
 {
     int i, result;
-    ulong d;
+    mp_limb_t d;
     mpz_t d_m;
     slong pow;
     ulong bits;

@@ -11,7 +11,6 @@
 
 #include "fmpq.h"
 #include "fmpz_mpoly_q.h"
-#include "fmpz_mod_mpoly_q.h"
 #include "gr.h"
 #include "gr_vec.h"
 #include "gr_generic.h"
@@ -23,14 +22,6 @@ typedef struct
 }
 _gr_fmpz_mpoly_ctx_t;
 
-typedef struct
-{
-    fmpz_mod_mpoly_ctx_t mctx;
-    char ** vars;
-}
-_gr_fmpz_mod_mpoly_ctx_t;
-
-#define MPOLYNOMIAL_CTX(ring_ctx) ((_gr_fmpz_mod_mpoly_ctx_t *)(GR_CTX_DATA_AS_PTR(ring_ctx)))
 #define MPOLYNOMIAL_CTX(ring_ctx) ((_gr_fmpz_mpoly_ctx_t *)(GR_CTX_DATA_AS_PTR(ring_ctx)))
 #define MPOLYNOMIAL_MCTX(ring_ctx) (MPOLYNOMIAL_CTX(ring_ctx)->mctx)
 
@@ -608,26 +599,6 @@ gr_ctx_init_fmpz_mpoly_q(gr_ctx_t ctx, slong nvars, const ordering_t ord)
     ctx->which_ring = GR_CTX_FMPZ_MPOLY_Q;
     ctx->sizeof_elem = sizeof(fmpz_mpoly_q_struct);
     GR_CTX_DATA_AS_PTR(ctx) = flint_malloc(sizeof(_gr_fmpz_mpoly_ctx_t));
-    ctx->size_limit = WORD_MAX;
-
-    fmpz_mpoly_ctx_init(MPOLYNOMIAL_MCTX(ctx), nvars, ord);
-    MPOLYNOMIAL_CTX(ctx)->vars = NULL;
-
-    ctx->methods = _gr_fmpz_mpoly_q_methods;
-
-    if (!_gr_fmpz_mpoly_q_methods_initialized)
-    {
-        gr_method_tab_init(_gr_fmpz_mpoly_q_methods, _gr_fmpz_mpoly_q_methods_input);
-        _gr_fmpz_mpoly_q_methods_initialized = 1;
-    }
-}
-
-void
-gr_ctx_init_fmpz_mod_mpoly_q(gr_ctx_t ctx, slong nvars, const ordering_t ord)
-{
-    ctx->which_ring = GR_CTX_FMPZ_MPOLY_Q;
-    ctx->sizeof_elem = sizeof(fmpz_mod_mpoly_q_struct);
-    GR_CTX_DATA_AS_PTR(ctx) = flint_malloc(sizeof(_gr_fmpz_mod_mpoly_ctx_t));
     ctx->size_limit = WORD_MAX;
 
     fmpz_mpoly_ctx_init(MPOLYNOMIAL_MCTX(ctx), nvars, ord);

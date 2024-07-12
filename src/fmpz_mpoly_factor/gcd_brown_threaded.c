@@ -23,7 +23,7 @@
 typedef struct
 {
     volatile int gcd_is_one;
-    volatile ulong p;
+    volatile mp_limb_t p;
 #if FLINT_USES_PTHREAD
     pthread_mutex_t mutex;
 #endif
@@ -99,7 +99,7 @@ static void _splitworker(void * varg)
     slong N = mpoly_words_per_exp_sp(bits, ctx->minfo);
     slong offset, shift;
     int success;
-    ulong p, gammared;
+    mp_limb_t p, gammared;
     nmod_poly_stack_t Sp;
 
     mpoly_gen_offset_shift_sp(&offset, &shift,
@@ -347,9 +347,8 @@ static void _find_edge(
 /* NOTE: Here `input' has to be an array of size `count'.  It will be
  * overwritten, and its initial element values do not matter.  It will contain
  * dangling pointers after returning, that is, the values `input[ix]' will be
- * invalid after returning.  Hence, we silence warnings about dangling pointers.
- * However, this warning is only available in GCC 12 and forwards.*/
-#if defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 12
+ * invalid after returning.  Hence, we silence warnings about dangling pointers. */
+#if defined(__GNUC__) && !defined(__clang__)
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wdangling-pointer"
 #endif

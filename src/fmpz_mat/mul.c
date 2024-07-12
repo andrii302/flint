@@ -10,7 +10,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "longlong.h"
 #include "fmpz.h"
 #include "fmpz_mat.h"
 
@@ -52,7 +51,7 @@ void _fmpz_mat_mul_small_2a(fmpz_mat_t C, const fmpz_mat_t A, const fmpz_mat_t B
     {
         for (j = 0; j < bc; j++)
         {
-            ulong hi, lo, shi, slo;
+            mp_limb_t hi, lo, shi, slo;
             slong x, y;
 
             shi = slo = 0;
@@ -84,7 +83,7 @@ void _fmpz_mat_mul_small_2b(fmpz_mat_t C, const fmpz_mat_t A, const fmpz_mat_t B
     {
         for (j = 0; j < bc; j++)
         {
-            ulong hi, lo, shi, smid, slo;
+            mp_limb_t hi, lo, shi, smid, slo;
             slong x, y;
 
             shi = smid = slo = 0;
@@ -280,7 +279,7 @@ fmpz_mat_mul(fmpz_mat_t C, const fmpz_mat_t A, const fmpz_mat_t B)
         slong min_bits = FLINT_MIN(abits, bbits);
         slong max_bits = FLINT_MAX(abits, bbits);
 
-        if (dim >= 3 * (slong) FLINT_BIT_COUNT(cbits))  /* tuning param */
+        if (dim >= 3 * FLINT_BIT_COUNT(cbits))  /* tuning param */
             _fmpz_mat_mul_multi_mod(C, A, B, sign, cbits);
         else if (dim < 20 && ((dim == 2 && min_bits >= 5000 && max_bits <= 1.1 * min_bits)
                               || (max_bits <= 1.6 * min_bits && ((dim == 3 && min_bits >= 3000)

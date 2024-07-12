@@ -10,6 +10,7 @@
 */
 
 #include <limits.h>
+#include "flint.h"
 #include "long_extras.h"
 
 size_t z_sizeinbase(slong n, int b)

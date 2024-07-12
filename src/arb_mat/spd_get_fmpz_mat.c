@@ -10,7 +10,6 @@
 */
 
 #include "fmpz_mat.h"
-#include "arb.h"
 #include "arb_mat.h"
 
 int

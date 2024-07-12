@@ -25,11 +25,11 @@ with op = -1, computes D = C - A*B
 */
 
 static inline void
-_nmod_mat_addmul_basic_op(nn_ptr * D, nn_ptr * const C, nn_ptr * const A,
-    nn_ptr * const B, slong m, slong k, slong n, int op, nmod_t mod, int nlimbs)
+_nmod_mat_addmul_basic_op(mp_ptr * D, mp_ptr * const C, mp_ptr * const A,
+    mp_ptr * const B, slong m, slong k, slong n, int op, nmod_t mod, int nlimbs)
 {
     slong i, j;
-    ulong c;
+    mp_limb_t c;
 
     for (i = 0; i < m; i++)
     {
@@ -56,10 +56,10 @@ typedef struct
     slong m;
     slong n;
     slong nlimbs;
-    const nn_ptr * A;
-    const nn_ptr * C;
-    nn_ptr * D;
-    nn_ptr tmp;
+    const mp_ptr * A;
+    const mp_ptr * C;
+    mp_ptr * D;
+    mp_ptr tmp;
     nmod_t mod;
 #if FLINT_USES_PTHREAD
     pthread_mutex_t * mutex;
@@ -77,13 +77,13 @@ _nmod_mat_addmul_transpose_worker(void * arg_ptr)
     slong m = arg.m;
     slong n = arg.n;
     slong nlimbs = arg.nlimbs;
-    const nn_ptr * A = arg.A;
-    const nn_ptr * C = arg.C;
-    nn_ptr * D = arg.D;
-    nn_ptr tmp = arg.tmp;
+    const mp_ptr * A = arg.A;
+    const mp_ptr * C = arg.C;
+    mp_ptr * D = arg.D;
+    mp_ptr tmp = arg.tmp;
     nmod_t mod = arg.mod;
     int op = arg.op;
-    ulong c;
+    mp_limb_t c;
 
     while (1)
     {
@@ -128,12 +128,12 @@ _nmod_mat_addmul_transpose_worker(void * arg_ptr)
 }
 
 static inline void
-_nmod_mat_addmul_transpose_threaded_pool_op(nn_ptr * D, const nn_ptr * C,
-                            const nn_ptr * A, const nn_ptr * B, slong m,
+_nmod_mat_addmul_transpose_threaded_pool_op(mp_ptr * D, const mp_ptr * C,
+                            const mp_ptr * A, const mp_ptr * B, slong m,
                           slong k, slong n, int op, nmod_t mod, int nlimbs,
                                thread_pool_handle * threads, slong num_threads)
 {
-    nn_ptr tmp;
+    mp_ptr tmp;
     slong i, j, block;
     slong shared_i = 0, shared_j = 0;
     nmod_mat_transpose_arg_t * args;
@@ -141,7 +141,7 @@ _nmod_mat_addmul_transpose_threaded_pool_op(nn_ptr * D, const nn_ptr * C,
     pthread_mutex_t mutex;
 #endif
 
-    tmp = flint_malloc(sizeof(ulong) * k * n);
+    tmp = flint_malloc(sizeof(mp_limb_t) * k * n);
 
     /* transpose B */
     for (i = 0; i < k; i++)
@@ -211,12 +211,12 @@ typedef struct
     slong K;
     slong N;
     slong Kpack;
-    const nn_ptr * A;
-    const nn_ptr * C;
-    nn_ptr * D;
-    nn_ptr tmp;
+    const mp_ptr * A;
+    const mp_ptr * C;
+    mp_ptr * D;
+    mp_ptr tmp;
     nmod_t mod;
-    ulong mask;
+    mp_limb_t mask;
 #if FLINT_USES_PTHREAD
     pthread_mutex_t * mutex;
 #endif
@@ -235,17 +235,17 @@ _nmod_mat_addmul_packed_worker(void * arg_ptr)
     slong K = arg.K;
     slong N = arg.N;
     slong Kpack = arg.Kpack;
-    const nn_ptr * A = arg.A;
-    const nn_ptr * C = arg.C;
-    nn_ptr * D = arg.D;
-    nn_ptr tmp = arg.tmp;
+    const mp_ptr * A = arg.A;
+    const mp_ptr * C = arg.C;
+    mp_ptr * D = arg.D;
+    mp_ptr tmp = arg.tmp;
     nmod_t mod = arg.mod;
-    ulong mask = arg.mask;
+    mp_limb_t mask = arg.mask;
     int pack = arg.pack;
     int pack_bits = arg.pack_bits;
     int op = arg.op;
-    ulong c, d;
-    nn_ptr Aptr, Tptr;
+    mp_limb_t c, d;
+    mp_ptr Aptr, Tptr;
 
     while (1)
     {
@@ -312,18 +312,18 @@ _nmod_mat_addmul_packed_worker(void * arg_ptr)
     }
 }
 
-/* Assumes nlimbs = 1 */
-static void
-_nmod_mat_addmul_packed_threaded_pool_op(nn_ptr * D,
-      const nn_ptr * C, const nn_ptr * A, const nn_ptr * B,
-          slong M, slong N, slong K, int op, nmod_t mod,
+/* requires nlimbs = 1 */
+void
+_nmod_mat_addmul_packed_threaded_pool_op(mp_ptr * D,
+      const mp_ptr * C, const mp_ptr * A, const mp_ptr * B,
+          slong M, slong N, slong K, int op, nmod_t mod, int nlimbs,
                                thread_pool_handle * threads, slong num_threads)
 {
     slong i, j, k;
     slong Kpack, block;
     int pack, pack_bits;
-    ulong c, mask;
-    nn_ptr tmp;
+    mp_limb_t c, mask;
+    mp_ptr tmp;
     slong shared_i = 0, shared_j = 0;
     nmod_mat_packed_arg_t * args;
 #if FLINT_USES_PTHREAD
@@ -433,7 +433,7 @@ _nmod_mat_mul_classical_threaded_pool_op(nmod_mat_t D, const nmod_mat_t C,
     if (nlimbs == 1 && m > 10 && k > 10 && n > 10)
     {
         _nmod_mat_addmul_packed_threaded_pool_op(D->rows, (op == 0) ? NULL : C->rows,
-            A->rows, B->rows, m, k, n, op, D->mod, threads, num_threads);
+            A->rows, B->rows, m, k, n, op, D->mod, nlimbs, threads, num_threads);
     }
     else
     {

@@ -9,7 +9,7 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "mpn_extras.h"
+#include "flint.h"
 #include "fft.h"
 
 /* negation mod 2^(FLINT_BITS*limbs) + 1 assuming normalized input */

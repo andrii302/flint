@@ -36,7 +36,7 @@ slong mpoly_degree_si(const ulong * exps,
         r = (exps[N*i + offset] >> shift) & mask;
         for (i = 1; i < len; i++)
         {
-            slong k = (exps[N*i + offset] >> shift) & mask;
+            ulong k = (exps[N*i + offset] >> shift) & mask;
             if (r < k)
                 r = k;
         }

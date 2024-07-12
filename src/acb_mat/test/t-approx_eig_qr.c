@@ -10,7 +10,6 @@
 */
 
 #include "test_helpers.h"
-#include "acb.h"
 #include "acb_mat.h"
 
 TEST_FUNCTION_START(acb_mat_approx_eig_qr, state)

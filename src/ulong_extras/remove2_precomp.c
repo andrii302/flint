@@ -9,13 +9,14 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "ulong_extras.h"
 
 int
-n_remove2_precomp(ulong * n, ulong p, double ppre)
+n_remove2_precomp(mp_limb_t * n, mp_limb_t p, double ppre)
 {
     int exp = 0;
-    ulong quot, rem = UWORD(0);
+    mp_limb_t quot, rem = UWORD(0);
 
     if (p == 2)
     {

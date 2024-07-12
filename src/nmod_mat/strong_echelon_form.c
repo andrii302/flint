@@ -17,7 +17,7 @@ static inline int
 _nmod_mat_pivot(nmod_mat_t A, slong start_row, slong col)
 {
     slong j;
-    nn_ptr u;
+    mp_ptr u;
 
     if (nmod_mat_entry(A, start_row, col) != 0)
         return 1;
@@ -37,9 +37,9 @@ _nmod_mat_pivot(nmod_mat_t A, slong start_row, slong col)
 }
 
 static void
-_n_ppio(nn_ptr ppi, nn_ptr ppo, ulong a, ulong b)
+_n_ppio(mp_ptr ppi, mp_ptr ppo, mp_limb_t a, mp_limb_t b)
 {
-    ulong c, n, g;
+    mp_limb_t c, n, g;
 
     c = n_gcd(a, b);
     n = a/c;
@@ -54,20 +54,20 @@ _n_ppio(nn_ptr ppi, nn_ptr ppo, ulong a, ulong b)
     *ppo = n;
 }
 
-static ulong
-_n_stab(ulong a, ulong b, nmod_t N)
+static mp_limb_t
+_n_stab(mp_limb_t a, mp_limb_t b, nmod_t N)
 {
-    ulong g, s, t;
+    mp_limb_t g, s, t;
     g = n_gcd(a, b);
     b = n_gcd(g, N.n);
     _n_ppio(&s, &t, N.n/b, a/b);
     return t;
 }
 
-static ulong
-_n_unit(ulong a, nmod_t N)
+static mp_limb_t
+_n_unit(mp_limb_t a, nmod_t N)
 {
-    ulong g, s, l, d;
+    mp_limb_t g, s, l, d;
 
     g = n_gcdinv(&s, a, N.n);
 
@@ -85,9 +85,9 @@ _n_unit(ulong a, nmod_t N)
 
 /* test whether q*a = b mod N has a solution */
 static int
-_n_is_divisible(nn_ptr q, ulong b, ulong a, nmod_t N)
+_n_is_divisible(mp_ptr q, mp_limb_t b, mp_limb_t a, nmod_t N)
 {
-    ulong e, g;
+    mp_limb_t e, g;
     g = n_gcdinv(&e, a, N.n);
 
     if (( b % g ) == 0)
@@ -102,11 +102,11 @@ _n_is_divisible(nn_ptr q, ulong b, ulong a, nmod_t N)
 void
 nmod_mat_strong_echelon_form(nmod_mat_t A)
 {
-    ulong s, t, u, v, q, t1, t2, g;
+    mp_limb_t s, t, u, v, q, t1, t2, g;
     slong m, n, row, col, i, k, l;
-    ulong **r;
+    mp_limb_t **r;
     nmod_t mod;
-    nn_ptr extra_row;
+    mp_ptr extra_row;
 
     if (nmod_mat_is_empty(A))
         return;

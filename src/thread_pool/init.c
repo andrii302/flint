@@ -10,9 +10,7 @@
 */
 
 #define _GNU_SOURCE
-#define ulong ulongxx /* fixup for Cygwin */
 #include <sched.h>
-#undef ulong
 
 #include "thread_pool.h"
 

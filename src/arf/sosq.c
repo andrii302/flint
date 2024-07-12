@@ -32,10 +32,10 @@ arf_sosq(arf_t res, const arf_t a, const arf_t b, slong prec, arf_rnd_t rnd)
     }
     else
     {
-        nn_srcptr ap, bp;
+        mp_srcptr ap, bp;
         int inexact;
-        nn_ptr tmp, aap, bbp;
-        slong an, bn, aan, bbn, alloc;
+        mp_ptr tmp, aap, bbp;
+        mp_size_t an, bn, aan, bbn, alloc;
         slong shift;
         fmpz_t texp, uexp;
         ARF_MUL_TMP_DECL

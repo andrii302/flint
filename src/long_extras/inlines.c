@@ -11,4 +11,5 @@
 
 #define LONG_EXTRAS_INLINES_C
 
+#include "flint.h"
 #include "long_extras.h"

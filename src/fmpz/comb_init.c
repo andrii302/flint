@@ -11,6 +11,7 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "ulong_extras.h"
 #include "nmod.h"
 #include "fmpz.h"
 #include "fmpz_vec.h"
@@ -41,7 +42,7 @@ void fmpz_comb_temp_init(fmpz_comb_temp_t CT, const fmpz_comb_t C)
 }
 
 
-void fmpz_comb_init(fmpz_comb_t C, nn_srcptr m, slong len)
+void fmpz_comb_init(fmpz_comb_t C, mp_srcptr m, slong len)
 {
     int success;
     slong l, i, j, k, s;
@@ -239,7 +240,7 @@ void fmpz_comb_init(fmpz_comb_t C, nn_srcptr m, slong len)
         }
     }
 
-    C->packed_multipliers = FLINT_ARRAY_ALLOC(l, ulong);
+    C->packed_multipliers = FLINT_ARRAY_ALLOC(l, mp_limb_t);
 
     l = 0;
     for (k = 0, i = 0; k < C->crt_klen; k++)

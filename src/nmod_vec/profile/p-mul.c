@@ -10,6 +10,7 @@
 */
 
 #include "profiler.h"
+#include "flint.h"
 #include "ulong_extras.h"
 #include "nmod.h"
 #include "nmod_vec.h"
@@ -22,14 +23,14 @@ typedef struct
 
 void sample(void * arg, ulong count)
 {
-   ulong n;
+   mp_limb_t n;
    nmod_t mod;
    info_t * info = (info_t *) arg;
    flint_bitcnt_t bits = info->bits;
    int fullword = info->fullword;
-   slong j;
+   mp_size_t j;
    slong i;
-   nn_ptr vec1, vec2, res;
+   mp_ptr vec1, vec2, res;
    FLINT_TEST_INIT(state);
 
    n = n_randbits(state, bits);
@@ -66,7 +67,7 @@ void sample(void * arg, ulong count)
       break;
    }
 
-   flint_rand_clear(state);
+   flint_randclear(state);
    _nmod_vec_clear(vec1);
    _nmod_vec_clear(vec2);
 }

@@ -11,8 +11,6 @@
 */
 
 #include "ca_mat.h"
-#include "ca_poly.h"
-#include "gr.h"
 #include "gr_mat.h"
 
 int

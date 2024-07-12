@@ -9,14 +9,10 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "gmpcompat.h"
 #include "fmpz.h"
 #include "ulong_extras.h"
-
-/* NOTE: mpz_remove has an allocation bug, at least in GMP 6.3.1, which may lead
-   to the output having a reduced number of limbs allocated as compared to prior
-   to the call. Hence, in order to not recycle too small mpzs, we have to check
-   the number of allocated limbs after the call. */
 
 slong _fmpz_remove(fmpz_t x, const fmpz_t f, double finv)
 {
@@ -29,7 +25,7 @@ slong _fmpz_remove(fmpz_t x, const fmpz_t f, double finv)
         {
             if (y > 0)
             {
-                return n_remove2_precomp((ulong *) x, q, finv);
+                return n_remove2_precomp((mp_limb_t *) x, q, finv);
             }
             else
             {
@@ -50,7 +46,7 @@ slong _fmpz_remove(fmpz_t x, const fmpz_t f, double finv)
     }
     else  /* x is large */
     {
-        mpz_ptr z = COEFF_TO_PTR(y);
+        __mpz_struct *z = COEFF_TO_PTR(y);
 
         if (!COEFF_IS_MPZ(q))  /* f is small */
         {
@@ -76,8 +72,6 @@ slong _fmpz_remove(fmpz_t x, const fmpz_t f, double finv)
                     flint_mpz_init_set_ui(r, q);
                     e = 2 + mpz_remove(z, z, r);
                     mpz_clear(r);
-                    if (z->_mp_alloc < MPZ_MIN_ALLOC)
-                        mpz_realloc(z, MPZ_MIN_ALLOC);
                     _fmpz_demote_val(x);
 
                     return e;
@@ -86,7 +80,7 @@ slong _fmpz_remove(fmpz_t x, const fmpz_t f, double finv)
         }
         else  /* f is large */
         {
-            mpz_srcptr r = COEFF_TO_PTR(q);
+            __mpz_struct *r = COEFF_TO_PTR(q);
 
             if (!mpz_divisible_p(z, r))
             {
@@ -98,8 +92,6 @@ slong _fmpz_remove(fmpz_t x, const fmpz_t f, double finv)
 
                 mpz_divexact(z, z, r);
                 e = 1 + mpz_remove(z, z, r);
-                if (z->_mp_alloc < MPZ_MIN_ALLOC)
-                    mpz_realloc(z, MPZ_MIN_ALLOC);
                 _fmpz_demote_val(x);
                 return e;
             }

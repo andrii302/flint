@@ -13,16 +13,15 @@
 */
 
 #include "long_extras.h"
-#include "mpn_extras.h"
 #include "nmod_vec.h"
 #include "nmod_poly.h"
 #include "fmpz.h"
 
 void
-_nmod_poly_powmod_x_fmpz_preinv (nn_ptr res, fmpz_t e, nn_srcptr f, slong lenf,
-                                      nn_srcptr finv, slong lenfinv, nmod_t mod)
+_nmod_poly_powmod_x_fmpz_preinv (mp_ptr res, fmpz_t e, mp_srcptr f, slong lenf,
+                                      mp_srcptr finv, slong lenfinv, nmod_t mod)
 {
-    nn_ptr T, Q;
+    mp_ptr T, Q;
     slong lenT, lenQ, window;
     slong i, l, c;
 
@@ -190,10 +189,10 @@ nmod_poly_powmod_x_fmpz_preinv(nmod_poly_t res, fmpz_t e, const nmod_poly_t f,
 }
 
 void
-_nmod_poly_powmod_x_ui_preinv(nn_ptr res, ulong e, nn_srcptr f, slong lenf,
-                                     nn_srcptr finv, slong lenfinv, nmod_t mod)
+_nmod_poly_powmod_x_ui_preinv(mp_ptr res, ulong e, mp_srcptr f, slong lenf,
+                                     mp_srcptr finv, slong lenfinv, nmod_t mod)
 {
-    nn_ptr T, Q;
+    mp_ptr T, Q;
     slong lenT, lenQ, window;
     int i, l, c;
 

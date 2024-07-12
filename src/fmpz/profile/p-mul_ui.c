@@ -9,10 +9,9 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include <gmp.h>
 #include "profiler.h"
-#include "ulong_extras.h"
 #include "fmpz.h"
+#include "ulong_extras.h"
 
 #define ntests 2000
 
@@ -23,8 +22,8 @@ fmpz_mul_ui_old(fmpz_t f, const fmpz_t g, ulong x)
 
     if (!COEFF_IS_MPZ(c2)) /* c2 is small */
     {
-        ulong th, tl;
-        ulong uc2 = FLINT_ABS(c2);
+        mp_limb_t th, tl;
+        mp_limb_t uc2 = FLINT_ABS(c2);
 
         /* unsigned limb by limb multiply (assembly for most CPU's) */
         umul_ppmm(th, tl, uc2, x);
@@ -40,7 +39,7 @@ fmpz_mul_ui_old(fmpz_t f, const fmpz_t g, ulong x)
         else
         {
             /* Promote without val as if aliased both are large */
-            mpz_ptr z = _fmpz_promote(f);
+            __mpz_struct *z = _fmpz_promote(f);
             mpz_mul_ui(z, COEFF_TO_PTR(c2), x);
         }
     }
@@ -70,7 +69,7 @@ sample_new(void * arg, ulong count)
         prof_stop();
     }
 
-    flint_rand_clear(state);
+    flint_randclear(state);
     fmpz_clear(res);
     fmpz_clear(a);
 }
@@ -99,7 +98,7 @@ sample_old(void * arg, ulong count)
         prof_stop();
     }
 
-    flint_rand_clear(state);
+    flint_randclear(state);
     fmpz_clear(res);
     fmpz_clear(a);
 }

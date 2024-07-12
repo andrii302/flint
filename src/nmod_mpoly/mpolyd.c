@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "longlong.h"
 #include "mpoly.h"
 #include "nmod_mpoly.h"
 #include "fq_nmod_mpoly.h"
@@ -43,7 +42,7 @@ void nmod_mpolyd_init(nmod_mpolyd_t poly, slong nvars)
         poly->deg_bounds[i] = WORD(1);
     }
     poly->coeff_alloc = WORD(16);
-    poly->coeffs = (ulong *) flint_malloc(poly->coeff_alloc*sizeof(ulong));
+    poly->coeffs = (mp_limb_t *) flint_malloc(poly->coeff_alloc*sizeof(mp_limb_t));
     for (i = 0; i < poly->coeff_alloc; i++)
     {
         poly->coeffs[i] = UWORD(0);
@@ -53,7 +52,7 @@ void nmod_mpolyd_init(nmod_mpolyd_t poly, slong nvars)
 void nmod_mpolyd_fit_length(nmod_mpolyd_t poly, slong len) {
     if (poly->coeff_alloc < len) {
 /*flint_printf("realloc %wd -> %wd\n",poly->coeff_alloc, len);*/
-        poly->coeffs = (ulong *) flint_realloc(poly->coeffs, len*sizeof(ulong));
+        poly->coeffs = (mp_limb_t *) flint_realloc(poly->coeffs, len*sizeof(mp_limb_t));
         poly->coeff_alloc = len;
     }
 }

@@ -15,7 +15,7 @@
 TEST_FUNCTION_START(nmod_mat_scalar_addmul_ui, state)
 {
     slong m, n, mod, rep;
-    ulong x;
+    mp_limb_t x;
 
     for (rep = 0; rep < 1000 * flint_test_multiplier(); rep++)
     {

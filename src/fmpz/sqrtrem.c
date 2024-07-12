@@ -9,7 +9,7 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include <gmp.h>
+#include "flint.h"
 #include "ulong_extras.h"
 #include "fmpz.h"
 
@@ -24,11 +24,11 @@ void fmpz_sqrtrem(fmpz_t f, fmpz_t r, const fmpz_t g)
     {
         if (COEFF_IS_MPZ(*r))
             _fmpz_clear_mpz(*r);
-        fmpz_set_ui(f, n_sqrtrem((ulong *) r, *g));
+        fmpz_set_ui(f, n_sqrtrem((mp_limb_t *) r, *g));
     }
     else
     {
-        mpz_ptr r_mpz_ptr, f_mpz_ptr;
+        __mpz_struct * r_mpz_ptr, * f_mpz_ptr;
         _fmpz_promote(f); /* must not hang on to pointer whilst promoting */
         r_mpz_ptr = _fmpz_promote(r);
 		f_mpz_ptr = COEFF_TO_PTR(*f);

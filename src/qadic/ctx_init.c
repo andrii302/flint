@@ -27,7 +27,7 @@ int _qadic_ctx_init_conway_ui(qadic_ctx_t ctx, ulong p, slong d,
     ulong tmp[410]; /* Largest degree is 409 */
     slong num_nzcoeffs;
     slong * idx_nzcoeffs;
-    nn_ptr nzcoeffs;
+    mp_ptr nzcoeffs;
     slong ix, jx;
 
     result = _nmod_poly_conway(tmp, p, d);
@@ -101,14 +101,14 @@ void qadic_ctx_init(qadic_ctx_t ctx, const fmpz_t p, slong d,
         if (_qadic_ctx_init_conway_ui(ctx, *p, d, min, max, var, mode))
             return;
 
-    flint_rand_init(state);
+    flint_randinit(state);
 
     fmpz_mod_ctx_init(ctxp, p);
     fmpz_mod_poly_init2(poly, d + 1, ctxp);
 
     fmpz_mod_poly_randtest_sparse_irreducible(poly, state, d + 1, ctxp);
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 
     /* Find number of non-zero coefficients */
     ctx->len = 1;

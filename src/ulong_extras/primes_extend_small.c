@@ -9,10 +9,11 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "ulong_extras.h"
 
 void
-n_primes_extend_small(n_primes_t iter, ulong bound)
+n_primes_extend_small(n_primes_t iter, mp_limb_t bound)
 {
     while (iter->small_primes[iter->small_num - 2] < bound)
     {

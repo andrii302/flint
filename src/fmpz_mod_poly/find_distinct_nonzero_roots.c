@@ -13,10 +13,6 @@
 #include "fmpz_mod.h"
 #include "fmpz_mod_poly.h"
 
-#if FLINT_WANT_ASSERT
-# include "longlong.h"
-#endif
-
 /* split f assuming that f has degree(f) distinct nonzero roots in Fp */
 void _fmpz_mod_poly_split_rabin(
     fmpz_mod_poly_t a,
@@ -167,7 +163,7 @@ int fmpz_mod_poly_find_distinct_nonzero_roots(
         goto cleanup1;
     }
 
-    flint_rand_init(randstate);
+    flint_randinit(randstate);
     fmpz_mod_poly_init(t, ctx);
     fmpz_mod_poly_init(t2, ctx);
     fmpz_mod_poly_init(f, ctx);
@@ -235,7 +231,7 @@ int fmpz_mod_poly_find_distinct_nonzero_roots(
 
 cleanup:
 
-    flint_rand_clear(randstate);
+    flint_randclear(randstate);
     fmpz_mod_poly_clear(t, ctx);
     fmpz_mod_poly_clear(t2, ctx);
     fmpz_mod_poly_clear(f, ctx);

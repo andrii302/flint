@@ -15,9 +15,9 @@
 #include "gmpcompat.h"
 #include "ulong_extras.h"
 
-ulong n_clog(ulong n, ulong b)
+mp_limb_t n_clog(mp_limb_t n, mp_limb_t b)
 {
-    ulong r, p, t, phi;
+    mp_limb_t r, p, t, phi;
 
     r = 0;
     p = 1;

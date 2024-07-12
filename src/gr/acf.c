@@ -9,11 +9,10 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "fmpz_poly.h"
 #include "fmpz_poly_factor.h"
-#include "arb_fmpz_poly.h"
 #include "acf.h"
 #include "acb.h"
+#include "arb_fmpz_poly.h"
 #include "gr.h"
 #include "gr_generic.h"
 #include "gr_vec.h"
@@ -346,7 +345,7 @@ _gr_acf_equal(const acf_t x, const acf_t y, const gr_ctx_t ctx)
 {
     if (arf_is_nan(acf_realref(x)) || arf_is_nan(acf_imagref(x)) ||
         arf_is_nan(acf_realref(y)) || arf_is_nan(acf_imagref(y)))
-        return T_UNKNOWN;
+        return T_FALSE;
 
     return acf_equal(x, y) ? T_TRUE : T_FALSE;
 }
@@ -371,7 +370,7 @@ int
 _gr_acf_add_si(acf_t res, const acf_t x, slong y, const gr_ctx_t ctx)
 {
     arf_add_si(acf_realref(res), acf_realref(x), y, ACF_CTX_PREC(ctx), ACF_CTX_RND(ctx));
-    arf_set_round(acf_imagref(res), acf_imagref(x), ACF_CTX_PREC(ctx), ACF_CTX_RND(ctx));
+    arf_set_round(acf_realref(res), acf_realref(x), ACF_CTX_PREC(ctx), ACF_CTX_RND(ctx));
     return GR_SUCCESS;
 }
 
@@ -379,7 +378,7 @@ int
 _gr_acf_add_ui(acf_t res, const acf_t x, ulong y, const gr_ctx_t ctx)
 {
     arf_add_ui(acf_realref(res), acf_realref(x), y, ACF_CTX_PREC(ctx), ACF_CTX_RND(ctx));
-    arf_set_round(acf_imagref(res), acf_imagref(x), ACF_CTX_PREC(ctx), ACF_CTX_RND(ctx));
+    arf_set_round(acf_realref(res), acf_realref(x), ACF_CTX_PREC(ctx), ACF_CTX_RND(ctx));
     return GR_SUCCESS;
 }
 
@@ -387,7 +386,7 @@ int
 _gr_acf_add_fmpz(acf_t res, const acf_t x, const fmpz_t y, const gr_ctx_t ctx)
 {
     arf_add_fmpz(acf_realref(res), acf_realref(x), y, ACF_CTX_PREC(ctx), ACF_CTX_RND(ctx));
-    arf_set_round(acf_imagref(res), acf_imagref(x), ACF_CTX_PREC(ctx), ACF_CTX_RND(ctx));
+    arf_set_round(acf_realref(res), acf_realref(x), ACF_CTX_PREC(ctx), ACF_CTX_RND(ctx));
     return GR_SUCCESS;
 }
 
@@ -402,7 +401,7 @@ int
 _gr_acf_sub_si(acf_t res, const acf_t x, slong y, const gr_ctx_t ctx)
 {
     arf_sub_si(acf_realref(res), acf_realref(x), y, ACF_CTX_PREC(ctx), ACF_CTX_RND(ctx));
-    arf_set_round(acf_imagref(res), acf_imagref(x), ACF_CTX_PREC(ctx), ACF_CTX_RND(ctx));
+    arf_set_round(acf_realref(res), acf_realref(x), ACF_CTX_PREC(ctx), ACF_CTX_RND(ctx));
     return GR_SUCCESS;
 }
 
@@ -410,7 +409,7 @@ int
 _gr_acf_sub_ui(acf_t res, const acf_t x, ulong y, const gr_ctx_t ctx)
 {
     arf_sub_ui(acf_realref(res), acf_realref(x), y, ACF_CTX_PREC(ctx), ACF_CTX_RND(ctx));
-    arf_set_round(acf_imagref(res), acf_imagref(x), ACF_CTX_PREC(ctx), ACF_CTX_RND(ctx));
+    arf_set_round(acf_realref(res), acf_realref(x), ACF_CTX_PREC(ctx), ACF_CTX_RND(ctx));
     return GR_SUCCESS;
 }
 
@@ -418,7 +417,7 @@ int
 _gr_acf_sub_fmpz(acf_t res, const acf_t x, const fmpz_t y, const gr_ctx_t ctx)
 {
     arf_sub_fmpz(acf_realref(res), acf_realref(x), y, ACF_CTX_PREC(ctx), ACF_CTX_RND(ctx));
-    arf_set_round(acf_imagref(res), acf_imagref(x), ACF_CTX_PREC(ctx), ACF_CTX_RND(ctx));
+    arf_set_round(acf_realref(res), acf_realref(x), ACF_CTX_PREC(ctx), ACF_CTX_RND(ctx));
     return GR_SUCCESS;
 }
 
@@ -672,7 +671,7 @@ _gr_acf_cmpabs(int * res, const acf_t x, const acf_t y, const gr_ctx_t ctx)
     if (!arf_is_zero(acf_imagref(x)) || !arf_is_zero(acf_imagref(y)))
         return GR_UNABLE;
 
-    *res = arf_cmpabs(acf_realref(x), acf_realref(y));
+    *res = arf_cmp(acf_realref(x), acf_realref(y));
     return GR_SUCCESS;
 }
 

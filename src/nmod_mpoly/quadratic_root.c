@@ -37,7 +37,7 @@ static int _nmod_mpoly_quadratic_root_heap(
     mpoly_heap_t * chain;
     slong * store, * store_base;
     mpoly_heap_t * x;
-    ulong * Qcoeffs = Q->coeffs;
+    mp_limb_t * Qcoeffs = Q->coeffs;
     ulong * Qexps = Q->exps;
     ulong * exp, * exps;
     ulong ** exp_list;
@@ -111,7 +111,7 @@ static int _nmod_mpoly_quadratic_root_heap(
             j = *--store;
             i = *--store;
 
-            if (i == -WORD(1))
+            if (i == -UWORD(1))
             {
                 if (j + 1 < Blen)
                 {
@@ -127,7 +127,7 @@ static int _nmod_mpoly_quadratic_root_heap(
                     FLINT_ASSERT(exp_next <= Alen + 2);
                 }
             }
-            else if (i == -WORD(2))
+            else if (i == -UWORD(2))
             {
                 if (j + 1 < Qlen)
                 {
@@ -345,7 +345,7 @@ int nmod_mpoly_quadratic_root(
 
     if (ctx->mod.n != 2)
     {
-        ulong c = (ctx->mod.n - 1)/2;
+        mp_limb_t c = (ctx->mod.n - 1)/2;
         nmod_mpoly_t t1, t2;
 
         nmod_mpoly_init(t1, ctx);

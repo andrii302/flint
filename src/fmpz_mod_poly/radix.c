@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "mpn_extras.h"
 #include "fmpz.h"
 #include "fmpz_vec.h"
 #include "fmpz_poly.h"
@@ -178,7 +177,7 @@ void fmpz_mod_poly_radix(fmpz_mod_poly_struct **B, const fmpz_mod_poly_t F,
             G = flint_malloc(lenG * sizeof(fmpz));
             for (i = 0; i < lenF; i++)
                 G[i] = F->coeffs[i];
-            flint_mpn_zero((nn_ptr) G + lenF, lenG - lenF);
+            flint_mpn_zero((mp_ptr) G + lenF, lenG - lenF);
 
             T = t ? _fmpz_vec_init(t * degR) : NULL;
         }

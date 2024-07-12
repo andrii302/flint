@@ -14,7 +14,6 @@
 #include "thread_pool.h"
 #include "thread_support.h"
 #include "ulong_extras.h"
-#include "mpn_extras.h"
 #include "nmod_vec.h"
 #include "nmod_mat.h"
 #include "nmod_poly.h"
@@ -63,7 +62,7 @@ _nmod_poly_compose_mod_brent_kung_precomp_preinv_worker(void * arg_ptr)
     nmod_poly_compose_mod_precomp_preinv_arg_t arg =
                    *((nmod_poly_compose_mod_precomp_preinv_arg_t*) arg_ptr);
     nmod_mat_t B, C;
-    nn_ptr t, h;
+    mp_ptr t, h;
     slong i, n, m;
     nmod_poly_struct * res = arg.res;
     nmod_poly_struct * poly1 = arg.poly1;
@@ -136,7 +135,7 @@ _nmod_poly_interval_poly_worker(void * arg_ptr)
     nmod_poly_struct * vinv = arg.vinv;
     nmod_poly_struct * baby = arg.baby;
     nmod_t mod = v->mod;
-    nn_ptr tmp = arg.tmp;
+    mp_ptr tmp = arg.tmp;
 
     res->coeffs[0] = 1;
 
@@ -231,7 +230,7 @@ void nmod_poly_factor_distinct_deg_threaded(nmod_poly_factor_t res,
 
     if (FLINT_BIT_COUNT(poly->mod.n) > ((n_sqrt(v->length - 1) + 1)*3)/4)
     {
-        for (i = 1; i < (slong) FLINT_BIT_COUNT(l); i++)
+        for (i = 1; i < FLINT_BIT_COUNT(l); i++)
             nmod_poly_compose_mod_brent_kung_vec_preinv_threaded_pool(h + 1 +
                                    (1 << (i - 1)), h + 1, 1 << (i - 1),
                                    1 << (i - 1), h + (1 << (i - 1)),

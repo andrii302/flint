@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include <gmp.h>
 #include "fmpq.h"
 
 void flint_mpq_clear_readonly(mpq_t z)

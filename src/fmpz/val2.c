@@ -9,8 +9,8 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include <gmp.h>
-#include "longlong.h"
+#include "flint.h"
+#include "ulong_extras.h"
 #include "fmpz.h"
 
 flint_bitcnt_t fmpz_val2(const fmpz_t x)
@@ -27,7 +27,7 @@ flint_bitcnt_t fmpz_val2(const fmpz_t x)
     }
     else
     {
-        ulong *d = (COEFF_TO_PTR(c))->_mp_d;
+        mp_limb_t *d = (COEFF_TO_PTR(c))->_mp_d;
         flint_bitcnt_t u;
 
         t = 0;

@@ -19,6 +19,7 @@
 
 #include "templates.h"
 
+#include "ulong_extras.h"
 int
 TEMPLATE(T, poly_factor_equal_deg_prob) (TEMPLATE(T, poly_t) factor,
                                          flint_rand_t state,

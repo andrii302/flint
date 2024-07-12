@@ -13,17 +13,24 @@
 
 #include "gmpcompat.h"
 #include "mpn_extras.h"
+#include "ulong_extras.h"
 #include "fmpz.h"
+
+#define MPZ_FIT_SIZE(z, nlimbs) \
+    do { \
+        if (z->_mp_alloc < nlimbs) \
+            _mpz_realloc(z, nlimbs); \
+    } while (0)
 
 /* Will not get called with x or y small. */
 void
 _flint_mpz_addmul_large(mpz_ptr z, mpz_srcptr x, mpz_srcptr y, int negate)
 {
-    slong xn, yn, tn, zn, zn_signed, zn_new, x_sgn, y_sgn, sgn, alloc;
-    nn_srcptr xd, yd;
-    nn_ptr zd;
-    nn_ptr td;
-    ulong top;
+    mp_size_t xn, yn, tn, zn, zn_signed, zn_new, x_sgn, y_sgn, sgn, alloc;
+    mp_srcptr xd, yd;
+    mp_ptr zd;
+    mp_ptr td;
+    mp_limb_t top;
     TMP_INIT;
 
     xn = x->_mp_size;
@@ -36,7 +43,7 @@ _flint_mpz_addmul_large(mpz_ptr z, mpz_srcptr x, mpz_srcptr y, int negate)
     if (xn < yn)
     {
         mpz_srcptr t;
-        slong tn;
+        mp_size_t tn;
 
         t = x; x = y; y = t;
         tn = xn; xn = yn; yn = tn;
@@ -101,7 +108,7 @@ _flint_mpz_addmul_large(mpz_ptr z, mpz_srcptr x, mpz_srcptr y, int negate)
 #endif
 
     TMP_START;
-    td = TMP_ALLOC(tn * sizeof(ulong));
+    td = TMP_ALLOC(tn * sizeof(mp_limb_t));
 
     if (x == y)
     {
@@ -115,7 +122,8 @@ _flint_mpz_addmul_large(mpz_ptr z, mpz_srcptr x, mpz_srcptr y, int negate)
 
     tn -= (top == 0);
     alloc = FLINT_MAX(tn, zn) + 1;
-    zd = FLINT_MPZ_REALLOC(z, alloc);
+    MPZ_FIT_SIZE(z, alloc);
+    zd = z->_mp_d;
 
     if (sgn >= 0)
     {
@@ -159,7 +167,7 @@ _flint_mpz_addmul_large(mpz_ptr z, mpz_srcptr x, mpz_srcptr y, int negate)
 void fmpz_addmul(fmpz_t f, const fmpz_t g, const fmpz_t h)
 {
     fmpz c1, c2, c3;
-    mpz_ptr mf;
+    __mpz_struct * mf;
 
     c1 = *g;
 	c2 = *h;

@@ -19,6 +19,7 @@
 
 #include "templates.h"
 
+#include "ulong_extras.h"
 
 void
 TEMPLATE(T, poly_factor_squarefree) (TEMPLATE(T, poly_factor_t) res,

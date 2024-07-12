@@ -11,7 +11,6 @@
 
 #include "thread_pool.h"
 #include "thread_support.h"
-#include "arb.h"
 #include "acb_dirichlet.h"
 
 #ifdef __GNUC__
@@ -28,7 +27,7 @@ typedef struct
     ulong s;
     int mod;
     const signed char * chi;
-    nn_ptr primes;
+    mp_ptr primes;
     double * powmags;
     slong num_primes;
     slong wp;
@@ -147,7 +146,7 @@ void _acb_dirichlet_euler_product_real_ui(arb_t res, ulong s,
     {
         n_primes_t iter;
         slong i;
-        nn_ptr primes;
+        mp_ptr primes;
         double * powmags;
         slong num_primes = 0;
         slong alloc = 16;
@@ -160,7 +159,7 @@ void _acb_dirichlet_euler_product_real_ui(arb_t res, ulong s,
         n_primes_init(iter);
         n_primes_jump_after(iter, 3);
 
-        primes = flint_malloc(alloc * sizeof(ulong));
+        primes = flint_malloc(alloc * sizeof(mp_limb_t));
         powmags = flint_malloc(alloc * sizeof(double));
 
         for (p = 3; p < limit; p = n_primes_next(iter))
@@ -183,7 +182,7 @@ void _acb_dirichlet_euler_product_real_ui(arb_t res, ulong s,
                 if (num_primes >= alloc)
                 {
                     alloc *= 2;
-                    primes = flint_realloc(primes, alloc * sizeof(ulong));
+                    primes = flint_realloc(primes, alloc * sizeof(mp_limb_t));
                     powmags = flint_realloc(powmags, alloc * sizeof(double));
                 }
 

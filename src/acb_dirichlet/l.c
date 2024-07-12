@@ -10,7 +10,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "acb.h"
 #include "acb_dirichlet.h"
 
 #ifdef __GNUC__
@@ -30,7 +29,7 @@ acb_dirichlet_l_general(acb_t res, const acb_t s,
     }
     else
     {
-        slong wp = prec + FLINT_CLOG2(G->phi_q);
+        slong wp = prec + n_clog(G->phi_q, 2);
         acb_dirichlet_hurwitz_precomp_t pre;
         acb_dirichlet_hurwitz_precomp_init_num(pre, s, acb_is_one(s), G->phi_q, wp);
         acb_dirichlet_l_hurwitz(res, s, pre, G, chi, prec);

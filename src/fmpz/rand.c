@@ -3,7 +3,6 @@
     Copyright (C) 2010, 2012 Sebastian Pancratz
     Copyright (C) 2011 Fredrik Johansson
     Authored 2015 by Daniel S. Roche; US Government work in the public domain.
-    Copyright (C) 2024 Albin Ahlbäck
 
     This file is part of FLINT.
 
@@ -13,37 +12,31 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include <gmp.h>
 #include "ulong_extras.h"
 #include "fmpz.h"
 
 void
-fmpz_randbits_unsigned(fmpz_t f, flint_rand_t state, flint_bitcnt_t bits)
+fmpz_randbits(fmpz_t f, flint_rand_t state, flint_bitcnt_t bits)
 {
     if (bits <= SMALL_FMPZ_BITCOUNT_MAX)
     {
         _fmpz_demote(f);
         *f = n_randbits(state, bits);
+        if (n_randint(state, 2))
+            *f = -*f;
     }
     else
     {
-        mpz_ptr mf = _fmpz_promote(f);
-
-        if (!FLINT_RAND_GMP_STATE_IS_INITIALISED(state))
-            _flint_rand_init_gmp_state(state);
-
-        mpz_urandomb(mf, state->__gmp_state, bits);
+        __mpz_struct *mf = _fmpz_promote(f);
+        _flint_rand_init_gmp(state);
+        mpz_urandomb(mf, state->gmp_state, bits);
         mpz_setbit(mf, bits - 1);
+
+        if (n_randint(state, 2))
+            mpz_neg(mf, mf);
+
         _fmpz_demote_val(f);
     }
-}
-
-void
-fmpz_randbits(fmpz_t f, flint_rand_t state, flint_bitcnt_t bits)
-{
-    fmpz_randbits_unsigned(f, state, bits);
-    if (n_randint(state, 2))
-        fmpz_neg(f, f);
 }
 
 void
@@ -59,12 +52,10 @@ fmpz_randm(fmpz_t f, flint_rand_t state, const fmpz_t m)
     }
     else
     {
-        mpz_ptr mf = _fmpz_promote(f);
+        __mpz_struct * mf = _fmpz_promote(f);
 
-        if (!FLINT_RAND_GMP_STATE_IS_INITIALISED(state))
-            _flint_rand_init_gmp_state(state);
-
-        mpz_urandomm(mf, state->__gmp_state, COEFF_TO_PTR(*m));
+        _flint_rand_init_gmp(state);
+        mpz_urandomm(mf, state->gmp_state, COEFF_TO_PTR(*m));
         if (sgn < 0)
             mpz_neg(mf, mf);
         _fmpz_demote_val(f);
@@ -73,15 +64,26 @@ fmpz_randm(fmpz_t f, flint_rand_t state, const fmpz_t m)
 
 void fmpz_randprime(fmpz_t f, flint_rand_t state, flint_bitcnt_t bits, int proved)
 {
-    if (bits <= FLINT_BITS)
+    if (bits <= SMALL_FMPZ_BITCOUNT_MAX)
     {
-        fmpz_set_ui(f, n_randprime(state, bits, proved));
+        _fmpz_demote(f);
+        *f = n_randprime(state, bits, proved);
     }
     else
     {
+        /* Here I would like to just call
+         * fmpz_randbits(f, state, bits);
+         * but it has different semantics from n_randbits,
+         * and in particular may return integers with fewer bits.
+         */
+        __mpz_struct * mf = _fmpz_promote(f);
+        _flint_rand_init_gmp(state);
+
         do
         {
-            fmpz_randbits_unsigned(f, state, bits);
+            mpz_urandomb(mf, state->gmp_state, bits - 1);
+            mpz_setbit(mf, bits - 1);
+
             fmpz_nextprime(f, f, proved);
         } while (fmpz_bits(f) != bits);
     }
@@ -125,12 +127,10 @@ fmpz_randtest_unsigned(fmpz_t f, flint_rand_t state, flint_bitcnt_t bits)
     }
     else
     {
-        mpz_ptr mf = _fmpz_promote(f);
+        __mpz_struct * mf = _fmpz_promote(f);
 
-        if (!FLINT_RAND_GMP_STATE_IS_INITIALISED(state))
-            _flint_rand_init_gmp_state(state);
-
-        mpz_rrandomb(mf, state->__gmp_state, bits);
+        _flint_rand_init_gmp(state);
+        mpz_rrandomb(mf, state->gmp_state, bits);
         _fmpz_demote_val(f);
     }
 }

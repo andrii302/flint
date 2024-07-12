@@ -9,7 +9,7 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "mpn_extras.h"
+#include "flint.h"
 #include "fft.h"
 
 void ifft_butterfly_sqrt2(mp_limb_t * s, mp_limb_t * t, mp_limb_t * i1,
@@ -23,7 +23,7 @@ void ifft_butterfly_sqrt2(mp_limb_t * s, mp_limb_t * t, mp_limb_t * i1,
    int negate = 1;
 
    b1 = wn - j - i*k - 1 + wn/4;
-   if (b1 >= (slong) wn)
+   if (b1 >= wn)
    {
       negate = 0;
       b1 -= wn;

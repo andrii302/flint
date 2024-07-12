@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "longlong.h"
 #include "nmod_mat.h"
 #include "fmpz_poly.h"
 #include "fmpz_mod.h"
@@ -160,7 +159,7 @@ _artin_schreier_preimage(fmpz *rop, const fmpz *op, slong len,
 
         for (k = 0; k < d; k++)
         {
-            nmod_mat_entry(A, k, i) = (ulong) f[k];
+            nmod_mat_entry(A, k, i) = (mp_limb_t) f[k];
         }
         fmpz_zero(e + i);
     }

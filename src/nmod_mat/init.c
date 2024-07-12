@@ -10,34 +10,21 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "long_extras.h"
-#include "mpn_extras.h"
 #include "nmod_mat.h"
 
 void
-nmod_mat_init(nmod_mat_t mat, slong rows, slong cols, ulong n)
+nmod_mat_init(nmod_mat_t mat, slong rows, slong cols, mp_limb_t n)
 {
     slong i;
 
     if (rows != 0)
-        mat->rows = flint_malloc(rows * sizeof(ulong *));
+        mat->rows = (mp_limb_t **) flint_malloc(rows * sizeof(mp_limb_t *));
     else
         mat->rows = NULL;
 
-    mat->r = rows;
-    mat->c = cols;
-
     if (rows != 0 && cols != 0)
     {
-        slong num;
-        int of;
-
-        of = z_mul_checked(&num, rows, cols);
-
-        if (of)
-            flint_throw(FLINT_ERROR, "Overflow creating a %wd x %wd object\n", rows, cols);
-
-        mat->entries = flint_calloc(num, sizeof(ulong));
+        mat->entries = (mp_limb_t *) flint_calloc(flint_mul_sizes(rows, cols), sizeof(mp_limb_t));
 
         for (i = 0; i < rows; i++)
             mat->rows[i] = mat->entries + i * cols;
@@ -45,12 +32,15 @@ nmod_mat_init(nmod_mat_t mat, slong rows, slong cols, ulong n)
     else
     {
         mat->entries = NULL;
-        if (rows != 0)
+	if (rows != 0)
         {
             for (i = 0; i < rows; i++)
                 mat->rows[i] = NULL;
         }
     }
+
+    mat->r = rows;
+    mat->c = cols;
 
     nmod_mat_set_mod(mat, n);
 }
@@ -63,26 +53,13 @@ nmod_mat_init_set(nmod_mat_t mat, const nmod_mat_t src)
     slong i;
 
     if (rows != 0)
-        mat->rows = flint_malloc(rows * sizeof(ulong *));
+        mat->rows = flint_malloc(rows * sizeof(mp_limb_t *));
     else
         mat->rows = NULL;
 
-    mat->r = rows;
-    mat->c = cols;
-
-    mat->mod = src->mod;
-
-    if (rows != 0 && cols != 0)
+    if ((rows) && (cols))
     {
-        slong num;
-        int of;
-
-        of = z_mul_checked(&num, rows, cols);
-
-        if (of)
-            flint_throw(FLINT_ERROR, "Overflow creating a %wd x %wd object\n", rows, cols);
-
-        mat->entries = flint_malloc(num * sizeof(ulong));
+        mat->entries = flint_malloc(flint_mul_sizes(rows, cols) * sizeof(mp_limb_t));
 
         for (i = 0; i < rows; i++)
         {
@@ -93,10 +70,15 @@ nmod_mat_init_set(nmod_mat_t mat, const nmod_mat_t src)
     else
     {
         mat->entries = NULL;
-        if (rows != 0)
+	if (rows != 0)
         {
             for (i = 0; i < rows; i++)
                 mat->rows[i] = NULL;
-        }
+	}
     }
+
+    mat->r = rows;
+    mat->c = cols;
+
+    mat->mod = src->mod;
 }

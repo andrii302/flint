@@ -10,6 +10,7 @@
 */
 
 #include <time.h>
+#include "flint.h"
 #include "ulong_extras.h"
 #include "fft.h"
 #include "mpn_extras.h"
@@ -31,6 +32,9 @@ main(void)
     flint_printf("#include \"gmp.h\"\n\n");
     flint_printf("#define FFT_TAB \\\n");
     fflush(stdout);
+
+
+    _flint_rand_init_gmp(state);
 
     flint_printf("   { "); fflush(stdout);
     for (depth = 6; depth <= 10; depth++)
@@ -56,8 +60,8 @@ main(void)
             i2 = i1 + n1;
             r1 = i2 + n2;
 
-            flint_mpn_urandomb(i1, state, b1);
-            flint_mpn_urandomb(i2, state, b2);
+            flint_mpn_urandomb(i1, state->gmp_state, b1);
+            flint_mpn_urandomb(i2, state->gmp_state, b2);
 
             best_off = -1;
 
@@ -115,8 +119,8 @@ main(void)
             r1 = i2 + int_limbs + 1;
             tt = r1 + 2*(int_limbs + 1);
 
-            flint_mpn_urandomb(i1, state, int_limbs*FLINT_BITS);
-            flint_mpn_urandomb(i2, state, int_limbs*FLINT_BITS);
+            flint_mpn_urandomb(i1, state->gmp_state, int_limbs*FLINT_BITS);
+            flint_mpn_urandomb(i2, state->gmp_state, int_limbs*FLINT_BITS);
             i1[int_limbs] = 0;
             i2[int_limbs] = 0;
 
@@ -169,7 +173,7 @@ main(void)
 
     flint_printf("#define FFT_MULMOD_2EXPP1_CUTOFF %wd\n\n", ((mp_limb_t) 1 << best_d)*best_w/(2*FLINT_BITS));
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 
     flint_printf("#endif\n");
     return 0;

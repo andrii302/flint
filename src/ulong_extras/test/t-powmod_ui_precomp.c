@@ -19,9 +19,9 @@ TEST_FUNCTION_START(n_powmod_ui_precomp, state)
 
     for (i = 0; i < 10000 * flint_test_multiplier(); i++)
     {
-        ulong a, d, r1, r2, bits;
+        mp_limb_t a, d, r1, r2, bits;
         mpz_t a_m, d_m, r2_m;
-        ulong exp;
+        mp_limb_t exp;
         double dpre;
 
         mpz_init(a_m);
@@ -59,7 +59,7 @@ TEST_FUNCTION_START(n_powmod_ui_precomp, state)
     /* check 0^0 = 1 */
     for (i = 0; i < 10000 * flint_test_multiplier(); i++)
     {
-        ulong bits, d, r;
+        mp_limb_t bits, d, r;
         double dpre;
 
         bits = n_randint(state, FLINT_D_BITS) + 1;

@@ -12,6 +12,7 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "ulong_extras.h"
 
 static unsigned int nextmod30[] =
@@ -46,7 +47,7 @@ static const unsigned short n_modular_primes_tab[N_MOD_TAB] = {
 };
 
 
-static ulong bsearch_uint(ulong n, const unsigned int *t, int tlen)
+static mp_limb_t bsearch_uint(mp_limb_t n, const unsigned int *t, int tlen)
 {
   int lo = 0;
   int hi = tlen-1;
@@ -58,7 +59,7 @@ static ulong bsearch_uint(ulong n, const unsigned int *t, int tlen)
   return t[lo];
 }
 
-ulong n_nextprime(ulong n, int FLINT_UNUSED(proved))
+mp_limb_t n_nextprime(mp_limb_t n, int proved)
 {
     ulong i, index;
 

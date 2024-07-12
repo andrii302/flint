@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "longlong.h"
 #include "fmpz.h"
 #include "nmod_poly.h"
 #include "mpoly.h"
@@ -50,7 +49,7 @@ int _nmod_mpoly_compose_nmod_poly_sp(nmod_poly_t A, const nmod_mpoly_t B,
     slong shift, off;
     slong entries, k_len;
     slong Blen = B->length;
-    const ulong * Bcoeff = B->coeffs;
+    const mp_limb_t * Bcoeff = B->coeffs;
     ulong * Bexp = B->exps;
     slong * degrees;
     slong * offs;
@@ -91,7 +90,7 @@ int _nmod_mpoly_compose_nmod_poly_sp(nmod_poly_t A, const nmod_mpoly_t B,
         flint_bitcnt_t varibits = FLINT_BIT_COUNT(degrees[i]);
 
         mpoly_gen_offset_shift_sp(&off, &shift, i, bits, ctx->minfo);
-        for (j = 0; (ulong) j < varibits; j++)
+        for (j = 0; j < varibits; j++)
         {
             offs[k] = off;
             masks[k] = UWORD(1) << (shift + j);
@@ -147,7 +146,7 @@ int _nmod_mpoly_compose_nmod_poly_mp(nmod_poly_t A, const nmod_mpoly_t B,
     slong i, k, N, nvars = ctx->minfo->nvars;
     slong off, entries, k_len;
     slong Blen = B->length;
-    const ulong * Bcoeff = B->coeffs;
+    const mp_limb_t * Bcoeff = B->coeffs;
     ulong * Bexp = B->exps;
     fmpz * degrees;
     slong * offs;

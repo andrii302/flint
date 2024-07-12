@@ -9,12 +9,13 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "ulong_extras.h"
 
 void
 n_cleanup_primes(void)
 {
-    slong i;
+    int i;
 
     for (i = 0; i < _flint_primes_used; i++)
     {

@@ -1,6 +1,5 @@
 /*
     Copyright (C) 2013 William Hart
-    Copyright (C) 2024 Fredrik Johansson
 
     This file is part of FLINT.
 
@@ -10,13 +9,11 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "mpn_extras.h"
 
 /*
-TODO:
- * fixed-length code for small n
- * use unbalanced mulhigh in the second loop
- * use mullow
+   TODO: speedup mpir's mullow and mulhigh and use instead of mul/mul_n
 */
 
 void flint_mpn_mod_preinvn(mp_ptr rp, mp_srcptr ap, mp_size_t m,
@@ -42,12 +39,10 @@ void flint_mpn_mod_preinvn(mp_ptr rp, mp_srcptr ap, mp_size_t m,
    /* 2n by n division */
    while (m >= 2*n)
    {
-      flint_mpn_mul_or_mulhigh_n(t, dinv, r + n, n);
+      flint_mpn_mul_n(t, dinv, r + n, n);
       cy = mpn_add_n(t + 2*n, t + n, r + n, n);
 
-      /* note: we rely on the fact that mul_or_mullow_n actually
-               writes at least n + 1 limbs */
-      flint_mpn_mul_or_mullow_n(t, d, t + 2*n, n);
+      flint_mpn_mul_n(t, d, t + 2*n, n);
       cy = r[n] - t[n] - mpn_sub_n(r, a, t, n);
 
       while (cy > 0)
@@ -55,8 +50,6 @@ void flint_mpn_mod_preinvn(mp_ptr rp, mp_srcptr ap, mp_size_t m,
 
       if (mpn_cmp(r, d, n) >= 0)
          mpn_sub_n(r, r, d, n);
-
-      FLINT_ASSERT(mpn_cmp(r, d, n) < 0);
 
       m -= n;
       r -= n;
@@ -71,7 +64,7 @@ void flint_mpn_mod_preinvn(mp_ptr rp, mp_srcptr ap, mp_size_t m,
       if (rp != ap)
          mpn_copyi(rp, ap, size);
 
-      flint_mpn_mul_or_mulhigh_n(t + n - size, dinv + n - size, rp + n, size);
+      flint_mpn_mul(t, dinv, n, rp + n, size);
       cy = mpn_add_n(t + 2*n, t + n, rp + n, size);
 
       flint_mpn_mul(t, d, n, t + 2*n, size);
@@ -85,8 +78,6 @@ void flint_mpn_mod_preinvn(mp_ptr rp, mp_srcptr ap, mp_size_t m,
 
       if (mpn_cmp(rp, d, n) >= 0)
          mpn_sub_n(rp, rp, d, n);
-
-      FLINT_ASSERT(mpn_cmp(rp, d, n) < 0);
    }
 
    TMP_END;

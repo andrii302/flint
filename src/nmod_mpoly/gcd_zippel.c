@@ -9,21 +9,20 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "longlong.h"
 #include "fq_nmod.h"
 #include "n_poly.h"
 #include "mpoly.h"
 #include "nmod_mpoly.h"
 #include "fq_nmod_mpoly.h"
 
-static int nmod_mpolyu_gcdm_zippel_bivar(
+int nmod_mpolyu_gcdm_zippel_bivar(
     nmod_mpolyu_t G,
     nmod_mpolyu_t Abar,
     nmod_mpolyu_t Bbar,
     nmod_mpolyu_t A,
     nmod_mpolyu_t B,
     nmod_mpoly_ctx_t ctx,
-    flint_rand_t FLINT_UNUSED(randstate))
+    flint_rand_t randstate)
 {
     slong var = 0;
     slong Alastdeg, Blastdeg;
@@ -351,7 +350,7 @@ choose_prime_outer:
 
     success = fq_nmod_mpolyu_gcdp_zippel(Gff, Abarff, Bbarff, Aff, Bff,
                                       ctx->minfo->nvars - 2, ffctx, randstate);
-    if (!success || Gff->exps[0] > (ulong) degbound)
+    if (!success || Gff->exps[0] > degbound)
         goto choose_prime_outer;
     degbound = Gff->exps[0];
 

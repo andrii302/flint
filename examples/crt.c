@@ -16,14 +16,14 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <flint/flint.h>
-#include <flint/fmpz.h>
-#include <flint/ulong_extras.h>
+#include "flint.h"
+#include "fmpz.h"
+#include "ulong_extras.h"
 
 int main(int argc, char* argv[])
 {
     slong bit_bound;
-    ulong prime, res;
+    mp_limb_t prime, res;
     fmpz_t x, y, prod;
 
     if (argc != 2)

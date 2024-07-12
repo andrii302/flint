@@ -10,7 +10,6 @@
 */
 
 #include "test_helpers.h"
-#include "acb.h"
 #include "acb_dirichlet.h"
 
 TEST_FUNCTION_START(acb_dirichlet_chi, state)

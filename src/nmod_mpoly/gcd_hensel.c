@@ -9,6 +9,7 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "ulong_extras.h"
 #include "nmod.h"
 #include "fq_zech.h"
 #include "mpoly.h"
@@ -49,8 +50,8 @@ int nmod_mpolyl_gcd_hensel_smprime(
     const slong n = ctx->minfo->nvars - 1;
     slong i, k;
     flint_bitcnt_t bits = A->bits;
-    ulong * alphas, * prev_alphas;
-    ulong q, mu1, mu2;
+    mp_limb_t * alphas, * prev_alphas;
+    mp_limb_t q, mu1, mu2;
     nmod_mpoly_struct * Aevals, * Bevals, * Hevals;
     nmod_mpoly_struct * H; /* points to A, B, or Hevals + n */
     nmod_mpoly_struct * Glcs, * Hlcs;
@@ -68,7 +69,7 @@ int nmod_mpolyl_gcd_hensel_smprime(
     FLINT_ASSERT(B->bits == bits);
     FLINT_ASSERT(ctx->minfo->ord == ORD_LEX);
 
-    flint_rand_init(state);
+    flint_randinit(state);
 
     Hdegs  = FLINT_ARRAY_ALLOC(n + 1, slong);
 
@@ -82,7 +83,7 @@ int nmod_mpolyl_gcd_hensel_smprime(
         nmod_mpoly_init(Hevals + i, ctx);
     }
 
-	alphas = FLINT_ARRAY_ALLOC(2*n, ulong);
+	alphas = FLINT_ARRAY_ALLOC(2*n, mp_limb_t);
     prev_alphas = alphas + n;
     Aevals = FLINT_ARRAY_ALLOC(2*(n + 1), nmod_mpoly_struct);
     Bevals = Aevals + (n + 1);
@@ -393,7 +394,7 @@ got_alpha:
 
 cleanup:
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 
     flint_free(Hdegs);
 
@@ -490,7 +491,7 @@ int nmod_mpolyl_gcd_hensel_medprime(
     fq_zech_mpoly_init(A, ctx);
     fq_zech_mpoly_init(B, ctx);
 
-    flint_rand_init(state);
+    flint_randinit(state);
 
     Hdegs  = FLINT_ARRAY_ALLOC(n + 1, slong);
 
@@ -843,7 +844,7 @@ cleanup:
     fq_zech_mpoly_clear(A, ctx);
     fq_zech_mpoly_clear(B, ctx);
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 
     flint_free(Hdegs);
 

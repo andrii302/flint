@@ -18,10 +18,10 @@ void
 fmpz_factor(fmpz_factor_t factor, const fmpz_t n)
 {
     ulong exp;
-    ulong p;
-    mpz_ptr xsrc;
-    nn_ptr xd;
-    slong xsize;
+    mp_limb_t p;
+    __mpz_struct * xsrc;
+    mp_ptr xd;
+    mp_size_t xsize;
     slong found;
     slong trial_start, trial_stop;
     TMP_INIT;
@@ -56,7 +56,7 @@ fmpz_factor(fmpz_factor_t factor, const fmpz_t n)
 
     /* Create a temporary copy to be mutated */
     TMP_START;
-    xd = TMP_ALLOC(xsize * sizeof(ulong));
+    xd = TMP_ALLOC(xsize * sizeof(mp_limb_t));
     flint_mpn_copyi(xd, xsrc->_mp_d, xsize);
 
     /* Factor out powers of two */
@@ -75,24 +75,21 @@ fmpz_factor(fmpz_factor_t factor, const fmpz_t n)
         {
             p = n_primes_arr_readonly(found+1)[found];
             exp = 1;
-            mpn_divexact_1(xd, xd, xsize, p);
-            xsize -= (xd[xsize - 1] == 0);
+            xsize = flint_mpn_divexact_1(xd, xsize, p);
 
             /* Check if p^2 divides n */
             if (flint_mpn_divisible_1_odd(xd, xsize, p))
             {
                 /* TODO: when searching for squarefree numbers
                    (Moebius function, etc), we can abort here. */
-                mpn_divexact_1(xd, xd, xsize, p);
-                xsize -= (xd[xsize - 1] == 0);
+                xsize = flint_mpn_divexact_1(xd, xsize, p);
                 exp = 2;
             }
 
             /* If we're up to cubes, then maybe there are higher powers */
             if (exp == 2 && flint_mpn_divisible_1_odd(xd, xsize, p))
             {
-                mpn_divexact_1(xd, xd, xsize, p);
-                xsize -= (xd[xsize - 1] == 0);
+                xsize = flint_mpn_divexact_1(xd, xsize, p);
                 xsize = flint_mpn_remove_power_ascending(xd, xsize, &p, 1, &exp);
                 exp += 3;
             }
@@ -110,7 +107,7 @@ fmpz_factor(fmpz_factor_t factor, const fmpz_t n)
         else
         {
             fmpz_t n2;
-            mpz_ptr data;
+            __mpz_struct * data;
 
             fmpz_init2(n2, xsize);
 

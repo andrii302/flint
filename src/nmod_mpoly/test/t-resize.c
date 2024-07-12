@@ -23,8 +23,8 @@ TEST_FUNCTION_START(nmod_mpoly_resize, state)
         flint_bitcnt_t exp_bits;
         ulong * exp, * exp2;
         slong len, nvars;
-        ulong c;
-        ulong modulus;
+        mp_limb_t c;
+        mp_limb_t modulus;
 
         modulus = n_randtest_bits(state, n_randint(state, FLINT_BITS) + 1);
         nmod_mpoly_ctx_init_rand(ctx, state, 10, modulus);

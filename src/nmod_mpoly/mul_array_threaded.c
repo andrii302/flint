@@ -9,8 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include <string.h>
-#include "longlong.h"
 #include "thread_pool.h"
 #include "thread_support.h"
 #include "fmpz.h"
@@ -41,7 +39,7 @@ typedef struct
     volatile int idx;
     slong nthreads;
     slong Al, Bl, Pl;
-    ulong * Acoeffs, * Bcoeffs;
+    mp_limb_t * Acoeffs, * Bcoeffs;
     slong * Amain, * Bmain;
     ulong * Apexp, * Bpexp;
     slong * perm;
@@ -103,7 +101,7 @@ static void _nmod_mpoly_mul_array_threaded_worker_LEX(void * varg)
     while (Pi < Pl)
     {
         slong len;
-        ulong t2, t1, t0, u1, u0;
+        mp_limb_t t2, t1, t0, u1, u0;
 
         Pi = base->perm[Pi];
 
@@ -334,7 +332,7 @@ void _nmod_mpoly_mul_array_chunked_threaded_LEX(
         FLINT_ASSERT((Pchunks + Pi)->poly->exps != NULL);
 
         memcpy(P->exps + Plen, (Pchunks + Pi)->poly->exps, (Pchunks + Pi)->len*sizeof(ulong));
-        memcpy(P->coeffs + Plen, (Pchunks + Pi)->poly->coeffs, (Pchunks + Pi)->len*sizeof(ulong));
+        memcpy(P->coeffs + Plen, (Pchunks + Pi)->poly->coeffs, (Pchunks + Pi)->len*sizeof(mp_limb_t));
 
         Plen += (Pchunks + Pi)->len;
 
@@ -492,7 +490,7 @@ static void _nmod_mpoly_mul_array_threaded_worker_DEG(void * varg)
     while (Pi < Pl)
     {
         slong len;
-        ulong t2, t1, t0, u1, u0;
+        mp_limb_t t2, t1, t0, u1, u0;
 
         Pi = base->perm[Pi];
 
@@ -718,7 +716,7 @@ void _nmod_mpoly_mul_array_chunked_threaded_DEG(
         FLINT_ASSERT((Pchunks + Pi)->poly->exps != NULL);
 
         memcpy(P->exps + Plen, (Pchunks + Pi)->poly->exps, (Pchunks + Pi)->len*sizeof(ulong));
-        memcpy(P->coeffs + Plen, (Pchunks + Pi)->poly->coeffs, (Pchunks + Pi)->len*sizeof(ulong));
+        memcpy(P->coeffs + Plen, (Pchunks + Pi)->poly->coeffs, (Pchunks + Pi)->len*sizeof(mp_limb_t));
 
         Plen += (Pchunks + Pi)->len;
 

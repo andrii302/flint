@@ -23,7 +23,7 @@ TEST_FUNCTION_START(nmod_poly_mat_det, state)
         nmod_poly_mat_t A, B, C;
         nmod_poly_t a, b, ab, c;
         slong n, deg;
-        ulong mod;
+        mp_limb_t mod;
         float density;
 
         mod = n_randtest_prime(state, 0);

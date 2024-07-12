@@ -72,7 +72,7 @@ int compute_gcd(
     FLINT_ASSERT(!nmod_mpoly_is_zero(B, ctx));
     FLINT_ASSERT(ctx->minfo->nvars >= 2);
 
-    flint_rand_init(state);
+    flint_randinit(state);
 
     wbits = FLINT_MAX(A->bits, B->bits);
 
@@ -136,7 +136,7 @@ cleanup:
 
     nmod_mpoly_ctx_clear(lctx);
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 
     flint_free(perm);
     flint_free(shift);
@@ -422,7 +422,7 @@ TEST_FUNCTION_START(nmod_mpoly_factor_gcd_zippel, state)
         nmod_mpoly_t a, b, g, t;
         slong len, len1, len2;
         slong degbound;
-        ulong p;
+        mp_limb_t p;
 
         p = n_randint(state, (i % 2 == 0) ? 10 : FLINT_BITS - 1) + 1;
         p = n_randbits(state, p);

@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "longlong.h"
 #include "fmpz.h"
 #include "fmpz_vec.h"
 #include "fq_nmod.h"
@@ -51,8 +50,8 @@ void fq_nmod_mpoly_evals(
     ulong varexp;
     slong total_degree, lo, hi;
     n_poly_struct * caches = FLINT_ARRAY_ALLOC(3*nvars, n_poly_struct);
-    ulong * t = FLINT_ARRAY_ALLOC(2*d, ulong);
-    ulong * meval = t + d;
+    mp_limb_t * t = FLINT_ARRAY_ALLOC(2*d, mp_limb_t);
+    mp_limb_t * meval = t + d;
 
     for (j = 0; j < nvars; j++)
     {
@@ -78,7 +77,7 @@ void fq_nmod_mpoly_evals(
     total_degree = 0;
     for (i = 0; i < A->length; i++)
     {
-        ulong * s = A->coeffs + d*i; /* source */
+        mp_limb_t * s = A->coeffs + d*i; /* source */
 
         lo = hi = 0;
         for (j = 0; j < nvars; j++)
@@ -159,8 +158,8 @@ void fq_nmod_mpoly_evals_lgprime(
     ulong varexp, lo, hi;
     slong total_degree;
     n_poly_struct * caches = FLINT_ARRAY_ALLOC(3*nvars, n_poly_struct);
-    ulong * t = FLINT_ARRAY_ALLOC(2*lgd, ulong);
-    ulong * meval = t + lgd;
+    mp_limb_t * t = FLINT_ARRAY_ALLOC(2*lgd, mp_limb_t);
+    mp_limb_t * meval = t + lgd;
 
     for (j = 0; j < nvars; j++)
     {
@@ -205,7 +204,7 @@ void fq_nmod_mpoly_evals_lgprime(
         }
 
         if (hi == 0 && FLINT_SIGN_EXT(lo) == 0 && total_degree >= 0)
-            total_degree = FLINT_MAX(total_degree, (slong) lo);
+            total_degree = FLINT_MAX(total_degree, lo);
         else
             total_degree = -1;
 
@@ -258,7 +257,7 @@ void mpoly_gcd_info_set_estimates_fq_nmod_mpoly(
     slong ignore_limit;
     int * ignore;
 
-    flint_rand_init(state);
+    flint_randinit(state);
 
     ignore = FLINT_ARRAY_ALLOC(nvars, int);
     alpha  = FLINT_ARRAY_ALLOC(nvars, fq_nmod_struct);
@@ -355,7 +354,7 @@ cleanup:
     flint_free(alpha);
     flint_free(Aevals);
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 
     return;
 }
@@ -380,7 +379,7 @@ void mpoly_gcd_info_set_estimates_fq_nmod_mpoly_lgprime(
     bad_fq_nmod_mpoly_embed_chooser_t embc;
     bad_fq_nmod_embed_struct * cur_emb;
 
-    flint_rand_init(state);
+    flint_randinit(state);
 
     cur_emb = bad_fq_nmod_mpoly_embed_chooser_init(embc, lgctx, smctx, state);
 
@@ -484,7 +483,7 @@ cleanup:
 
     bad_fq_nmod_mpoly_embed_chooser_clear(embc, lgctx, smctx, state);
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 
     return;
 }
@@ -636,7 +635,7 @@ static int _try_monomial_cofactors(
     slong NA, NG;
     slong nvars = ctx->minfo->nvars;
     fmpz * Abarexps, * Bbarexps, * Texps;
-    ulong * tmp, * t1, * t2, * a0, * b0;
+    mp_limb_t * tmp, * t1, * t2, * a0, * b0;
     fq_nmod_mpoly_t T;
     flint_bitcnt_t Gbits = FLINT_MIN(A->bits, B->bits);
     flint_bitcnt_t Abarbits = A->bits;
@@ -651,8 +650,8 @@ static int _try_monomial_cofactors(
 
     TMP_START;
 
-    tmp = (ulong *) TMP_ALLOC(d*(4 + FLINT_MAX(N_FQ_MUL_ITCH,
-                                            N_FQ_INV_ITCH))*sizeof(ulong));
+    tmp = (mp_limb_t *) TMP_ALLOC(d*(4 + FLINT_MAX(N_FQ_MUL_ITCH,
+                                            N_FQ_INV_ITCH))*sizeof(mp_limb_t));
     t1 = tmp + d*FLINT_MAX(N_FQ_MUL_ITCH, N_FQ_INV_ITCH);
     t2 = t1 + d;
     a0 = t2 + d;
@@ -936,7 +935,7 @@ static int _try_zippel(
     FLINT_ASSERT(A->length > 0);
     FLINT_ASSERT(B->length > 0);
 
-    flint_rand_init(randstate);
+    flint_randinit(randstate);
 
     /* uctx is context for Fq[y_1,...,y_{m-1}]*/
     fq_nmod_mpoly_ctx_init(uctx, m - 1, ORD_LEX, ctx->fqctx);
@@ -1027,7 +1026,7 @@ cleanup:
 
     fq_nmod_mpoly_ctx_clear(uctx);
 
-    flint_rand_clear(randstate);
+    flint_randclear(randstate);
 
     return success;
 }

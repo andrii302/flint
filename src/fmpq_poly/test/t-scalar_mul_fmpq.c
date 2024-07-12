@@ -38,12 +38,16 @@ TEST_FUNCTION_START(fmpq_poly_scalar_mul_fmpq, state)
         cflags |= fmpq_poly_is_canonical(b) ? 0 : 2;
         result = (fmpq_poly_equal(a, b) && !cflags);
         if (!result)
-            TEST_FUNCTION_FAIL(
-                    "a = %{fmpq_poly}\n"
-                    "b = %{fmpq_poly}\n"
-                    "z = %{fmpq}\n"
-                    "cflags = %{ulong}\n",
-                    a, b, z, cflags);
+        {
+            flint_printf("FAIL (aliasing):\n\n");
+            flint_printf("a = "), fmpq_poly_debug(a), flint_printf("\n\n");
+            flint_printf("b = "), fmpq_poly_debug(b), flint_printf("\n\n");
+            flint_printf("z = "), fmpq_print(z), flint_printf("\n\n");
+            gmp_printf("z = %Qd\n\n", z);
+            flint_printf("cflags = %wu\n\n", cflags);
+            fflush(stdout);
+            flint_abort();
+        }
 
         fmpq_clear(z);
         fmpq_poly_clear(a);
@@ -78,15 +82,18 @@ TEST_FUNCTION_START(fmpq_poly_scalar_mul_fmpq, state)
         cflags |= fmpq_poly_is_canonical(rhs) ? 0 : 2;
         result = (fmpq_poly_equal(lhs, rhs) && !cflags);
         if (!result)
-            TEST_FUNCTION_FAIL(
-                    "a = %{fmpq_poly}\n"
-                    "z1 = %{fmpq}\n"
-                    "z2 = %{fmpq}\n"
-                    "z = %{fmpq}\n"
-                    "lhs = %{fmpq_poly}\n"
-                    "rhs = %{fmpq_poly}\n"
-                    "cflags = %{ulong}\n",
-                    a, z1, z2, z, lhs, rhs, cflags);
+        {
+            flint_printf("FAIL (a * n1 * n2):\n");
+            fmpq_poly_debug(a), flint_printf("\n\n");
+            flint_printf("z1 = "), fmpq_print(z1), flint_printf("\n\n");
+            flint_printf("z2 = "), fmpq_print(z2), flint_printf("\n\n");
+            flint_printf("z = "), fmpq_print(z), flint_printf("\n\n");
+            fmpq_poly_debug(lhs), flint_printf("\n\n");
+            fmpq_poly_debug(rhs), flint_printf("\n\n");
+            flint_printf("cflags = %wu\n\n", cflags);
+            fflush(stdout);
+            flint_abort();
+        }
 
         fmpq_clear(z1);
         fmpq_clear(z2);
@@ -123,14 +130,17 @@ TEST_FUNCTION_START(fmpq_poly_scalar_mul_fmpq, state)
         cflags |= fmpq_poly_is_canonical(rhs) ? 0 : 2;
         result = (fmpq_poly_equal(lhs, rhs) && !cflags);
         if (!result)
-            TEST_FUNCTION_FAIL(
-                    "a = %{fmpq_poly}\n"
-                    "b = %{fmpq_poly}\n"
-                    "z = %{fmpq}\n"
-                    "lhs = %{fmpq_poly}\n"
-                    "rhs = %{fmpq_poly}\n"
-                    "cflags = %{ulong}\n",
-                    a, b, z, lhs, rhs, cflags);
+        {
+            flint_printf("FAIL ((a + b) / n):\n");
+            fmpq_poly_debug(a), flint_printf("\n\n");
+            fmpq_poly_debug(b), flint_printf("\n\n");
+            flint_printf("z = "), fmpq_print(z), flint_printf("\n\n");
+            fmpq_poly_debug(lhs), flint_printf("\n\n");
+            fmpq_poly_debug(rhs), flint_printf("\n\n");
+            flint_printf("cflags = %wu\n\n", cflags);
+            fflush(stdout);
+            flint_abort();
+        }
 
         fmpq_clear(z);
         fmpq_poly_clear(a);

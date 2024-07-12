@@ -18,7 +18,7 @@
 /* printing *******************************************************************/
 
 static int _nmod_mpoly_fprint_pretty(FILE * file,
-                       const ulong * coeff, const ulong * exp, slong len,
+                       const mp_limb_t * coeff, const ulong * exp, slong len,
                        const char ** x_in,  slong bits, const mpoly_ctx_t mctx)
 {
     slong i, j, N;

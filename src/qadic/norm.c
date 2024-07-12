@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "longlong.h"
 #include "qadic.h"
 
 /*
@@ -60,7 +59,7 @@ void _qadic_norm(fmpz_t rop, const fmpz *op, slong len,
 
         if (w >= 2 || (*p != WORD(2) && w >= 1))
         {
-            if ((slong) (4 * FLINT_FLOG2(N) * FLINT_FLOG2(N) * FLINT_FLOG2(d)) < d*d*d)
+            if (4 * FLINT_FLOG2(N) * FLINT_FLOG2(N) * FLINT_FLOG2(d) < d*d*d)
             {
                 _qadic_norm_analytic(rop, y, w, len, a, j, lena, p, N);
             }

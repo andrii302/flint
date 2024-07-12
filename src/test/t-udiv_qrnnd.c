@@ -18,7 +18,7 @@ TEST_FUNCTION_START(udiv_qrnnd, state)
 
     for (i = 0; i < 100000 * flint_test_multiplier(); i++)
     {
-        ulong d, nh, nl, q, r, ph, pl;
+        mp_limb_t d, nh, nl, q, r, ph, pl;
 
         do
         {

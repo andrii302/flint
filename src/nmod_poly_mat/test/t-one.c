@@ -21,7 +21,7 @@ TEST_FUNCTION_START(nmod_poly_mat_one, state)
     {
         nmod_poly_mat_t A;
         slong m, n;
-        ulong mod;
+        mp_limb_t mod;
 
         mod = n_randtest_prime(state, 0);
         m = n_randint(state, 10);

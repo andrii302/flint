@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "gr.h"
 #include "gr_mat.h"
 
 /* todo: use a vector function; preinvert when appropriate */

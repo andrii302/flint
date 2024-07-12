@@ -10,13 +10,14 @@
 */
 
 #include <math.h>
+#include "flint.h"
 #include "ulong_extras.h"
 
-ulong n_sqrtrem(ulong * r, ulong a)
+mp_limb_t n_sqrtrem(mp_limb_t * r, mp_limb_t a)
 {
-    ulong is;
+    mp_limb_t is;
 
-    is = (ulong) sqrt((double) a);
+    is = (mp_limb_t) sqrt((double) a);
 
     is -= (is*is > a);
 #if FLINT64

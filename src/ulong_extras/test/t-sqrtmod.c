@@ -18,7 +18,7 @@ TEST_FUNCTION_START(n_sqrtmod, state)
 
     for (i = 0; i < 1000 * flint_test_multiplier(); i++) /* Test random integers */
     {
-        ulong a, b, p, pinv;
+        mp_limb_t a, b, p, pinv;
 
         p = n_randtest_prime(state, 0);
         a = n_randtest(state) % p;
@@ -37,7 +37,7 @@ TEST_FUNCTION_START(n_sqrtmod, state)
 
     for (i = 0; i < 1000 * flint_test_multiplier(); i++) /* Test random squares */
     {
-        ulong a, b, p, pinv;
+        mp_limb_t a, b, p, pinv;
 
         p = n_randtest_prime(state, 0);
 

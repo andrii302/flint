@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "longlong.h"
 #include "thread_support.h"
 #include "fmpz.h"
 #include "mpoly.h"
@@ -80,7 +79,7 @@ static int _try_array_LEX(slong * Bdegs, slong * Cdegs,
 }
 
 
-static int _try_array_DEG(slong Btotaldeg, slong FLINT_UNUSED(Ctotaldeg),
+static int _try_array_DEG(slong Btotaldeg, slong Ctotaldeg,
                                            slong Blen, slong Clen, slong nvars)
 {
     slong i, dense_size, total_degree;

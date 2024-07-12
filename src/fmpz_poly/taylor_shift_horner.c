@@ -9,8 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include <gmp.h>
-#include "longlong.h"
 #include "fmpz.h"
 #include "fmpz_vec.h"
 #include "fmpz_poly.h"
@@ -104,11 +102,11 @@ _fmpz_poly_taylor_shift_horner(fmpz * poly, const fmpz_t c, slong n)
     }
     else if (n >= 5 && out_bits < 2 * FLINT_BITS)
     {
-        nn_ptr t;
+        mp_ptr t;
         TMP_INIT;
         TMP_START;
 
-        t = TMP_ALLOC(2 * n * sizeof(ulong));
+        t = TMP_ALLOC(2 * n * sizeof(mp_limb_t));
 
         for (i = 0; i < n; i++)
             fmpz_get_signed_uiui(t + 2*i + 1, t + 2*i + 0, poly + i);
@@ -123,15 +121,15 @@ _fmpz_poly_taylor_shift_horner(fmpz * poly, const fmpz_t c, slong n)
 
         TMP_END;
     }
-    else if (n >= 3 + (slong) FLINT_BIT_COUNT(bits) && bits <= 100 * FLINT_BITS)
+    else if (n >= 3 + FLINT_BIT_COUNT(bits) && bits <= 100 * FLINT_BITS)
     {
         slong B = BLOCK_SIZE, ii, jj, d;
-        nn_ptr t;
+        mp_ptr t;
         TMP_INIT;
         TMP_START;
 
         d = (out_bits + FLINT_BITS - 1) / FLINT_BITS;
-        t = TMP_ALLOC(d * n * sizeof(ulong));
+        t = TMP_ALLOC(d * n * sizeof(mp_limb_t));
 
         for (i = 0; i < n; i++)
             fmpz_get_signed_ui_array(t + d * i, d, poly + i);

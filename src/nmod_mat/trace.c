@@ -12,10 +12,10 @@
 #include "nmod.h"
 #include "nmod_mat.h"
 
-ulong
+mp_limb_t
 nmod_mat_trace(const nmod_mat_t mat)
 {
-    ulong t;
+    mp_limb_t t;
     slong i, n = nmod_mat_nrows(mat);
 
     if (n == 0)

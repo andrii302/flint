@@ -10,5 +10,4 @@
 */
 
 #define ARB_MAT_INLINES_C
-
 #include "arb_mat.h"

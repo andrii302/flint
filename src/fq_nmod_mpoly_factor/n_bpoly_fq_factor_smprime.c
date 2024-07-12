@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "longlong.h"
 #include "fq_nmod.h"
 #include "nmod_mat.h"
 #include "fmpz_poly_factor.h"
@@ -480,7 +479,7 @@ static void n_fq_bpoly_lift_start(
                                                 r*sizeof(n_fq_bpoly_struct *));
 
     /* linear lifting has large memory requirements wrt r */
-    if (r < 20 + 5 * (slong) FLINT_BIT_COUNT(degx))
+    if (r < 20 + 5*FLINT_BIT_COUNT(degx))
         L->use_linear = 1;
     else
         L->use_linear = 0;
@@ -530,7 +529,7 @@ static void n_fq_bpoly_lift_start(
     FLINT_ASSERT(degx == n_fq_poly_degree(A->coeffs + 0));
 
     /* try evaluation when not too many local factors */
-    if (r < 10 + (slong) FLINT_BIT_COUNT(degx))
+    if (r < 10 + FLINT_BIT_COUNT(degx))
         L->Eok = nmod_eval_interp_set_degree_modulus(L->E, degx, ctx->mod);
     else
         L->Eok = 0;
@@ -958,10 +957,10 @@ static void _lattice(
     n_fq_bpoly_struct * ld;
     nmod_mat_t M, T1, T2;
     int nlimbs;
-    ulong * trow;
+    mp_limb_t * trow;
 
     nlimbs = _nmod_vec_dot_bound_limbs(r, ctx->mod);
-    trow = (ulong *) flint_malloc(r*sizeof(ulong));
+    trow = (mp_limb_t *) flint_malloc(r*sizeof(mp_limb_t));
     n_fq_bpoly_init(Q);
     n_fq_bpoly_init(R);
     n_fq_bpoly_init(dg);

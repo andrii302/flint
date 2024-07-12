@@ -67,7 +67,7 @@ TEST_FUNCTION_START(nmod_poly_mat_rref, state)
         slong *perm;
         float density;
         int equal;
-        ulong p;
+        mp_limb_t p;
 
         m = n_randint(state, 10);
         n = n_randint(state, 10);

@@ -21,7 +21,7 @@ TEST_FUNCTION_START(fmpz_vec_max_limbs, state)
     {
         fmpz *a;
         slong len, bits;
-        slong limbs, limbs2;
+        mp_size_t limbs, limbs2;
 
         len = n_randint(state, 100);
 

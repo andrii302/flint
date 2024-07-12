@@ -15,7 +15,8 @@
 
 ulong _fmpz_poly_deflation(const fmpz* a, slong len)
 {
-    ulong i, coeff, deflation;
+    ulong deflation;
+    slong i, coeff;
 
     if (len <= 1)
         return len;
@@ -26,7 +27,7 @@ ulong _fmpz_poly_deflation(const fmpz* a, slong len)
 
     deflation = n_gcd(len - 1, coeff);
 
-    while ((deflation > 1) && (coeff + deflation < (ulong) len))
+    while ((deflation > 1) && (coeff + deflation < len))
     {
         for (i = 0; i < deflation - 1; i++)
         {

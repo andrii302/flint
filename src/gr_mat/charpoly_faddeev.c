@@ -10,7 +10,6 @@
 */
 
 #include "gr_mat.h"
-#include "gr_poly.h"
 
 /* todo: when adj != A, could save memory by using as temporary */
 int

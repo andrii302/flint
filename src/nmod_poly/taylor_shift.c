@@ -14,9 +14,9 @@
 #include "nmod_poly.h"
 
 void
-_nmod_poly_taylor_shift(nn_ptr poly, ulong c, slong len, nmod_t mod)
+_nmod_poly_taylor_shift(mp_ptr poly, mp_limb_t c, slong len, nmod_t mod)
 {
-    if (len < 100 || (ulong) len > mod.n)
+    if (len < 100 || len > mod.n)
         _nmod_poly_taylor_shift_horner(poly, c, len, mod);
     else if ((c == 1 || c == mod.n - 1) && len < 1000)
         _nmod_poly_taylor_shift_horner(poly, c, len, mod);
@@ -25,7 +25,7 @@ _nmod_poly_taylor_shift(nn_ptr poly, ulong c, slong len, nmod_t mod)
 }
 
 void
-nmod_poly_taylor_shift(nmod_poly_t g, const nmod_poly_t f, ulong c)
+nmod_poly_taylor_shift(nmod_poly_t g, const nmod_poly_t f, mp_limb_t c)
 {
     if (f != g)
         nmod_poly_set(g, f);
@@ -34,11 +34,11 @@ nmod_poly_taylor_shift(nmod_poly_t g, const nmod_poly_t f, ulong c)
 }
 
 void
-_nmod_poly_taylor_shift_convolution(nn_ptr p, ulong c, slong len, nmod_t mod)
+_nmod_poly_taylor_shift_convolution(mp_ptr p, mp_limb_t c, slong len, nmod_t mod)
 {
     slong i, n = len - 1;
-    ulong f, d;
-    nn_ptr t, u;
+    mp_limb_t f, d;
+    mp_ptr t, u;
 
     if (c == 0 || len <= 1)
         return;
@@ -92,7 +92,7 @@ _nmod_poly_taylor_shift_convolution(nn_ptr p, ulong c, slong len, nmod_t mod)
 
 void
 nmod_poly_taylor_shift_convolution(nmod_poly_t g, const nmod_poly_t f,
-    ulong c)
+    mp_limb_t c)
 {
     if (f != g)
         nmod_poly_set(g, f);
@@ -101,7 +101,7 @@ nmod_poly_taylor_shift_convolution(nmod_poly_t g, const nmod_poly_t f,
 }
 
 void
-_nmod_poly_taylor_shift_horner(nn_ptr poly, ulong c, slong n, nmod_t mod)
+_nmod_poly_taylor_shift_horner(mp_ptr poly, mp_limb_t c, slong n, nmod_t mod)
 {
     slong i, j;
 
@@ -126,7 +126,7 @@ _nmod_poly_taylor_shift_horner(nn_ptr poly, ulong c, slong n, nmod_t mod)
 }
 
 void
-nmod_poly_taylor_shift_horner(nmod_poly_t g, const nmod_poly_t f, ulong c)
+nmod_poly_taylor_shift_horner(nmod_poly_t g, const nmod_poly_t f, mp_limb_t c)
 {
     if (f != g)
         nmod_poly_set(g, f);

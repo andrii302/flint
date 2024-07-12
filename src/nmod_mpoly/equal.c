@@ -13,8 +13,8 @@
 #include "mpoly.h"
 #include "nmod_mpoly.h"
 
-int _nmod_mpoly_equal(const ulong * coeff1, const ulong * exp1,
-                      const ulong * coeff2, const ulong * exp2,
+int _nmod_mpoly_equal(const mp_limb_t * coeff1, const ulong * exp1,
+                      const mp_limb_t * coeff2, const ulong * exp2,
                                                             slong len, slong N)
 {
     slong i;
@@ -40,8 +40,7 @@ int nmod_mpoly_equal(const nmod_mpoly_t poly1, const nmod_mpoly_t poly2,
                                                     const nmod_mpoly_ctx_t ctx)
 {
     ulong * ptr1 = poly1->exps, * ptr2 = poly2->exps;
-    ulong max_bits;
-    slong N;
+    slong max_bits, N;
     int r, free1 = 0, free2 = 0;
 
     if (poly1 == poly2)

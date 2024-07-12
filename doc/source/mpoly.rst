@@ -20,19 +20,8 @@ Orderings
 --------------------------------------------------------------------------------
 .. type:: ordering_t
 
-    Represents one of the following supported term orderings:
-
-    .. macro:: ORD_LEX
-
-        The lexicographic ordering.
-
-    .. macro:: ORD_DEGLEX
-
-        The degree lexicographic ordering.
-
-    .. macro:: ORD_DEGREVLEX
-
-        The degree reverse lexicographic ordering.
+     An enumeration of supported term orderings.  Currently one of ``ORD_LEX``, 
+     ``ORD_DEGLEX`` or ``ORD_DEGREVLEX``.
 
 .. type:: mpoly_ctx_struct
           mpoly_ctx_t
@@ -50,7 +39,8 @@ Orderings
 
 .. function:: ordering_t mpoly_ordering_randtest(flint_rand_t state)
 
-    Return a random term ordering.
+    Return a random ordering. The possibilities are ``ORD_LEX``,
+    ``ORD_DEGLEX`` and ``ORD_DEGREVLEX``.
 
 .. function:: void mpoly_ctx_init_rand(mpoly_ctx_t mctx, flint_rand_t state, slong max_nvars)
 

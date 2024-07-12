@@ -16,7 +16,7 @@ void
 fq_zech_set_fmpz(fq_zech_t rop, const fmpz_t x, const fq_zech_ctx_t ctx)
 {
     /* TODO: Clean this up */
-    ulong ux;
+    mp_limb_t ux;
     fmpz_t y;
 
     fmpz_init(y);

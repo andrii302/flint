@@ -17,10 +17,10 @@ TEST_FUNCTION_START(compute_primes, state)
 {
     slong i, lim = 1000000;
     n_primes_t pg;
-    ulong * ref_primes;
+    mp_limb_t * ref_primes;
     double * ref_inverses;
 
-    ref_primes = flint_malloc(sizeof(ulong) * lim);
+    ref_primes = flint_malloc(sizeof(mp_limb_t) * lim);
     ref_inverses = flint_malloc(sizeof(double) * lim);
 
     n_primes_init(pg);
@@ -31,13 +31,13 @@ TEST_FUNCTION_START(compute_primes, state)
     }
     n_primes_clear(pg);
 
-    for (i = 0; i < 100 * flint_test_multiplier(); i++)
+    for (i = 0; i < 250; i++)
     {
         slong n;
-        const ulong * primes;
+        const mp_limb_t * primes;
         const double * inverses;
 
-        n = n_randint(state, lim);
+        n = n_randtest(state) % lim;
 
         primes = n_primes_arr_readonly(n + 1);
         inverses = n_prime_inverses_arr_readonly(n + 1);
@@ -48,7 +48,7 @@ TEST_FUNCTION_START(compute_primes, state)
                     "inv1 = %g, inv2 = %g\n",
                     n, primes[n], ref_primes[n], inverses[n], ref_inverses[n]);
 
-        if (n_randint(state, 50) == 0)
+        if (n_randint(state, 20) == 0)
             n_cleanup_primes();
     }
 

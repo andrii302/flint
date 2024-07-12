@@ -10,6 +10,7 @@
 */
 
 #include <float.h>
+#include "flint.h"
 #include "fmpz.h"
 #include "fmpz_poly.h"
 #include "ulong_extras.h"
@@ -213,7 +214,7 @@ main(void)
         }
     }
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 
     return 0;
 }

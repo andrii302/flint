@@ -23,14 +23,14 @@ extern "C" {
 
 typedef struct
 {
-    ulong d[ARF_NOPTR_LIMBS];
+    mp_limb_t d[ARF_NOPTR_LIMBS];
 }
 mantissa_noptr_struct;
 
 typedef struct
 {
-    slong alloc;
-    nn_ptr d;
+    mp_size_t alloc;
+    mp_ptr d;
 }
 mantissa_ptr_struct;
 
@@ -44,7 +44,7 @@ mantissa_struct;
 typedef struct
 {
     fmpz exp;
-    slong size;
+    mp_size_t size;
     mantissa_struct d;
 }
 arf_struct;

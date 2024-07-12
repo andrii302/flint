@@ -16,9 +16,9 @@
 
 /* A = D - B*C */
 slong _nmod_mpoly_mulsub1(nmod_mpoly_t A,
-                 const ulong * Dcoeff, const ulong * Dexp, slong Dlen,
-                 const ulong * Bcoeff, const ulong * Bexp, slong Blen,
-                 const ulong * Ccoeff, const ulong * Cexp, slong Clen,
+                 const mp_limb_t * Dcoeff, const ulong * Dexp, slong Dlen,
+                 const mp_limb_t * Bcoeff, const ulong * Bexp, slong Blen,
+                 const mp_limb_t * Ccoeff, const ulong * Cexp, slong Clen,
                                          ulong maskhi, nmod_t fctx)
 {
     slong i, j;
@@ -30,11 +30,11 @@ slong _nmod_mpoly_mulsub1(nmod_mpoly_t A,
     mpoly_heap_t * x;
     slong Di;
     slong Alen;
-    ulong * Acoeff = A->coeffs;
+    mp_limb_t * Acoeff = A->coeffs;
     ulong * Aexp = A->exps;
     ulong exp;
     slong * hind;
-    ulong acc0, acc1, acc2, pp1, pp0;
+    mp_limb_t acc0, acc1, acc2, pp1, pp0;
     TMP_INIT;
 
     FLINT_ASSERT(Blen > 0);
@@ -175,9 +175,9 @@ slong _nmod_mpoly_mulsub1(nmod_mpoly_t A,
 
 /* A = D - B*C */
 void _nmod_mpoly_mulsub(nmod_mpoly_t A,
-                 const ulong * Dcoeff, const ulong * Dexp, slong Dlen,
-                 const ulong * Bcoeff, const ulong * Bexp, slong Blen,
-                 const ulong * Ccoeff, const ulong * Cexp, slong Clen,
+                 const mp_limb_t * Dcoeff, const ulong * Dexp, slong Dlen,
+                 const mp_limb_t * Bcoeff, const ulong * Bexp, slong Blen,
+                 const mp_limb_t * Ccoeff, const ulong * Cexp, slong Clen,
               flint_bitcnt_t bits, slong N, const ulong * cmpmask, nmod_t fctx)
 {
     slong i, j;
@@ -189,13 +189,13 @@ void _nmod_mpoly_mulsub(nmod_mpoly_t A,
     mpoly_heap_t * x;
     slong Di;
     slong Alen;
-    ulong * Acoeff = A->coeffs;
+    mp_limb_t * Acoeff = A->coeffs;
     ulong * Aexp = A->exps;
     ulong * exp, * exps;
     ulong ** exp_list;
     slong exp_next;
     slong * hind;
-    ulong acc0, acc1, acc2, pp1, pp0;
+    mp_limb_t acc0, acc1, acc2, pp1, pp0;
     TMP_INIT;
 
     FLINT_ASSERT(Blen > 0);
@@ -472,10 +472,10 @@ int nmod_mpolyuu_divides(
             {
                 *store++ = x->i;
                 *store++ = x->j;
-                if (x->i != -UWORD(1))
+                if (x->i != -WORD(1))
                     hind[x->i] |= WORD(1);
 
-                if (x->i == -UWORD(1))
+                if (x->i == -WORD(1))
                 {
                     a = Acoeff + x->j;
                     nmod_mpoly_fit_length(S, T->length + a->length, ctx);

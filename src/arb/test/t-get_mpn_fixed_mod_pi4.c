@@ -21,12 +21,12 @@ TEST_FUNCTION_START(arb_get_mpn_fixed_mod_pi4, state)
         arf_t x;
         int octant;
         fmpz_t q;
-        nn_ptr w;
+        mp_ptr w;
         arb_t wb, t, u;
-        slong wn;
+        mp_size_t wn;
         slong prec, prec2;
         int success;
-        ulong error;
+        mp_limb_t error;
 
         prec = 2 + n_randint(state, 10000);
         wn = 1 + n_randint(state, 200);
@@ -37,7 +37,7 @@ TEST_FUNCTION_START(arb_get_mpn_fixed_mod_pi4, state)
         arb_init(t);
         arb_init(u);
         fmpz_init(q);
-        w = flint_malloc(sizeof(ulong) * wn);
+        w = flint_malloc(sizeof(mp_limb_t) * wn);
 
         arf_randtest(x, state, prec, 14);
 

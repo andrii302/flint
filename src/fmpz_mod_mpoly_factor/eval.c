@@ -163,7 +163,7 @@ next:
         stop++;
 
     fmpz_mod_bpoly_fit_length(E, e + 1, ctx->ffinfo);
-    while ((ulong) E->length <= e)
+    while (E->length <= e)
     {
         fmpz_mod_poly_zero(E->coeffs + E->length, ctx->ffinfo);
         E->length++;

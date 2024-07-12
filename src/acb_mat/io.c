@@ -11,7 +11,6 @@
 */
 
 #include <stdio.h>
-#include "acb.h"
 #include "acb_mat.h"
 
 /* printing *******************************************************************/

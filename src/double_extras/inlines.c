@@ -11,4 +11,5 @@
 
 #define DOUBLE_EXTRAS_INLINES_C
 
+#include "flint.h"
 #include "double_extras.h"

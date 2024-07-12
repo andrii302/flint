@@ -16,7 +16,7 @@ acb_dot_fmpz(acb_t res, const acb_t initial, int subtract, acb_srcptr x, slong x
 {
     arb_ptr t;
     slong i, ssize, size, tmp_size;
-    nn_ptr ztmp;
+    mp_ptr ztmp;
     fmpz v;
     ulong av, al;
     unsigned int bc;
@@ -71,7 +71,7 @@ acb_dot_fmpz(acb_t res, const acb_t initial, int subtract, acb_srcptr x, slong x
         }
         else
         {
-            mpz_ptr z = COEFF_TO_PTR(v);
+            __mpz_struct * z = COEFF_TO_PTR(v);
 
             ssize = z->_mp_size;
             size = FLINT_ABS(ssize);
@@ -119,7 +119,7 @@ acb_dot_fmpz(acb_t res, const acb_t initial, int subtract, acb_srcptr x, slong x
 
     if (tmp_size != 0)
     {
-        ztmp = TMP_ALLOC(sizeof(ulong) * tmp_size);
+        ztmp = TMP_ALLOC(sizeof(mp_limb_t) * tmp_size);
 
         for (i = 0; i < len; i++)
         {

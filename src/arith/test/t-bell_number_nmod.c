@@ -20,10 +20,10 @@ TEST_FUNCTION_START(arith_bell_number_nmod, state)
 
     for (i = 0; i < 100 * flint_test_multiplier(); i++)
     {
-        nn_ptr b;
+        mp_ptr b;
         slong n;
         nmod_t mod;
-        ulong p, u;
+        mp_limb_t p, u;
 
         n = n_randint(state, 800);
         if (n_randint(state, 2))

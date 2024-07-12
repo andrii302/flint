@@ -13,10 +13,6 @@
 #include "mpoly.h"
 #include "nmod_mpoly.h"
 
-#if FLINT_WANT_ASSERT
-# include "longlong.h"
-#endif
-
 /*
     set A(x_var^Bstride[var]) to B/xbar^Bshifts
     it is asserted that the conversion is correct
@@ -32,7 +28,7 @@ void _nmod_mpoly_to_nmod_poly_deflate(
     ulong mask;
     slong i, shift, off, N;
     slong len = B->length;
-    ulong * coeff = B->coeffs;
+    mp_limb_t * coeff = B->coeffs;
     ulong * exp = B->exps;
     ulong var_shift, var_stride;
     flint_bitcnt_t bits = B->bits;
@@ -91,7 +87,7 @@ void _nmod_mpoly_from_nmod_poly_inflate(
     slong N;
     slong k;
     slong Alen;
-    ulong * Acoeff;
+    mp_limb_t * Acoeff;
     ulong * Aexp;
     ulong * shiftexp;
     ulong * strideexp;

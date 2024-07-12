@@ -12,9 +12,6 @@
 #include "mpn_extras.h"
 #include "profiler.h"
 
-/* TODO: Remove this preprocessor conditional */
-#if FLINT_HAVE_NATIVE_mpn_mulhigh_basecase
-
 #define N_MAX FLINT_MPN_MULHIGH_NORMALISED_FUNC_TAB_WIDTH
 
 int main(void)
@@ -32,7 +29,7 @@ int main(void)
 
         for (slong ix = 0; ix < 10; ix++)
         {
-            double t1, t2, FLINT_SET_BUT_UNUSED(__);
+            double t1, t2, __attribute__((unused)) __;
 
             mpn_random2(xp, n);
             mpn_random2(yp, n);
@@ -40,7 +37,7 @@ int main(void)
             yp[n - 1] |= (UWORD(1) << (FLINT_BITS - 1));
 
             TIMEIT_START
-            flint_mpn_mulhigh_n(ru, xp, yp, n);
+            flint_mpn_mulhigh_basecase(ru, xp, yp, n);
             TIMEIT_STOP_VALUES(__, t1)
 
             TIMEIT_START
@@ -56,9 +53,3 @@ int main(void)
 
     return 0;
 }
-#else
-int main(void)
-{
-    return 0;
-}
-#endif

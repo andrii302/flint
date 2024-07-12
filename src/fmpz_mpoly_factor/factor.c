@@ -129,7 +129,7 @@ static int _factor_irred_compressed(
 
     Abits = A->bits;
 
-    flint_rand_init(state);
+    flint_randinit(state);
     fmpz_poly_init(u);
     fmpz_poly_factor_init(uf);
     fmpz_mpoly_init(lcA, ctx);
@@ -336,7 +336,7 @@ done_alpha:
 
 cleanup:
 
-    flint_rand_clear(state);
+    flint_randclear(state);
     fmpz_poly_clear(u);
     fmpz_poly_factor_clear(uf);
     fmpz_mpoly_clear(lcA, ctx);

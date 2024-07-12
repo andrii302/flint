@@ -11,6 +11,8 @@
 
 #define PADIC_INLINES_C
 
+#include "flint.h"
+#include "ulong_extras.h"
 #include "fmpz.h"
 #include "fmpz_poly.h"
 #include "padic.h"

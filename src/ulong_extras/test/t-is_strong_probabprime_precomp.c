@@ -23,10 +23,10 @@ TEST_FUNCTION_START(n_is_strong_probabprime_precomp, state)
 
     for (i = 0; i < 100 * test_multiplier; i++) /* Test that primes pass the test */
     {
-        ulong a, d, norm;
+        mp_limb_t a, d, norm;
         mpz_t d_m;
         double dpre;
-        ulong bits = n_randint(state, FLINT_D_BITS-1) + 2;
+        mp_limb_t bits = n_randint(state, FLINT_D_BITS-1) + 2;
 
         mpz_init(d_m);
 
@@ -57,10 +57,10 @@ TEST_FUNCTION_START(n_is_strong_probabprime_precomp, state)
 
     for (i = 0; i < 100 * test_multiplier; i++) /* Test that not too many composites pass */
     {
-        ulong a, d, norm;
+        mp_limb_t a, d, norm;
         mpz_t d_m;
         double dpre;
-        ulong bits = n_randint(state, FLINT_D_BITS-3) + 4;
+        mp_limb_t bits = n_randint(state, FLINT_D_BITS-3) + 4;
 
         mpz_init(d_m);
 

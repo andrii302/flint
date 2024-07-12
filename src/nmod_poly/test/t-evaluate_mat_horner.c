@@ -22,7 +22,7 @@ TEST_FUNCTION_START(nmod_poly_evaluate_mat_horner, state)
     {
         nmod_poly_t a;
         nmod_mat_t A, B;
-        ulong sum, n = n_randtest_not_zero(state);
+        mp_limb_t sum, n = n_randtest_not_zero(state);
         slong m, k;
 
         nmod_poly_init(a, n);
@@ -64,7 +64,7 @@ TEST_FUNCTION_START(nmod_poly_evaluate_mat_horner, state)
     {
         nmod_poly_t a, b;
         nmod_mat_t A, B, C;
-        ulong n = n_randtest_not_zero(state);
+        mp_limb_t n = n_randtest_not_zero(state);
         slong m;
 
         nmod_poly_init(a, n);

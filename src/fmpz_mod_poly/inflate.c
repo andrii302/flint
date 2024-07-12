@@ -29,8 +29,7 @@ void fmpz_mod_poly_inflate(fmpz_mod_poly_t result, const fmpz_mod_poly_t input,
     }
     else
     {
-        slong res_length = (input->length - 1) * inflation + 1;
-        ulong i, j;
+        slong i, j, res_length = (input->length - 1) * inflation + 1;
 
         fmpz_mod_poly_fit_length(result, res_length, ctx);
 

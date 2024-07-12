@@ -2,10 +2,10 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <flint/fmpq.h>
-#include <flint/arb.h>
-#include <flint/bernoulli.h>
-#include <flint/profiler.h>
+#include "fmpq.h"
+#include "arb.h"
+#include "bernoulli.h"
+#include "profiler.h"
 
 int main(int argc, char *argv[])
 {

@@ -18,8 +18,8 @@ int nmod_mpoly_cmp(const nmod_mpoly_t A, const nmod_mpoly_t B,
     int cmp;
     slong i;
     slong length = A->length;
-    ulong * Acoeffs = A->coeffs;
-    ulong * Bcoeffs = B->coeffs;
+    mp_limb_t * Acoeffs = A->coeffs;
+    mp_limb_t * Bcoeffs = B->coeffs;
 
     if (A->length != B->length)
         return A->length < B->length ? -1 : 1;

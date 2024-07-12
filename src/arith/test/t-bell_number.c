@@ -32,7 +32,7 @@ TEST_FUNCTION_START(arith_bell_number, state)
         slong len, prev_len;
         fmpz * vb1, * vb2;
         fmpz_t b;
-        nn_ptr vnb, vnr;
+        mp_ptr vnb, vnr;
         slong n, iter;
         ulong nb;
         nmod_t mod;

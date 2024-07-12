@@ -18,14 +18,15 @@ ulong
 _fmpz_poly_is_cyclotomic(const fmpz * poly, slong len)
 {
     ulong * phi;
-    ulong i, d, p, q, N1, N2;
+    ulong p, q, N1, N2;
+    slong i, d;
     ulong res;
     double U;
     fmpz_poly_t tmp;
 
     d = len - 1;
 
-    if ((slong) d < 1)
+    if (d < 1)
         return 0;
 
     if (d == 1)

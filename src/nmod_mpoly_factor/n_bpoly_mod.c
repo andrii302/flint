@@ -56,7 +56,7 @@ void nmod_mpoly_set_bpoly(
     slong i, j;
     slong NA;
     slong Alen;
-    ulong * Acoeff;
+    mp_limb_t * Acoeff;
     ulong * Aexp;
     ulong * Aexps;
     TMP_INIT;
@@ -103,7 +103,7 @@ void nmod_mpoly_set_bpoly(
 }
 
 void n_bpoly_mod_taylor_shift_gen1(n_bpoly_t A, const n_bpoly_t B,
-                                                      ulong c, nmod_t ctx)
+                                                      mp_limb_t c, nmod_t ctx)
 {
     slong i;
 
@@ -195,7 +195,7 @@ void n_bpoly_mod_add(
 
 void n_bpoly_mod_make_primitive(n_poly_t g, n_bpoly_t A, nmod_t ctx)
 {
-    ulong c = 1;
+    mp_limb_t c = 1;
     slong Alen = A->length;
     slong i;
     n_poly_t q, r;
@@ -529,7 +529,7 @@ int n_bpoly_mod_divides(
         {
             for (j = order - 1; j >= 0; j--)
             {
-                ulong qc = n_poly_get_coeff(q, order*i + j);
+                mp_limb_t qc = n_poly_get_coeff(q, order*i + j);
                 if (qc == 0)
                     continue;
 
@@ -606,12 +606,12 @@ cleanup:
     return divides;
 }
 
-void n_bpoly_mod_taylor_shift_gen0(n_bpoly_t A, ulong alpha, nmod_t ctx)
+void n_bpoly_mod_taylor_shift_gen0(n_bpoly_t A, mp_limb_t alpha, nmod_t ctx)
 {
     slong i, j;
     slong n = A->length;
     n_poly_struct * Acoeffs = A->coeffs;
-    ulong c;
+    mp_limb_t c;
 
     FLINT_ASSERT(alpha < ctx.n);
 

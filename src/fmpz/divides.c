@@ -9,6 +9,7 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "gmpcompat.h"
 #include "ulong_extras.h"
 #include "fmpz.h"
@@ -31,7 +32,7 @@ fmpz_divides(fmpz_t q, const fmpz_t g, const fmpz_t h)
     {
         if (!COEFF_IS_MPZ(c2))  /* h is also small */
         {
-            ulong qz;
+            mp_limb_t qz;
 
             if (c1 < 0)
             {
@@ -62,11 +63,11 @@ fmpz_divides(fmpz_t q, const fmpz_t g, const fmpz_t h)
     }
     else                        /* g is large */
     {
-        mpz_ptr mq;
+        __mpz_struct * mq;
 
         if (!COEFF_IS_MPZ(c2))  /* h is small */
         {
-            ulong r;
+            mp_limb_t r;
 
             mq = _fmpz_promote(q);
 

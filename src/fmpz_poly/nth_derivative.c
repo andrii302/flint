@@ -34,7 +34,7 @@ void fmpz_poly_nth_derivative(fmpz_poly_t res, const fmpz_poly_t poly, ulong n)
 {
     const slong len = poly->length;
 
-    if ((ulong) len <= n)
+    if (len <= n)
     {
         fmpz_poly_zero(res);
         return;

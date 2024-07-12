@@ -17,10 +17,10 @@
 
 static int _nmod_mpoly_divides_try_dense(
     slong * Adegs,
-    slong * FLINT_UNUSED(Bdegs),
+    slong * Bdegs,
     slong nvars,
     slong Alen,
-    slong FLINT_UNUSED(Blen))
+    slong Blen)
 {
     slong i, total_dense_size;
     ulong hi;

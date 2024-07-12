@@ -13,6 +13,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include "profiler.h"
+#include "flint.h"
 #include "fmpz_mat.h"
 #include "fmpz.h"
 #include "ulong_extras.h"
@@ -79,9 +80,9 @@ compare_two(int parameters, int alg1, int alg2)
     int randtest;
 
     flint_rand_t state, state1, state2;
-    flint_rand_init(state);
-    flint_rand_init(state1);
-    flint_rand_init(state2);
+    flint_randinit(state);
+    flint_randinit(state1);
+    flint_randinit(state2);
 
     flint_printf("A = %s\n", names[alg1]);
     flint_printf("B = %s\n\n", names[alg2]);
@@ -127,9 +128,9 @@ compare_two(int parameters, int alg1, int alg2)
         flint_printf("%4wd %4wd %4wd   %5wd %5wd   %d   %6.8f  %6.8f     %.3f\n", m, n, k, bits1, bits2, randtest, t1, t2, t1 / t2);
     }
 
-    flint_rand_clear(state);
-    flint_rand_clear(state1);
-    flint_rand_clear(state2);
+    flint_randclear(state);
+    flint_randclear(state1);
+    flint_randclear(state2);
 }
 
 int main(int argc, char * argv[])

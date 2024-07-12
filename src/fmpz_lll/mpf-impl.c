@@ -10,7 +10,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "long_extras.h"
 #include "gmpcompat.h"
 #include "mpf-impl.h"
 #include "fmpz.h"
@@ -109,22 +108,10 @@ _mpf_vec_dot2(mpf_t res, const mpf * vec1, const mpf * vec2, slong len2, flint_b
 void
 mpf_mat_init(mpf_mat_t mat, slong rows, slong cols, flint_bitcnt_t prec)
 {
-    mat->r = rows;
-    mat->c = cols;
-    mat->prec = prec;
-
     if (rows != 0 && cols != 0)
     {
         slong i;
-        slong num;
-        int of;
-
-        of = z_mul_checked(&num, rows, cols);
-
-        if (of)
-            flint_throw(FLINT_ERROR, "Overflow creating a %wd x %wd object\n", rows, cols);
-
-        mat->entries = flint_malloc(num * sizeof(mpf));
+        mat->entries = flint_malloc(flint_mul_sizes(rows, cols) * sizeof(mpf));
         mat->rows = flint_malloc(rows * sizeof(mpf *));
 
         for (i = 0; i < rows * cols; i++)
@@ -137,6 +124,10 @@ mpf_mat_init(mpf_mat_t mat, slong rows, slong cols, flint_bitcnt_t prec)
        mat->entries = NULL;
        mat->rows = NULL;
     }
+
+    mat->r = rows;
+    mat->c = cols;
+    mat->prec = prec;
 }
 
 void mpf_mat_clear(mpf_mat_t mat)

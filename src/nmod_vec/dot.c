@@ -12,10 +12,10 @@
 #include "nmod.h"
 #include "nmod_vec.h"
 
-ulong
-_nmod_vec_dot(nn_srcptr vec1, nn_srcptr vec2, slong len, nmod_t mod, int nlimbs)
+mp_limb_t
+_nmod_vec_dot(mp_srcptr vec1, mp_srcptr vec2, slong len, nmod_t mod, int nlimbs)
 {
-    ulong res;
+    mp_limb_t res;
     slong i;
     NMOD_VEC_DOT(res, i, len, vec1[i], vec2[i], mod, nlimbs);
     return res;
@@ -24,40 +24,40 @@ _nmod_vec_dot(nn_srcptr vec1, nn_srcptr vec2, slong len, nmod_t mod, int nlimbs)
 int
 _nmod_vec_dot_bound_limbs(slong len, nmod_t mod)
 {
-    ulong t2, t1, t0, u1, u0;
+    mp_limb_t t2, t1, t0, u1, u0;
 
     umul_ppmm(t1, t0, mod.n - 1, mod.n - 1);
     umul_ppmm(t2, t1, t1, len);
     umul_ppmm(u1, u0, t0, len);
-    add_ssaaaa(t2, t1, t2, t1, UWORD(0), u1);
+    add_sssaaaaaa(t2, t1, t0,  t2, t1, UWORD(0),  UWORD(0), u1, u0);
 
     if (t2 != 0) return 3;
     if (t1 != 0) return 2;
-    return (u0 != 0);
+    return (t0 != 0);
 }
 
-ulong
-_nmod_vec_dot_ptr(nn_srcptr vec1, const nn_ptr * vec2, slong offset,
+mp_limb_t
+_nmod_vec_dot_ptr(mp_srcptr vec1, const mp_ptr * vec2, slong offset,
                             slong len, nmod_t mod, int nlimbs)
 {
-    ulong res;
+    mp_limb_t res;
     slong i;
     NMOD_VEC_DOT(res, i, len, vec1[i], vec2[i][offset], mod, nlimbs);
     return res;
 }
 
-static ulong
-nmod_fmma(ulong a, ulong b, ulong c, ulong d, nmod_t mod)
+static mp_limb_t
+nmod_fmma(mp_limb_t a, mp_limb_t b, mp_limb_t c, mp_limb_t d, nmod_t mod)
 {
     a = nmod_mul(a, b, mod);
     NMOD_ADDMUL(a, c, d, mod);
     return a;
 }
 
-ulong
-_nmod_vec_dot_rev(nn_srcptr vec1, nn_srcptr vec2, slong len, nmod_t mod, int nlimbs)
+mp_limb_t
+_nmod_vec_dot_rev(mp_srcptr vec1, mp_srcptr vec2, slong len, nmod_t mod, int nlimbs)
 {
-    ulong res;
+    mp_limb_t res;
     slong i;
 
     if (len <= 2 && nlimbs >= 2)

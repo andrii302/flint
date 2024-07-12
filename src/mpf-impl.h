@@ -16,7 +16,6 @@
 #ifndef FLINT_MPF_H
 #define FLINT_MPF_H
 
-#include <gmp.h>
 #include "flint.h"
 
 #ifdef __cplusplus

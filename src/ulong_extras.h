@@ -23,7 +23,6 @@
 #endif
 
 #include "limb_types.h"
-#include "longlong.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,6 +31,7 @@ extern "C" {
 /* Randomisation *************************************************************/
 
 ulong n_randlimb(flint_rand_t state);
+ulong n_randint(flint_rand_t state, ulong limit);
 ulong n_urandint(flint_rand_t state, ulong limit);
 ulong n_randbits(flint_rand_t state, unsigned int bits);
 ulong n_randprime(flint_rand_t state, ulong bits, int proved);
@@ -45,7 +45,7 @@ ulong n_randtest_prime(flint_rand_t state, int proved);
 
 ulong n_revbin(ulong in, ulong bits);
 
-int n_divides(ulong * q, ulong n, ulong p);
+int n_divides(mp_limb_t * q, mp_limb_t n, mp_limb_t p);
 ulong n_divrem2_precomp(ulong * q, ulong a, ulong n, double npre);
 ulong n_divrem2_preinv(ulong * q, ulong a, ulong n, ulong ninv);
 ulong n_div2_preinv(ulong a, ulong n, ulong ninv);
@@ -61,6 +61,7 @@ int n_is_squarefree(ulong n);
 double n_cbrt_estimate(double a);
 ulong n_cbrt(ulong a);
 ulong n_cbrt_binary_search(ulong x);
+ulong n_cbrt_newton_iteration(ulong n);
 ulong n_cbrt_chebyshev_approx(ulong n);
 ulong n_cbrtrem(ulong* remainder, ulong n);
 
@@ -78,15 +79,6 @@ ulong n_flog(ulong n, ulong b);
 ulong n_clog(ulong n, ulong b);
 ulong n_clog_2exp(ulong n, ulong b);
 
-#ifdef _MSC_VER
-# define DECLSPEC_IMPORT __declspec(dllimport)
-#else
-# define DECLSPEC_IMPORT
-#endif
-DECLSPEC_IMPORT ulong __gmpn_gcd_11(ulong, ulong);
-DECLSPEC_IMPORT ulong __gmpn_gcd_1(nn_srcptr, long int, ulong);
-#undef DECLSPEC_IMPORT
-
 ULONG_EXTRAS_INLINE
 ulong n_gcd(ulong x, ulong y)
 {
@@ -98,11 +90,11 @@ ulong n_gcd(ulong x, ulong y)
         my = flint_ctz(y);
         x >>= mx;
         y >>= my;
-        res = (x != 1 && y != 1) ? __gmpn_gcd_11(x, y) : 1;
+        res = (x != 1 && y != 1) ? mpn_gcd_11(x, y) : 1;
         res <<= FLINT_MIN(mx, my);
         return res;
 #else
-        return __gmpn_gcd_1(&x, 1, y);
+        return mpn_gcd_1(&x, 1, y);
 #endif
     }
     else
@@ -117,36 +109,24 @@ ulong n_CRT(ulong r1, ulong m1, ulong r2, ulong m2);
 
 ULONG_EXTRAS_INLINE int n_mul_checked(ulong * a, ulong b, ulong c)
 {
-#if defined(__GNUC__)
-    return __builtin_mul_overflow(b, c, a);
-#else
 	ulong ahi, alo;
 	umul_ppmm(ahi, alo, b, c);
 	*a = alo;
 	return 0 != ahi;
-#endif
 }
 
 ULONG_EXTRAS_INLINE int n_add_checked(ulong * a, ulong b, ulong c)
 {
-#if defined(__GNUC__)
-    return __builtin_add_overflow(b, c, a);
-#else
     int of = b + c < b;
     *a = b + c;
     return of;
-#endif
 }
 
 ULONG_EXTRAS_INLINE int n_sub_checked(ulong * a, ulong b, ulong c)
 {
-#if defined(__GNUC__)
-    return __builtin_sub_overflow(b, c, a);
-#else
     int of = b < c;
     *a = b - c;
     return of;
-#endif
 }
 
 /* Modular arithmetic ********************************************************/
@@ -169,12 +149,12 @@ ulong n_lll_mod_preinv(ulong a_hi, ulong a_mi, ulong a_lo, ulong n, ulong ninv);
 ulong n_mulmod_precomp(ulong a, ulong b, ulong n, double ninv);
 ulong n_mulmod_preinv(ulong a, ulong b, ulong n, ulong ninv, ulong norm);
 
-ulong n_mulmod_precomp_shoup(ulong w, ulong p);
+mp_limb_t n_mulmod_precomp_shoup(mp_limb_t w, mp_limb_t p);
 
 ULONG_EXTRAS_INLINE
-ulong n_mulmod_shoup(ulong w, ulong t, ulong w_precomp, ulong p)
+mp_limb_t n_mulmod_shoup(mp_limb_t w, mp_limb_t t, mp_limb_t w_precomp, mp_limb_t p)
 {
-    ulong q, r, p_hi, p_lo;
+    mp_limb_t q, r, p_hi, p_lo;
 
     umul_ppmm(p_hi, p_lo, w_precomp, t);
     q = p_hi;
@@ -324,7 +304,7 @@ FLINT_DLL extern const unsigned int flint_primes_small[];
 
 extern FLINT_TLS_PREFIX ulong * _flint_primes[FLINT_BITS];
 extern FLINT_TLS_PREFIX double * _flint_prime_inverses[FLINT_BITS];
-extern FLINT_TLS_PREFIX slong _flint_primes_used;
+extern FLINT_TLS_PREFIX int _flint_primes_used;
 
 void n_primes_init(n_primes_t iter);
 void n_primes_clear(n_primes_t iter);
@@ -363,7 +343,7 @@ void n_nth_prime_bounds(ulong *lo, ulong *hi, ulong n);
 ulong n_prime_pi(ulong n);
 void n_prime_pi_bounds(ulong *lo, ulong *hi, ulong n);
 
-ulong n_nextprime(ulong n, int FLINT_UNUSED(proved));
+ulong n_nextprime(ulong n, int proved);
 
 /* Factorisation *************************************************************/
 
@@ -376,8 +356,6 @@ ulong n_nextprime(ulong n, int FLINT_UNUSED(proved));
 #define FLINT_FACTOR_ONE_LINE_ITERS 40000
 
 ULONG_EXTRAS_INLINE void n_factor_init(n_factor_t * factors) { factors->num = UWORD(0); }
-
-ulong n_factor_evaluate(const n_factor_t * fac);
 
 void n_factor(n_factor_t * factors, ulong n, int proved);
 

@@ -23,7 +23,7 @@ TEST_FUNCTION_START(nmod_poly_mulhigh_classical, state)
         nmod_poly_t a, b, c;
         slong j, start;
 
-        ulong n = n_randtest_not_zero(state);
+        mp_limb_t n = n_randtest_not_zero(state);
 
         nmod_poly_init(a, n);
         nmod_poly_init(b, n);
@@ -65,7 +65,7 @@ TEST_FUNCTION_START(nmod_poly_mulhigh_classical, state)
     {
         nmod_poly_t a, b, c;
         slong j, start;
-        ulong n = n_randtest_not_zero(state);
+        mp_limb_t n = n_randtest_not_zero(state);
 
         nmod_poly_init(a, n);
         nmod_poly_init(b, n);
@@ -107,7 +107,7 @@ TEST_FUNCTION_START(nmod_poly_mulhigh_classical, state)
     {
         nmod_poly_t a, b, c, d;
         slong j, start;
-        ulong n = n_randtest_not_zero(state);
+        mp_limb_t n = n_randtest_not_zero(state);
 
         nmod_poly_init(a, n);
         nmod_poly_init(b, n);

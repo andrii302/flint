@@ -38,7 +38,7 @@ int n_fq_bpoly_hlift2_cubic(
     slong i, j;
     n_fq_poly_struct * c, * s, * t, * u, * v, * g, * ce;
     n_fq_bpoly_struct * B0e, * B1e;
-    ulong * alpha;
+    mp_limb_t * alpha;
 
     FLINT_ASSERT(n_fq_bpoly_is_canonical(A, ctx));
     FLINT_ASSERT(n_fq_bpoly_is_canonical(B0, ctx));
@@ -60,7 +60,7 @@ int n_fq_bpoly_hlift2_cubic(
     B0e  = n_bpoly_stack_take_top(St->bpoly_stack);
     B1e  = n_bpoly_stack_take_top(St->bpoly_stack);
 
-    alpha = FLINT_ARRAY_ALLOC(d, ulong);
+    alpha = FLINT_ARRAY_ALLOC(d, mp_limb_t);
     n_fq_set_fq_nmod(alpha, alpha_, ctx);
 
     n_fq_bpoly_taylor_shift_gen0_n_fq(A, alpha, ctx);
@@ -231,7 +231,7 @@ int n_fq_bpoly_hlift2(
     int success;
     slong i, j;
     n_fq_poly_struct * c, * s, * t, * u, * v, * g;
-    ulong * alpha;
+    mp_limb_t * alpha;
 
     FLINT_ASSERT(n_fq_bpoly_is_canonical(A, ctx));
     FLINT_ASSERT(n_fq_bpoly_is_canonical(B0, ctx));
@@ -248,7 +248,7 @@ int n_fq_bpoly_hlift2(
     v = n_poly_stack_take_top(St->poly_stack);
     g = n_poly_stack_take_top(St->poly_stack);
 
-    alpha = FLINT_ARRAY_ALLOC(d, ulong);
+    alpha = FLINT_ARRAY_ALLOC(d, mp_limb_t);
     n_fq_set_fq_nmod(alpha, alpha_, ctx);
 
     n_fq_bpoly_taylor_shift_gen0_n_fq(A, alpha, ctx);
@@ -368,7 +368,7 @@ int n_fq_bpoly_hlift(
     const fq_nmod_t alpha,
     slong degree_inner, /* required degree in x */
     const fq_nmod_ctx_t ctx,
-    n_poly_bpoly_stack_t FLINT_UNUSED(St))
+    n_poly_bpoly_stack_t St)
 {
     int success;
     slong i, j, k, tdeg;

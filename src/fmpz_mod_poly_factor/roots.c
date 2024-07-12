@@ -14,10 +14,6 @@
 #include "fmpz_mod_poly.h"
 #include "fmpz_mod_poly_factor.h"
 
-#if FLINT_WANT_ASSERT
-# include "longlong.h"
-#endif
-
 /*
     Helper function for finding roots. The roots of a monic f are written
     with exponent given in mult to r. Uses Rabin's Las Vegas algorithm
@@ -185,7 +181,7 @@ void fmpz_mod_poly_roots(fmpz_mod_poly_factor_t r, const fmpz_mod_poly_t f,
     fmpz_sub_ui(p2, p2, 1);
     fmpz_fdiv_q_2exp(p2, p2, 1);
 
-    flint_rand_init(randstate);
+    flint_randinit(randstate);
 
     for (i = 0; i < FLINT_BITS + 3; i++)
         fmpz_mod_poly_init(t + i, ctx);
@@ -212,7 +208,7 @@ void fmpz_mod_poly_roots(fmpz_mod_poly_factor_t r, const fmpz_mod_poly_t f,
 
     fmpz_clear(p2);
 
-    flint_rand_clear(randstate);
+    flint_randclear(randstate);
 
     for (i = 0; i < FLINT_BITS + 3; i++)
         fmpz_mod_poly_clear(t + i, ctx);

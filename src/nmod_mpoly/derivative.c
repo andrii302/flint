@@ -9,14 +9,13 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include <gmp.h>
 #include "nmod.h"
 #include "mpoly.h"
 #include "nmod_mpoly.h"
 
 static slong _nmod_mpoly_derivative(
-    ulong * coeff1, ulong * exp1,
-    const ulong * coeff2, const ulong * exp2, slong len2,
+    mp_limb_t * coeff1, ulong * exp1,
+    const mp_limb_t * coeff2, const ulong * exp2, slong len2,
     flint_bitcnt_t bits,
     slong N,
     slong offset,
@@ -31,7 +30,7 @@ static slong _nmod_mpoly_derivative(
     len1 = 0;
     for (i = 0; i < len2; i++)
     {
-        ulong cr;
+        mp_limb_t cr;
         ulong c = (exp2[N*i + offset] >> shift) & mask;
         if (c == 0)
             continue;
@@ -48,8 +47,8 @@ static slong _nmod_mpoly_derivative(
 
 
 static slong _nmod_mpoly_derivative_mp(
-    ulong * coeff1, ulong * exp1,
-    const ulong * coeff2, const ulong * exp2, slong len2,
+    mp_limb_t * coeff1, ulong * exp1,
+    const mp_limb_t * coeff2, const ulong * exp2, slong len2,
     flint_bitcnt_t bits,
     slong N,
     slong offset,
@@ -58,17 +57,17 @@ static slong _nmod_mpoly_derivative_mp(
 {
     slong i, len1;
     slong esize = bits/FLINT_BITS;
-    ulong * t;
+    mp_limb_t * t;
     TMP_INIT;
 
     TMP_START;
-    t = (ulong *) TMP_ALLOC(esize*sizeof(ulong));
+    t = (mp_limb_t *) TMP_ALLOC(esize*sizeof(mp_limb_t));
 
     /* x^c -> c*x^(c-1) */
     len1 = 0;
     for (i = 0; i < len2; i++)
     {
-        ulong cr = mpn_divrem_1(t, 0, exp2 + N*i + offset, esize, fctx.n);
+        mp_limb_t cr = mpn_divrem_1(t, 0, exp2 + N*i + offset, esize, fctx.n);
         coeff1[len1] = nmod_mul(coeff2[i], cr, fctx);
         if (coeff1[len1] == 0)
             continue;

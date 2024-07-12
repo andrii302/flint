@@ -13,7 +13,7 @@
 #include "nmod.h"
 #include "nmod_poly.h"
 
-#if FLINT_HAVE_FFT_SMALL
+#ifdef FLINT_HAVE_FFT_SMALL
 
 #include "fft_small.h"
 
@@ -33,8 +33,8 @@ static const short fft_sqr_tab[] = {1420, 1420, 1353, 964, 689, 569, 407, 353, 3
 
 #endif
 
-void _nmod_poly_mul(nn_ptr res, nn_srcptr poly1, slong len1,
-                             nn_srcptr poly2, slong len2, nmod_t mod)
+void _nmod_poly_mul(mp_ptr res, mp_srcptr poly1, slong len1,
+                             mp_srcptr poly2, slong len2, nmod_t mod)
 {
     slong bits, cutoff_len;
 
@@ -47,7 +47,7 @@ void _nmod_poly_mul(nn_ptr res, nn_srcptr poly1, slong len1,
     bits = NMOD_BITS(mod);
     cutoff_len = FLINT_MIN(len1, 2 * len2);
 
-#if FLINT_HAVE_FFT_SMALL
+#ifdef FLINT_HAVE_FFT_SMALL
 
     if (poly1 == poly2 && len1 == len2)
     {

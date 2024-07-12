@@ -66,15 +66,15 @@ int fmpz_factor_smooth(fmpz_factor_t factor, const fmpz_t n,
 		                                        slong bits, int proved)
 {
     ulong exp;
-    ulong p;
-    mpz_ptr xsrc;
-    nn_ptr xd;
-    slong xsize;
+    mp_limb_t p;
+    __mpz_struct * xsrc;
+    mp_ptr xd;
+    mp_size_t xsize;
     slong found;
     slong trial_stop;
     slong * idx;
     slong i, b, bits2, istride;
-    const ulong * primes;
+    const mp_limb_t * primes;
     int ret = 0;
 
     TMP_INIT;
@@ -109,7 +109,7 @@ int fmpz_factor_smooth(fmpz_factor_t factor, const fmpz_t n,
 
     /* Create a temporary copy to be mutated */
     TMP_START;
-    xd = TMP_ALLOC(xsize * sizeof(ulong));
+    xd = TMP_ALLOC(xsize * sizeof(mp_limb_t));
     flint_mpn_copyi(xd, xsrc->_mp_d, xsize);
 
     /* Factor out powers of two */
@@ -144,22 +144,19 @@ int fmpz_factor_smooth(fmpz_factor_t factor, const fmpz_t n,
                 continue;
 
             exp = 1;
-            mpn_divexact_1(xd, xd, xsize, p);
-            xsize -= (xd[xsize - 1] == 0);
+            xsize = flint_mpn_divexact_1(xd, xsize, p);
 
             /* Check if p^2 divides n */
             if (flint_mpn_divisible_1_odd(xd, xsize, p))
             {
-                mpn_divexact_1(xd, xd, xsize, p);
-                xsize -= (xd[xsize - 1] == 0);
+                xsize = flint_mpn_divexact_1(xd, xsize, p);
                 exp = 2;
             }
 
             /* If we're up to cubes, then maybe there are higher powers */
             if (exp == 2 && flint_mpn_divisible_1_odd(xd, xsize, p))
             {
-                mpn_divexact_1(xd, xd, xsize, p);
-                xsize -= (xd[xsize - 1] == 0);
+                xsize = flint_mpn_divexact_1(xd, xsize, p);
                 xsize = flint_mpn_remove_power_ascending(xd, xsize, &p, 1, &exp);
                 exp += 3;
             }
@@ -179,7 +176,7 @@ int fmpz_factor_smooth(fmpz_factor_t factor, const fmpz_t n,
     else
     {
         fmpz_t n2, f;
-        mpz_ptr data;
+        __mpz_struct * data;
 
         fmpz_init2(n2, xsize);
 
@@ -219,7 +216,7 @@ int fmpz_factor_smooth(fmpz_factor_t factor, const fmpz_t n,
                 flint_rand_t state;
 
                 fmpz_init(f);
-                flint_rand_init(state);
+                flint_randinit(state);
 
                 /* currently only tuning values up to factors of 100 bits */
                 bits = FLINT_MIN(bits, 100);
@@ -246,7 +243,7 @@ int fmpz_factor_smooth(fmpz_factor_t factor, const fmpz_t n,
                         }
 
                         /* if what remains is below the bound, just factor it */
-                        if (fmpz_sizeinbase(n2, 2) < (ulong) bits)
+                        if (fmpz_sizeinbase(n2, 2) < bits)
                         {
                             fmpz_factor_no_trial(factor, n2);
 
@@ -268,7 +265,7 @@ int fmpz_factor_smooth(fmpz_factor_t factor, const fmpz_t n,
                     }
                 }
 
-                flint_rand_clear(state);
+                flint_randclear(state);
                 fmpz_clear(f);
             }
         }

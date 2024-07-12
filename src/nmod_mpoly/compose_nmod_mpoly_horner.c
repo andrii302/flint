@@ -47,7 +47,7 @@ static int _nmod_mpoly_pmul(nmod_mpoly_t A, const nmod_mpoly_t X,
 
     p = fmpz_get_ui(pow);
 
-    if (X->length <= WORD(2) || (slong) (A->length / p) < X->length)
+    if (X->length <= WORD(2) || A->length/p < X->length)
     {
         if (!nmod_mpoly_pow_ui(T, X, p, ctx))
         {
@@ -90,7 +90,7 @@ int nmod_mpoly_compose_nmod_mpoly_horner(nmod_mpoly_t A,
     ulong * counts;
     slong Blen = B->length;
     slong * Blist;
-    const ulong * Bcoeff = B->coeffs;
+    const mp_limb_t * Bcoeff = B->coeffs;
     ulong * Bexp = B->exps;
     flint_bitcnt_t Bbits = B->bits;
     slong BN = mpoly_words_per_exp(Bbits, ctxB->minfo);

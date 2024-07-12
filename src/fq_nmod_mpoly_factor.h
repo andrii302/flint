@@ -50,7 +50,7 @@ void fq_nmod_mpoly_factor_clear(fq_nmod_mpoly_factor_t f,
 
 FQ_NMOD_MPOLY_FACTOR_INLINE
 slong fq_nmod_mpoly_factor_length(const fq_nmod_mpoly_factor_t f,
-                                                 const fq_nmod_mpoly_ctx_t FLINT_UNUSED(ctx))
+                                                 const fq_nmod_mpoly_ctx_t ctx)
 {
     return f->num;
 }
@@ -73,7 +73,7 @@ void fq_nmod_mpoly_factor_swap_base(fq_nmod_mpoly_t p,
     fq_nmod_mpoly_swap(p, f->poly + i, ctx);
 }
 
-slong fq_nmod_mpoly_factor_get_exp_si(fq_nmod_mpoly_factor_t f, slong i, const fq_nmod_mpoly_ctx_t FLINT_UNUSED(ctx));
+slong fq_nmod_mpoly_factor_get_exp_si(fq_nmod_mpoly_factor_t f, slong i, const fq_nmod_mpoly_ctx_t ctx);
 
 void fq_nmod_mpoly_factor_set(fq_nmod_mpoly_factor_t a,
                 const fq_nmod_mpoly_factor_t b, const fq_nmod_mpoly_ctx_t ctx);
@@ -107,7 +107,7 @@ int fq_nmod_mpoly_factor_cmp(const fq_nmod_mpoly_factor_t A,
 
 FQ_NMOD_MPOLY_FACTOR_INLINE
 void fq_nmod_mpoly_factor_swap(fq_nmod_mpoly_factor_t A,
-                       fq_nmod_mpoly_factor_t B, const fq_nmod_mpoly_ctx_t FLINT_UNUSED(ctx))
+                       fq_nmod_mpoly_factor_t B, const fq_nmod_mpoly_ctx_t ctx)
 {
    fq_nmod_mpoly_factor_struct t = *A;
    *A = *B;
@@ -266,7 +266,7 @@ typedef struct
 typedef fq_nmod_mpolyv_struct fq_nmod_mpolyv_t[1];
 
 FQ_NMOD_MPOLY_FACTOR_INLINE
-void fq_nmod_mpolyv_init(fq_nmod_mpolyv_t A, const fq_nmod_mpoly_ctx_t FLINT_UNUSED(ctx))
+void fq_nmod_mpolyv_init(fq_nmod_mpolyv_t A, const fq_nmod_mpoly_ctx_t ctx)
 {
     A->coeffs = NULL;
     A->alloc = 0;
@@ -275,7 +275,7 @@ void fq_nmod_mpolyv_init(fq_nmod_mpolyv_t A, const fq_nmod_mpoly_ctx_t FLINT_UNU
 
 FQ_NMOD_MPOLY_FACTOR_INLINE
 void fq_nmod_mpolyv_swap(fq_nmod_mpolyv_t A, fq_nmod_mpolyv_t B,
-                                                 const fq_nmod_mpoly_ctx_t FLINT_UNUSED(ctx))
+                                                 const fq_nmod_mpoly_ctx_t ctx)
 {
    fq_nmod_mpolyv_struct t = *A;
    *A = *B;
@@ -373,7 +373,7 @@ int fq_nmod_mpoly_factor_irred_lgprime_zippel(
 /*****************************************************************************/
 
 void fq_nmod_mpoly_compression_do(fq_nmod_mpoly_t L,
-               const fq_nmod_mpoly_ctx_t Lctx, ulong * Acoeffs, slong Alen,
+               const fq_nmod_mpoly_ctx_t Lctx, mp_limb_t * Acoeffs, slong Alen,
                                                         mpoly_compression_t M);
 
 void fq_nmod_mpoly_compression_undo(fq_nmod_mpoly_t A,
@@ -472,7 +472,7 @@ int n_fq_bpoly_hlift(
     const fq_nmod_t alpha,
     slong degree_inner, /* required degree in x */
     const fq_nmod_ctx_t ctx,
-    n_poly_bpoly_stack_t FLINT_UNUSED(St));
+    n_poly_bpoly_stack_t St);
 
 int n_fq_polyu3_hlift(
     slong r,
@@ -498,7 +498,7 @@ int fq_nmod_mpoly_factor_zippel(fq_nmod_mpoly_factor_t f,
 
 int _fq_nmod_mpoly_eval_rest_n_fq_poly(n_poly_struct * E,
     slong * starts, slong * ends, slong * stops, ulong * es,
-    const ulong * Acoeffs, const ulong * Aexps, slong Alen, slong var,
+    const mp_limb_t * Acoeffs, const ulong * Aexps, slong Alen, slong var,
     const n_fq_poly_struct * alphas, const slong * offsets, const slong * shifts,
                     slong N, ulong mask, slong nvars, const fq_nmod_ctx_t ctx);
 

@@ -14,10 +14,10 @@
 #include "arith.h"
 
 void
-arith_number_of_partitions_nmod_vec(nn_ptr res, slong len, nmod_t mod)
+arith_number_of_partitions_nmod_vec(mp_ptr res, slong len, nmod_t mod)
 {
-    nn_ptr tmp;
-    ulong r;
+    mp_ptr tmp;
+    mp_limb_t r;
     slong k, n;
 
     r = mod.n - UWORD(1);

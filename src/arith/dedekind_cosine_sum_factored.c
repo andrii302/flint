@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include <gmp.h>
 #include "ulong_extras.h"
 #include "arith.h"
 
@@ -20,10 +19,10 @@ static const int gcd24_tab[24] = {
     12, 1, 2, 3, 8, 1, 6, 1, 4, 3, 2, 1
 };
 
-static ulong
-n_sqrtmod_2exp(ulong a, int k)
+static mp_limb_t
+n_sqrtmod_2exp(mp_limb_t a, int k)
 {
-    ulong x;
+    mp_limb_t x;
     int i;
 
     if (a == 0 || k == 0)
@@ -49,10 +48,10 @@ n_sqrtmod_2exp(ulong a, int k)
     return x;
 }
 
-static ulong
-n_sqrtmod_ppow(ulong a, ulong p, int k, ulong pk, ulong pkinv)
+static mp_limb_t
+n_sqrtmod_ppow(mp_limb_t a, mp_limb_t p, int k, mp_limb_t pk, mp_limb_t pkinv)
 {
-    ulong r, t;
+    mp_limb_t r, t;
     int i;
 
     /* n_sqrtmod assumes that a is reduced */
@@ -74,10 +73,10 @@ n_sqrtmod_ppow(ulong a, ulong p, int k, ulong pk, ulong pkinv)
 }
 
 void
-trigprod_mul_prime_power(trig_prod_t prod, ulong k, ulong n,
-                                                ulong p, int exp)
+trigprod_mul_prime_power(trig_prod_t prod, mp_limb_t k, mp_limb_t n,
+                                                mp_limb_t p, int exp)
 {
-    ulong m, mod, inv;
+    mp_limb_t m, mod, inv;
 
     if (k <= 3)
     {
@@ -128,7 +127,7 @@ trigprod_mul_prime_power(trig_prod_t prod, ulong k, ulong n,
         if (exp % 2 == 1)
             prod->prefactor *= -1;
         prod->sqrt_p *= k;
-        prod->cos_p[prod->n] = (slong)(k - m);
+        prod->cos_p[prod->n] = (mp_limb_signed_t)(k - m);
         prod->cos_q[prod->n] = 2 * k;
         prod->n++;
         return;
@@ -149,7 +148,7 @@ trigprod_mul_prime_power(trig_prod_t prod, ulong k, ulong n,
             prod->prefactor *= -1;
         prod->sqrt_p *= k;
         prod->sqrt_q *= 3;
-        prod->cos_p[prod->n] = (slong)(3 * k - 8 * m);
+        prod->cos_p[prod->n] = (mp_limb_signed_t)(3 * k - 8 * m);
         prod->cos_q[prod->n] = 6 * k;
         prod->n++;
         return;
@@ -192,11 +191,11 @@ Solve (k2^2 * d2 * e) * n1 = (d2 * e * n + (k2^2 - 1) / d1)   mod k2
 
 TODO: test this on 32 bit
 */
-static ulong
-solve_n1(ulong n, ulong k1, ulong k2,
-        ulong d1, ulong d2, ulong e)
+static mp_limb_t
+solve_n1(mp_limb_t n, mp_limb_t k1, mp_limb_t k2,
+        mp_limb_t d1, mp_limb_t d2, mp_limb_t e)
 {
-    ulong inv, n1, u, t[2];
+    mp_limb_t inv, n1, u, t[2];
 
     inv = n_preinvert_limb(k1);
 
@@ -216,7 +215,7 @@ solve_n1(ulong n, ulong k1, ulong k2,
 
 
 void
-arith_hrr_expsum_factored(trig_prod_t prod, ulong k, ulong n)
+arith_hrr_expsum_factored(trig_prod_t prod, mp_limb_t k, mp_limb_t n)
 {
     n_factor_t fac;
     int i;
@@ -233,7 +232,7 @@ arith_hrr_expsum_factored(trig_prod_t prod, ulong k, ulong n)
     /* Repeatedly factor A_k(n) into A_k1(n1)*A_k2(n2) with k1, k2 coprime */
     for (i = 0; i + 1 < fac.num && prod->prefactor != 0; i++)
     {
-        ulong p, k1, k2, inv, n1, n2;
+        mp_limb_t p, k1, k2, inv, n1, n2;
 
         p = fac.p[i];
 
@@ -271,7 +270,7 @@ arith_hrr_expsum_factored(trig_prod_t prod, ulong k, ulong n)
         /* k = k1 * k2 with k1 odd or divisible by 8 */
         else
         {
-            ulong d1, d2, e;
+            mp_limb_t d1, d2, e;
 
             k1 = n_pow(fac.p[i], fac.exp[i]);
             k2 = k / k1;

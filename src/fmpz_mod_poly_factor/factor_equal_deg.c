@@ -232,7 +232,8 @@ static void _fmpz_mod_poly_factor_equal_deg_via_trace(
     const fmpz * p = fmpz_mod_ctx_modulus(ctx);
     fmpz_t halfp;   /* floor((p-1)/2) */
     slong n = fmpz_mod_poly_degree(ff, ctx);
-    flint_bitcnt_t r = n/d, r_cutoff;
+    slong r = n/d;
+    flint_bitcnt_t r_cutoff;
     fmpz_mod_poly_t t, tq, tr, finv;
     slong Qlen, Qalloc;
     queue_struct * Q;
@@ -246,7 +247,7 @@ static void _fmpz_mod_poly_factor_equal_deg_via_trace(
 
     res->num = 0;
 
-    flint_rand_init(state);
+    flint_randinit(state);
 
     fmpz_init(halfp);
     fmpz_sub_ui(halfp, p, 1);
@@ -336,7 +337,7 @@ next_alpha:
     fmpz_mod_berlekamp_massey_start_over(bma, ctx);
     fmpz_mod_poly_one(t, ctx);
     fmpz_mod_berlekamp_massey_add_point_ui(bma, 1, ctx);
-    for (i = 1; (ulong) i < 2*r; i++)
+    for (i = 1; i < 2*r; i++)
     {
         fmpz_mod_poly_mulmod_preinv(tq, t, S->a, S->f, finv, ctx);
         fmpz_mod_poly_swap(t, tq, ctx);
@@ -445,7 +446,7 @@ cleanup:
     fmpz_mod_poly_clear(tr, ctx);
     fmpz_mod_poly_clear(finv, ctx);
 
-    flint_rand_clear(state);
+    flint_randclear(state);
     fmpz_clear(halfp);
 
     return;

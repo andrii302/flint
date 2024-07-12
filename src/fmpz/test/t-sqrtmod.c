@@ -21,7 +21,7 @@ TEST_FUNCTION_START(fmpz_sqrtmod, state)
     {
         int ans;
         fmpz_t a, b, c, p;
-        ulong prime;
+        mp_limb_t prime;
 
         prime = n_randint(state, UWORD(1) << (FLINT_BITS - 1));
         prime = n_nextprime(prime, 1);
@@ -61,7 +61,7 @@ TEST_FUNCTION_START(fmpz_sqrtmod, state)
     {
         int ans;
         fmpz_t a, b, c, d, p;
-        ulong prime;
+        mp_limb_t prime;
 
         prime = n_randint(state, UWORD(1) << (FLINT_BITS - 1));
         prime = n_nextprime(prime, 1);

@@ -10,6 +10,7 @@
 */
 
 #include <stdlib.h>
+#include "flint.h"
 #include "ulong_extras.h"
 #include "fmpz.h"
 #include "fq.h"

@@ -31,7 +31,7 @@ void fq_nmod_mpoly_get_coeff_vars_ui(
     ulong * uexp;
     ulong * tmask, * texp;
     slong nvars = ctx->minfo->nvars;
-    ulong * Ccoeffs;
+    mp_limb_t * Ccoeffs;
     ulong * Cexps;
     slong Clen;
     TMP_INIT;
@@ -107,7 +107,7 @@ continue_outer_sp:;
     }
     else
     {
-        slong wpf = A->bits/FLINT_BITS;
+        ulong wpf = A->bits/FLINT_BITS;
         maxoffset = 0;
         minoffset = N;
         for (i = 0; i < length; i++)

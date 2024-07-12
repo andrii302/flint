@@ -25,19 +25,16 @@
 
 int main(void)
 {
-    nn_ptr x, y, r, s;
+    mp_ptr x, y, r, s;
     slong n;
-    flint_rand_t state;
 
-    flint_rand_init(state);
+    x = flint_malloc(sizeof(mp_limb_t) * FLINT_MAX(N_MAX_MUL, N_MAX_SQR));
+    y = flint_malloc(sizeof(mp_limb_t) * FLINT_MAX(N_MAX_MUL, N_MAX_SQR));
+    r = flint_malloc(2 * sizeof(mp_limb_t) * FLINT_MAX(N_MAX_MUL, N_MAX_SQR));
+    s = flint_malloc(2 * sizeof(mp_limb_t) * FLINT_MAX(N_MAX_MUL, N_MAX_SQR));
 
-    x = flint_malloc(sizeof(ulong) * FLINT_MAX(N_MAX_MUL, N_MAX_SQR));
-    y = flint_malloc(sizeof(ulong) * FLINT_MAX(N_MAX_MUL, N_MAX_SQR));
-    r = flint_malloc(2 * sizeof(ulong) * FLINT_MAX(N_MAX_MUL, N_MAX_SQR));
-    s = flint_malloc(2 * sizeof(ulong) * FLINT_MAX(N_MAX_MUL, N_MAX_SQR));
-
-    flint_mpn_rrandom(x, state, FLINT_MAX(N_MAX_MUL, N_MAX_SQR));
-    flint_mpn_rrandom(y, state, FLINT_MAX(N_MAX_MUL, N_MAX_SQR));
+    mpn_random2(x, FLINT_MAX(N_MAX_MUL, N_MAX_SQR));
+    mpn_random2(y, FLINT_MAX(N_MAX_MUL, N_MAX_SQR));
 
     flint_printf("mpn_mul_n vs fft_small\n\n");
 
@@ -81,8 +78,6 @@ int main(void)
     flint_free(y);
     flint_free(r);
     flint_free(s);
-
-    flint_rand_clear(state);
 
     flint_cleanup_master();
 

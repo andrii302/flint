@@ -19,7 +19,7 @@
 #include "fmpz_mod_poly.h"
 
 void
-fmpz_poly_randtest_irreducible1(fmpz_poly_t p, flint_rand_t state, slong len, flint_bitcnt_t bits)
+fmpz_poly_randtest_irreducible1(fmpz_poly_t p, flint_rand_t state, slong len, mp_bitcnt_t bits)
 {
     slong i;
     fmpz_t c;
@@ -57,23 +57,23 @@ fmpz_poly_randtest_irreducible1(fmpz_poly_t p, flint_rand_t state, slong len, fl
 }
 
 void
-fmpz_poly_randtest_irreducible2(fmpz_poly_t pol, flint_rand_t state, slong len, flint_bitcnt_t bits)
+fmpz_poly_randtest_irreducible2(fmpz_poly_t pol, flint_rand_t state, slong len, mp_bitcnt_t bits)
 {
     while (1)
     {
         slong i;
         fmpz_poly_factor_t fac;
 
-        do
+        do {
             fmpz_poly_randtest(pol, state, len, bits);
-        while (fmpz_poly_degree(pol) < 1);
+        } while (fmpz_poly_degree(pol) < 1);
 
         fmpz_poly_factor_init(fac);
         fmpz_poly_factor(fac, pol);
 
         i = n_randint(state, fac->num);
 
-        if ((ulong) FLINT_ABS(fmpz_poly_max_bits(fac->p + i)) <= bits)
+        if (FLINT_ABS(fmpz_poly_max_bits(fac->p + i)) <= bits)
         {
             fmpz_poly_set(pol, fac->p + i);
             fmpz_poly_factor_clear(fac);
@@ -85,7 +85,7 @@ fmpz_poly_randtest_irreducible2(fmpz_poly_t pol, flint_rand_t state, slong len, 
 }
 
 void
-fmpz_poly_randtest_irreducible(fmpz_poly_t pol, flint_rand_t state, slong len, flint_bitcnt_t bits)
+fmpz_poly_randtest_irreducible(fmpz_poly_t pol, flint_rand_t state, slong len, mp_bitcnt_t bits)
 {
     if (n_randint(state, 2))
         fmpz_poly_randtest_irreducible1(pol, state, len, bits);

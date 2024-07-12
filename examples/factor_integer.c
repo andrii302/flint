@@ -13,11 +13,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <gmp.h>
-#include <flint/flint.h>
-#include <flint/fmpz.h>
-#include <flint/fmpz_factor.h>
-#include <flint/gr.h>
-#include <flint/profiler.h>
+#include "flint.h"
+#include "fmpz.h"
+#include "fmpz_factor.h"
+#include "fmpz_mpoly.h"
+#include "profiler.h"
 
 int
 main(int argc, char * argv[])
@@ -51,18 +51,26 @@ main(int argc, char * argv[])
         }
         else
         {
-            /* allow expression input like "2^64+1" */
+            /* allow input like 2^64+1 */
+            /* we don't have an expression parser for fmpz yet, so use
+               fmpz_mpoly with 0 variables  */
             {
-                gr_ctx_t ZZ;
-                gr_ctx_init_fmpz(ZZ);
+                fmpz_mpoly_ctx_t mctx;
+                fmpz_mpoly_t f;
 
-                if (gr_set_str(n, argv[i], ZZ) != GR_SUCCESS)
+                fmpz_mpoly_ctx_init(mctx, 0, ORD_LEX);
+                fmpz_mpoly_init(f, mctx);
+
+                if (fmpz_mpoly_set_str_pretty(f, argv[i], NULL, mctx) != 0)
                 {
                     flint_printf("unable to parse integer\n");
                     return 1;
                 }
 
-                gr_ctx_clear(ZZ);
+                fmpz_mpoly_get_fmpz(n, f, mctx);
+
+                fmpz_mpoly_clear(f, mctx);
+                fmpz_mpoly_ctx_clear(mctx);
             }
         }
     }

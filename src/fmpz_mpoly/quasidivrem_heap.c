@@ -10,7 +10,6 @@
 */
 
 #include "ulong_extras.h"
-#include "mpn_extras.h"
 #include "fmpz.h"
 #include "fmpz_vec.h"
 #include "mpoly.h"
@@ -108,7 +107,7 @@ slong _fmpz_mpoly_quasidivrem_heap1(fmpz_t scale, slong * lenr,
             len = FLINT_MAX(q_len + 1, 2*qs_alloc);
             qs = (fmpz *) flint_realloc(qs, len*sizeof(fmpz));
             if (len > qs_alloc)
-                flint_mpn_zero((nn_ptr) (qs + qs_alloc), len - qs_alloc);
+                flint_mpn_zero((mp_ptr) (qs + qs_alloc), len - qs_alloc);
             qs_alloc = len;
         }
         /* make sure remainder array has space for r_len + 1 entries */
@@ -119,7 +118,7 @@ slong _fmpz_mpoly_quasidivrem_heap1(fmpz_t scale, slong * lenr,
             len = FLINT_MAX(r_len + 1, 2*rs_alloc);
             rs = (fmpz *) flint_realloc(rs, len*sizeof(fmpz));
             if (len > rs_alloc)
-                flint_mpn_zero((nn_ptr) (rs + rs_alloc), len - rs_alloc);
+                flint_mpn_zero((mp_ptr) (rs + rs_alloc), len - rs_alloc);
             rs_alloc = len;
         }
 
@@ -142,24 +141,24 @@ slong _fmpz_mpoly_quasidivrem_heap1(fmpz_t scale, slong * lenr,
             {
                 *store++ = x->i;
                 *store++ = x->j;
-                if (x->i != -UWORD(1))
+                if (x->i != -WORD(1))
                     hind[x->i] |= WORD(1);
 
                 if (small)
                 {
-                    if (x->i == -UWORD(1))
+                    if (x->i == -WORD(1))
                        _fmpz_mpoly_add_uiuiui_fmpz(acc_sm, poly2 + x->j);
                     else
                        _fmpz_mpoly_submul_uiuiui_fmpz(acc_sm, poly3[x->i], q_coeff[x->j]);
                 } else if (scaleis1)
                 {
-                    if (x->i == -UWORD(1))
+                    if (x->i == -WORD(1))
                         fmpz_add(acc_lg, acc_lg, poly2 + x->j);
                     else
                         fmpz_submul(acc_lg, poly3 + x->i, q_coeff + x->j);
                 } else
                 {
-                    if (x->i == -UWORD(1))
+                    if (x->i == -WORD(1))
                         fmpz_addmul(acc_lg, scale, poly2 + x->j);
                     else
                     {
@@ -470,7 +469,7 @@ slong _fmpz_mpoly_quasidivrem_heap(fmpz_t scale, slong * lenr,
             len = FLINT_MAX(q_len + 1, 2*qs_alloc);
             qs = (fmpz *) flint_realloc(qs, len*sizeof(fmpz));
             if (len > qs_alloc)
-                flint_mpn_zero((nn_ptr) (qs + qs_alloc), len - qs_alloc);
+                flint_mpn_zero((mp_ptr) (qs + qs_alloc), len - qs_alloc);
             qs_alloc = len;
         }
         /* make sure remainder array has space for r_len + 1 entries */
@@ -481,7 +480,7 @@ slong _fmpz_mpoly_quasidivrem_heap(fmpz_t scale, slong * lenr,
             len = FLINT_MAX(r_len + 1, 2*rs_alloc);
             rs = (fmpz *) flint_realloc(rs, len*sizeof(fmpz));
             if (len > rs_alloc)
-                flint_mpn_zero((nn_ptr) (rs + rs_alloc), len - rs_alloc);
+                flint_mpn_zero((mp_ptr) (rs + rs_alloc), len - rs_alloc);
             rs_alloc = len;
         }
 
@@ -515,24 +514,24 @@ slong _fmpz_mpoly_quasidivrem_heap(fmpz_t scale, slong * lenr,
             {
                 *store++ = x->i;
                 *store++ = x->j;
-                if (x->i != -UWORD(1))
+                if (x->i != -WORD(1))
                     hind[x->i] |= WORD(1);
 
                 if (small)
                 {
-                    if (x->i == -UWORD(1))
+                    if (x->i == -WORD(1))
                        _fmpz_mpoly_add_uiuiui_fmpz(acc_sm, poly2 + x->j);
                     else
                        _fmpz_mpoly_submul_uiuiui_fmpz(acc_sm, poly3[x->i], q_coeff[x->j]);
                 } else if (scaleis1)
                 {
-                    if (x->i == -UWORD(1))
+                    if (x->i == -WORD(1))
                         fmpz_add(acc_lg, acc_lg, poly2 + x->j);
                     else
                         fmpz_submul(acc_lg, poly3 + x->i, q_coeff + x->j);
                 } else
                 {
-                    if (x->i == -UWORD(1))
+                    if (x->i == -WORD(1))
                         fmpz_addmul(acc_lg, scale, poly2 + x->j);
                     else
                     {
@@ -755,8 +754,7 @@ void fmpz_mpoly_quasidivrem_heap(fmpz_t scale, fmpz_mpoly_t q, fmpz_mpoly_t r,
                   const fmpz_mpoly_t poly2, const fmpz_mpoly_t poly3,
                                                     const fmpz_mpoly_ctx_t ctx)
 {
-    slong N, lenq = 0, lenr = 0;
-    flint_bitcnt_t exp_bits;
+    slong exp_bits, N, lenq = 0, lenr = 0;
     ulong * exp2 = poly2->exps, * exp3 = poly3->exps;
     ulong * cmpmask;
     int free2 = 0, free3 = 0;

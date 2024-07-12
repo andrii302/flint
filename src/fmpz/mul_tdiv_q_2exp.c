@@ -10,14 +10,16 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "gmpcompat.h"
+#include "ulong_extras.h"
 #include "fmpz.h"
 
 void
 fmpz_mul_tdiv_q_2exp(fmpz_t f, const fmpz_t g, const fmpz_t h, ulong exp)
 {
     fmpz c1, c2;
-    mpz_ptr mf;
+    __mpz_struct * mf;
 
     c1 = *g;
 

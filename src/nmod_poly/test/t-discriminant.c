@@ -22,8 +22,8 @@ TEST_FUNCTION_START(nmod_poly_discriminant, state)
     for (i = 0; i < 50 * flint_test_multiplier(); i++)
     {
         nmod_poly_t f, g, h;
-        ulong x, y, z, r;
-        ulong n;
+        mp_limb_t x, y, z, r;
+        mp_limb_t n;
 
         do n = n_randtest_not_zero(state);
         while (!n_is_probabprime(n));
@@ -72,8 +72,8 @@ TEST_FUNCTION_START(nmod_poly_discriminant, state)
     for (i = 0; i < 50 * flint_test_multiplier(); i++)
     {
         nmod_poly_t f;
-        ulong y;
-        ulong n;
+        mp_limb_t y;
+        mp_limb_t n;
 
         do n = n_randtest_not_zero(state);
         while (!n_is_probabprime(n));

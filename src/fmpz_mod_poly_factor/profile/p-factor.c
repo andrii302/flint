@@ -13,6 +13,7 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "flint.h"
 #include "gmpcompat.h"
 #include "fmpz.h"
 #include "fmpz_mod.h"

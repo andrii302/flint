@@ -10,12 +10,13 @@
 */
 
 #include "profiler.h"
+#include "flint.h"
 #include "ulong_extras.h"
 
 void sample(void * arg, ulong count)
 {
-   ulong d;
-   nn_ptr array = (nn_ptr) flint_malloc(200 * sizeof(ulong));
+   mp_limb_t d;
+   mp_ptr array = (mp_ptr) flint_malloc(200 * sizeof(mp_limb_t));
    ulong i;
    int j;
 
@@ -45,7 +46,7 @@ void sample(void * arg, ulong count)
          if (array[j] == 0) flint_printf("\r");
    }
 
-   flint_rand_clear(state);
+   flint_randclear(state);
    flint_free(array);
 }
 

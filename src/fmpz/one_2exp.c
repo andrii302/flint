@@ -9,7 +9,9 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "gmpcompat.h"
+#include "ulong_extras.h"
 #include "fmpz.h"
 
 void
@@ -21,7 +23,7 @@ fmpz_one_2exp(fmpz_t x, ulong e)
     }
     else
     {
-        mpz_ptr z = _fmpz_promote(x);
+        __mpz_struct * z = _fmpz_promote(x);
         flint_mpz_set_ui(z, 1);
         mpz_mul_2exp(z, z, e);
     }

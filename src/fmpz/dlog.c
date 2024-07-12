@@ -10,7 +10,6 @@
 */
 
 #include <math.h>
-#include <gmp.h>
 #include "fmpz.h"
 
 double

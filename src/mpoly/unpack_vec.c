@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "mpn_extras.h"
 #include "fmpz.h"
 #include "mpoly.h"
 
@@ -99,10 +98,11 @@ void mpoly_unpack_vec_fmpz(fmpz * exp1, const ulong * exp2, flint_bitcnt_t bits,
             }
             else
             {
-                mpz_ptr mpz = _fmpz_promote(exp1);
-                mp_ptr zp = FLINT_MPZ_REALLOC(mpz, words_per_field);
+                __mpz_struct * mpz = _fmpz_promote(exp1);
+                if (mpz->_mp_alloc < words_per_field)
+                    mpz_realloc2(mpz, bits);
                 mpz->_mp_size = size;
-                flint_mpn_copyi(zp, exp2, size);
+                flint_mpn_copyi(mpz->_mp_d, exp2, size);
             }
             exp1++;
         }

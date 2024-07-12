@@ -11,7 +11,6 @@
 
 #include <stdlib.h>
 #include "profiler.h"
-#include "acb.h"
 #include "acb_mat.h"
 #include "acb_theta.h"
 
@@ -43,7 +42,7 @@ int main(int argc, char * argv[])
     dstep = atol(argv[4]);
     dmax = atol(argv[5]);
 
-    flint_rand_init(state);
+    flint_randinit(state);
     acb_mat_init(tau, g, g);
     acb_mat_init(w, g, g);
     arb_init(r);
@@ -77,7 +76,7 @@ int main(int argc, char * argv[])
         }
     }
 
-    flint_rand_clear(state);
+    flint_randclear(state);
     acb_mat_clear(tau);
     acb_mat_clear(w);
     arb_clear(r);

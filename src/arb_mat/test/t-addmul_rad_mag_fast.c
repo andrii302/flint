@@ -10,7 +10,6 @@
 */
 
 #include "test_helpers.h"
-#include "arb.h"
 #include "arb_mat.h"
 
 #define BLOCK_SIZE 32

@@ -11,12 +11,11 @@
 */
 
 #include "nmod_vec.h"
-#include "longlong.h"
 
-flint_bitcnt_t _nmod_vec_max_bits(nn_srcptr vec, slong len)
+flint_bitcnt_t _nmod_vec_max_bits(mp_srcptr vec, slong len)
 {
     slong i;
-    ulong mask = 0;
+    mp_limb_t mask = 0;
 
     for (i = 0; i < len; i++)
     {

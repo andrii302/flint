@@ -11,9 +11,9 @@ The module includes functions for square roots, factorisation and
 primality testing. Almost all the functions in this module are highly
 developed and extremely well optimised.
 
-The basic type is the ``ulong`` as defined by GMP. Functions
+The basic type is the ``mp_limb_t`` as defined by GMP. Functions
 which take a precomputed inverse either have the suffix ``preinv`` and
-take an ``ulong`` precomputed inverse as computed by
+take an ``mp_limb_t`` precomputed inverse as computed by
 ``n_preinvert_limb`` or have the suffix ``_precomp`` and accept a
 ``double`` precomputed inverse as computed by
 ``n_precompute_inverse``.
@@ -42,7 +42,7 @@ inverse, where `a = 12345678, b = 87654321` and `n = 111111111`.
    #include "ulong_extras.h"
    int main()
    {
-       ulong r, a, b, n, ninv;
+       mp_limb_t r, a, b, n, ninv;
 
        a = UWORD(12345678);
        b = UWORD(87654321);
@@ -192,7 +192,8 @@ Basic arithmetic with precomputed inverses
         invxl = (B^2 - B*x - 1)/x = (B^2 - 1)/x - B
 
     Note that `x` must be normalised, i.e. with msb set. This inverse
-    makes use of Lemma 8.1 in [GraMon1994]_:
+    makes use of the following theorem of Torbjorn Granlund and Peter
+    Montgomery~[Lemma~8.1][GraMon1994]_:
 
     Let `d` be normalised, `d < B`, i.e. it fits in a word, and suppose
     that `m d < B^2 \leq (m+1) d`. Let `0 \leq n \leq B d - 1`.  Write
@@ -452,7 +453,7 @@ Jacobi and Kronecker symbols
 --------------------------------------------------------------------------------
 
 
-.. function:: int n_jacobi(slong x, ulong y)
+.. function:: int n_jacobi(mp_limb_signed_t x, ulong y)
 
     Computes the Jacobi symbol `\left(\frac{x}{y}\right)` for any `x` and odd `y`.
 
@@ -481,7 +482,7 @@ Modular Arithmetic
     This is merely an adaption of the extended Euclidean algorithm
     with appropriate normalisation.
 
-.. function:: ulong n_powmod_precomp(ulong a, slong exp, ulong n, double npre)
+.. function:: ulong n_powmod_precomp(ulong a, mp_limb_signed_t exp, ulong n, double npre)
 
     Returns ``a^exp`` modulo `n` given a precomputed inverse of `n`
     computed by :func:`n_precompute_inverse`. We require `n < 2^{53}`
@@ -501,7 +502,7 @@ Modular Arithmetic
     This is implemented as a standard binary powering algorithm using
     repeated squaring and reducing modulo `n` at each step.
 
-.. function:: ulong n_powmod(ulong a, slong exp, ulong n)
+.. function:: ulong n_powmod(ulong a, mp_limb_signed_t exp, ulong n)
 
     Returns ``a^exp`` modulo `n`. We require ``n < 2^FLINT_D_BITS``
     and `0 \leq a < n`. There are no restrictions on ``exp``, i.e.
@@ -510,7 +511,7 @@ Modular Arithmetic
     This is implemented by precomputing an inverse and calling the
     ``precomp`` version of this function.
 
-.. function:: ulong n_powmod2_preinv(ulong a, slong exp, ulong n, ulong ninv)
+.. function:: ulong n_powmod2_preinv(ulong a, mp_limb_signed_t exp, ulong n, ulong ninv)
 
     Returns ``(a^exp) % n`` given a precomputed inverse of `n` computed
     by :func:`n_preinvert_limb`. We require `0 \leq a < n`, but there are no
@@ -522,7 +523,7 @@ Modular Arithmetic
     If ``exp`` is negative but `a` is not invertible modulo `n`, an
     exception is raised.
 
-.. function:: ulong n_powmod2(ulong a, slong exp, ulong n)
+.. function:: ulong n_powmod2(ulong a, mp_limb_signed_t exp, ulong n)
 
     Returns ``(a^exp) % n``. We require `0 \leq a < n`, but there are
     no restrictions on `n` or on ``exp``, i.e. it can be negative.
@@ -596,7 +597,7 @@ Modular Arithmetic
     ``m`` then 0 is returned by the function and the location ``sqrt``
     points to is set to NULL.
 
-.. function:: ulong n_mulmod_shoup(ulong w, ulong t, ulong w_precomp, ulong p)
+.. function:: mp_limb_t n_mulmod_shoup(mp_limb_t w, mp_limb_t t, mp_limb_t w_precomp, mp_limb_t p)
 
     Returns `w t \bmod{p}` given a precomputed scaled approximation of `w / p`
     computed by :func:`n_mulmod_precomp_shoup`. The value of `p` should be
@@ -604,7 +605,7 @@ Modular Arithmetic
     Works faster than :func:`n_mulmod2_preinv` if `w` fixed and `t` from array
     (for example, scalar multiplication of vector).
 
-.. function:: ulong n_mulmod_precomp_shoup(ulong w, ulong p)
+.. function:: mp_limb_t n_mulmod_precomp_shoup(mp_limb_t w, mp_limb_t p)
 
     Returns `w'`, scaled approximation of `w / p`. `w'`  is equal to the integer
     part of `w \cdot 2^{\mathtt{FLINT\_BITS}} / p`.
@@ -613,7 +614,7 @@ Modular Arithmetic
 Divisibility testing
 --------------------------------------------------------------------------------
 
-.. function:: int n_divides(ulong * q, ulong n, ulong p)
+.. function:: int n_divides(mp_limb_t * q, mp_limb_t n, mp_limb_t p)
 
    Returns ``1`` if ``p`` divides ``n`` and sets ``q`` to the quotient,
    otherwise returns ``0`` and sets ``q`` to ``0``.
@@ -1040,6 +1041,12 @@ Square root and perfect power testing
     `x \leftarrow x - (x\cdot x\cdot x - a)\cdot x/(2\cdot x\cdot x\cdot x + a)` for getting a good estimate,
     as mentioned in the paper by W. Kahan [Kahan1991]_ .
 
+.. function:: ulong n_cbrt_newton_iteration(ulong n)
+
+    This function returns the integer truncation of the cube root of `n`.
+    Makes use of Newton iterations to get a close value, and then adjusts the
+    estimate so as to get the correct value.
+
 .. function:: ulong n_cbrt_binary_search(ulong n)
 
     This function returns the integer truncation of the cube root of `n`.
@@ -1067,12 +1074,6 @@ Factorisation
 .. function:: void n_factor_init(n_factor_t * factors)
 
     Initializes factors.
-
-.. function:: ulong n_factor_evaluate(const n_factor_t * factors)
-
-    Returns the evaluation of ``factors``,
-    i.e. `p_{1}^{e_{1}} \cdots p_{n}^{e_{n}}` assuming that it fits in a limb.
-    In case the evaluation does not fit in a limb, it returns `0`.
 
 .. function:: int n_remove(ulong * n, ulong p)
 
@@ -1302,7 +1303,7 @@ Factorisation
     the time for ``n_factor`` on numbers that reach the ``n_factor_pp1``
     stage, i.e. after trial factoring and one line factoring.
 
-.. function:: int n_factor_pollard_brent_single(ulong * factor, ulong n, ulong ninv, ulong ai, ulong xi, ulong normbits, ulong max_iters)
+.. function:: int n_factor_pollard_brent_single(mp_limb_t * factor, mp_limb_t n, mp_limb_t ninv, mp_limb_t ai, mp_limb_t xi, mp_limb_t normbits, mp_limb_t max_iters)
 
     Pollard Rho algorithm (with Brent modification) for integer factorization.
     Assumes that the `n` is not prime. `factor` is set as the factor if found.
@@ -1321,7 +1322,7 @@ Factorisation
     suggested by Richard Brent in the paper, available at
     https://maths-people.anu.edu.au/~brent/pd/rpb051i.pdf
 
-.. function:: int n_factor_pollard_brent(ulong * factor, flint_rand_t state, ulong n_in, ulong max_tries, ulong max_iters)
+.. function:: int n_factor_pollard_brent(mp_limb_t * factor, flint_rand_t state, mp_limb_t n_in, mp_limb_t max_tries, mp_limb_t max_iters)
 
     Pollard Rho algorithm, modified as suggested by Richard Brent. Makes a call to
     :func:`n_factor_pollard_brent_single`. The input parameters ai and xi for
@@ -1423,11 +1424,11 @@ Primitive Roots and Discrete Logarithms
 
 
 
-Elliptic curve method for factorization of ``ulong``
+Elliptic curve method for factorization of ``mp_limb_t``
 --------------------------------------------------------------------------------
 
 
-.. function:: void n_factor_ecm_double(ulong * x, ulong * z, ulong x0, ulong z0, ulong n, n_ecm_t n_ecm_inf)
+.. function:: void n_factor_ecm_double(mp_limb_t * x, mp_limb_t * z, mp_limb_t x0, mp_limb_t z0, mp_limb_t n, n_ecm_t n_ecm_inf)
 
     Sets the point `(x : z)` to two times `(x_0 : z_0)` modulo `n` according
     to the formula
@@ -1439,7 +1440,7 @@ Elliptic curve method for factorization of ``ulong``
     This group doubling is valid only for points expressed in
     Montgomery projective coordinates.
 
-.. function:: void n_factor_ecm_add(ulong * x, ulong * z, ulong x1, ulong z1, ulong x2, ulong z2, ulong x0, ulong z0, ulong n, n_ecm_t n_ecm_inf)
+.. function:: void n_factor_ecm_add(mp_limb_t * x, mp_limb_t * z, mp_limb_t x1, mp_limb_t z1, mp_limb_t x2, mp_limb_t z2, mp_limb_t x0, mp_limb_t z0, mp_limb_t n, n_ecm_t n_ecm_inf)
 
     Sets the point `(x : z)` to the sum of `(x_1 : z_1)` and `(x_2 : z_2)`
     modulo `n`, given the difference `(x_0 : z_0)` according to the formula
@@ -1447,7 +1448,7 @@ Elliptic curve method for factorization of ``ulong``
     This group doubling is valid only for points expressed in
     Montgomery projective coordinates.
 
-.. function:: void n_factor_ecm_mul_montgomery_ladder(ulong * x, ulong * z, ulong x0, ulong z0, ulong k, ulong n, n_ecm_t n_ecm_inf)
+.. function:: void n_factor_ecm_mul_montgomery_ladder(mp_limb_t * x, mp_limb_t * z, mp_limb_t x0, mp_limb_t z0, mp_limb_t k, mp_limb_t n, n_ecm_t n_ecm_inf)
 
     Montgomery ladder algorithm for scalar multiplication of elliptic points.
 
@@ -1455,7 +1456,7 @@ Elliptic curve method for factorization of ``ulong``
 
     Valid only for points expressed in Montgomery projective coordinates.
 
-.. function:: int n_factor_ecm_select_curve(ulong * f, ulong sigma, ulong n, n_ecm_t n_ecm_inf)
+.. function:: int n_factor_ecm_select_curve(mp_limb_t * f, mp_limb_t sigma, mp_limb_t n, n_ecm_t n_ecm_inf)
 
     Selects a random elliptic curve given a random integer ``sigma``,
     according to Suyama's parameterization. If the factor is found while
@@ -1470,7 +1471,7 @@ Elliptic curve method for factorization of ``ulong``
     The curve selected is of Montgomery form, the points selected satisfy the
     curve and are projective coordinates.
 
-.. function:: int n_factor_ecm_stage_I(ulong * f, const ulong * prime_array, ulong num, ulong B1, ulong n, n_ecm_t n_ecm_inf)
+.. function:: int n_factor_ecm_stage_I(mp_limb_t * f, const mp_limb_t * prime_array, mp_limb_t num, mp_limb_t B1, mp_limb_t n, n_ecm_t n_ecm_inf)
 
     Stage I implementation of the ECM algorithm.
 
@@ -1480,7 +1481,7 @@ Elliptic curve method for factorization of ``ulong``
 
     If the factor is found, `1` is returned, otherwise `0`.
 
-.. function:: int n_factor_ecm_stage_II(ulong * f, ulong B1, ulong B2, ulong P, ulong n, n_ecm_t n_ecm_inf)
+.. function:: int n_factor_ecm_stage_II(mp_limb_t * f, mp_limb_t B1, mp_limb_t B2, mp_limb_t P, mp_limb_t n, n_ecm_t n_ecm_inf)
 
     Stage II implementation of the ECM algorithm.
 
@@ -1490,10 +1491,10 @@ Elliptic curve method for factorization of ``ulong``
 
     If the factor is found, `1` is returned, otherwise `0`.
 
-.. function:: int n_factor_ecm(ulong * f, ulong curves, ulong B1, ulong B2, flint_rand_t state, ulong n)
+.. function:: int n_factor_ecm(mp_limb_t * f, mp_limb_t curves, mp_limb_t B1, mp_limb_t B2, flint_rand_t state, mp_limb_t n)
 
     Outer wrapper function for the ECM algorithm. It factors `n` which
-    must fit into a ``ulong``.
+    must fit into a ``mp_limb_t``.
 
     The function calls stage I and II, and
     the precomputations (builds ``prime_array`` for stage I,

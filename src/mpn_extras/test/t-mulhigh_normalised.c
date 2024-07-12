@@ -12,6 +12,9 @@
 #include "test_helpers.h"
 #include "mpn_extras.h"
 
+/* TODO: Remove this preprocessor conditional */
+#if FLINT_HAVE_ADX
+
 # define N_MAX 64
 
 TEST_FUNCTION_START(flint_mpn_mulhigh_normalised, state)
@@ -19,24 +22,24 @@ TEST_FUNCTION_START(flint_mpn_mulhigh_normalised, state)
     slong ix;
     int result;
 
-    for (ix = 0; ix < 10000 * flint_test_multiplier(); ix++)
+    for (ix = 0; ix < 100000 * flint_test_multiplier(); ix++)
     {
         mp_limb_t rp_n[N_MAX + 1] = {UWORD(0)};
         mp_limb_t rp_u[N_MAX + 1] = {UWORD(0)};
         mp_limb_t xp[N_MAX];
         mp_limb_t yp[N_MAX];
         mp_size_t n;
-        mp_limb_pair_t res_norm;
+        struct mp_limb_pair_t res_norm;
         mp_limb_t retlimb, normalised;
 
         n = 1 + n_randint(state, N_MAX);
 
-        flint_mpn_rrandom(xp, state, n);
-        flint_mpn_rrandom(yp, state, n);
+        mpn_random2(xp, n);
+        mpn_random2(yp, n);
         xp[n - 1] |= (UWORD(1) << (FLINT_BITS - 1));
         yp[n - 1] |= (UWORD(1) << (FLINT_BITS - 1));
 
-        rp_u[0] = flint_mpn_mulhigh_n(rp_u + 1, xp, yp, n);
+        rp_u[0] = flint_mpn_mulhigh_basecase(rp_u + 1, xp, yp, n);
         res_norm = flint_mpn_mulhigh_normalised(rp_n + 1, xp, yp, n);
         retlimb = res_norm.m1;
         normalised = res_norm.m2;
@@ -60,7 +63,7 @@ TEST_FUNCTION_START(flint_mpn_mulhigh_normalised, state)
             result = result && (mpn_cmp(rp_n, rp_u, n + 1) == 0);
             if (!result)
                 TEST_FUNCTION_FAIL(
-                        "Normalised case failed\n"
+                        "rp_n != rp_u << 1 when normalised\n"
                         "ix = %wd\n"
                         "n = %wd\n"
                         "xp = %{ulong*}\n"
@@ -74,7 +77,7 @@ TEST_FUNCTION_START(flint_mpn_mulhigh_normalised, state)
             result = (mpn_cmp(rp_n, rp_u, n + 1) == 0);
             if (!result)
                 TEST_FUNCTION_FAIL(
-                        "Unnormalised case failed\n"
+                        "rp_n != rp_u when unnormalised\n"
                         "ix = %wd\n"
                         "n = %wd\n"
                         "xp = %{ulong*}\n"
@@ -88,3 +91,9 @@ TEST_FUNCTION_START(flint_mpn_mulhigh_normalised, state)
     TEST_FUNCTION_END(state);
 }
 # undef N_MAX
+#else
+TEST_FUNCTION_START(flint_mpn_mulhigh_normalised, state)
+{
+    TEST_FUNCTION_END_SKIPPED(state);
+}
+#endif

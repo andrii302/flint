@@ -21,7 +21,7 @@
 void fmpz_mpoly_height(
     fmpz_t max,
     const fmpz_mpoly_t A,
-    const fmpz_mpoly_ctx_t FLINT_UNUSED(ctx))
+    const fmpz_mpoly_ctx_t ctx)
 {
     slong i;
     fmpz_t t;
@@ -44,7 +44,7 @@ void fmpz_mpoly_heights(
     fmpz_t max,
     fmpz_t sum,
     const fmpz_mpoly_t A,
-    const fmpz_mpoly_ctx_t FLINT_UNUSED(ctx))
+    const fmpz_mpoly_ctx_t ctx)
 {
     slong i;
     fmpz_t t;
@@ -78,7 +78,7 @@ int fmpz_mpolyl_gcd_brown(
     int success;
     fmpz_t bound;
     slong offset, shift;
-    ulong p, gammared;
+    mp_limb_t p, gammared;
     fmpz_t gamma, modulus;
     fmpz_t gnm, gns, anm, ans, bnm, bns;
     fmpz_t cA, cB, cG, cAbar, cBbar;

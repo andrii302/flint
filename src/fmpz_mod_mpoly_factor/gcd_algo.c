@@ -33,7 +33,7 @@ static void fmpz_mod_mpoly_evals(
     const int * ignore,
     const fmpz_mod_mpoly_t A,
     ulong * Amin_exp,
-    ulong * FLINT_UNUSED(Amax_exp),
+    ulong * Amax_exp,
     ulong * Astride,
     const fmpz * alphas,
     const fmpz_mod_mpoly_ctx_t ctx)
@@ -98,7 +98,7 @@ static void fmpz_mod_mpoly_evals(
 
             fmpz_mod_poly_fit_length(out + j, varexp + 1, ctx->ffinfo);
 
-            while ((ulong) out[j].length <= varexp)
+            while (out[j].length <= varexp)
             {
                 fmpz_zero(out[j].coeffs + out[j].length);
                 out[j].length++;
@@ -142,7 +142,7 @@ static void _set_estimates(
     slong ignore_limit;
     int * ignore;
 
-    flint_rand_init(state);
+    flint_randinit(state);
 
     ignore = FLINT_ARRAY_ALLOC(nvars, int);
     alphas  = _fmpz_vec_init(nvars);
@@ -235,7 +235,7 @@ cleanup:
     flint_free(Aevals);
     flint_free(Bevals);
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 
     return;
 }
@@ -805,7 +805,7 @@ static int _try_zippel(
 
     FLINT_ASSERT(m >= 2);
 
-    flint_rand_init(state);
+    flint_randinit(state);
 
     fmpz_mod_mpoly_ctx_init(lctx, m, ORD_LEX, fmpz_mod_ctx_modulus(ctx->ffinfo));
 
@@ -894,7 +894,7 @@ cleanup:
     fmpz_mod_mpoly_clear(Bbarc, lctx);
 
     fmpz_mod_mpoly_ctx_clear(lctx);
-    flint_rand_clear(state);
+    flint_randclear(state);
 
     return success;
 }

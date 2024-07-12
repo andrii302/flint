@@ -19,29 +19,30 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA. */
 
+#include "flint.h"
 #include "gmpcompat.h"
 #include "fmpz.h"
 
 #if defined(_WIN64) || defined(__mips64)
 
-#define FLINT_UI_MAX          ((ulong)(~(ulong)0))
+#define FLINT_UI_MAX          ((mp_limb_t)(~(mp_limb_t)0))
 #define FLINT_UI_HIBIT        (FLINT_UI_MAX ^ (FLINT_UI_MAX >> 1))
-#define FLINT_SI_MAX          ((slong)(FLINT_UI_MAX ^ FLINT_UI_HIBIT))
-#define FLINT_SI_MIN          ((slong)FLINT_UI_HIBIT)
+#define FLINT_SI_MAX          ((mp_limb_signed_t)(FLINT_UI_MAX ^ FLINT_UI_HIBIT))
+#define FLINT_SI_MIN          ((mp_limb_signed_t)FLINT_UI_HIBIT)
 
 int
 flint_mpz_fits_si_p(mpz_srcptr z)
 {
-  slong n = z->_mp_size;
-  nn_ptr p = z->_mp_d;
-  ulong limb = p[0];
+  mp_size_t n = z->_mp_size;
+  mp_ptr p = z->_mp_d;
+  mp_limb_t limb = p[0];
 
   if (n == 0)
     return 1;
   if (n == 1)
     return limb <= FLINT_SI_MAX;
   if (n == -1)
-    return limb <= (ulong) FLINT_SI_MIN;
+    return limb <= (mp_limb_t) FLINT_SI_MIN;
   return 0;
 }
 

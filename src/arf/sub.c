@@ -50,8 +50,8 @@ arf_sub_special(arf_t z, const arf_t x, const arf_t y, slong prec, arf_rnd_t rnd
 int
 arf_sub(arf_ptr z, arf_srcptr x, arf_srcptr y, slong prec, arf_rnd_t rnd)
 {
-    slong xn, yn;
-    nn_srcptr xptr, yptr;
+    mp_size_t xn, yn;
+    mp_srcptr xptr, yptr;
     slong shift;
 
     if (arf_is_special(x) || arf_is_special(y))
@@ -75,9 +75,9 @@ arf_sub(arf_ptr z, arf_srcptr x, arf_srcptr y, slong prec, arf_rnd_t rnd)
 int
 arf_sub_si(arf_ptr z, arf_srcptr x, slong y, slong prec, arf_rnd_t rnd)
 {
-    slong xn, yn;
-    nn_srcptr xptr, yptr;
-    ulong ytmp;
+    mp_size_t xn, yn;
+    mp_srcptr xptr, yptr;
+    mp_limb_t ytmp;
     int xsgnbit, ysgnbit;
     fmpz yexp;
     slong shift;
@@ -126,9 +126,9 @@ arf_sub_si(arf_ptr z, arf_srcptr x, slong y, slong prec, arf_rnd_t rnd)
 int
 arf_sub_ui(arf_ptr z, arf_srcptr x, ulong y, slong prec, arf_rnd_t rnd)
 {
-    slong xn, yn;
-    nn_srcptr xptr, yptr;
-    ulong ytmp;
+    mp_size_t xn, yn;
+    mp_srcptr xptr, yptr;
+    mp_limb_t ytmp;
     int xsgnbit, ysgnbit;
     fmpz yexp;
     slong shift;
@@ -173,9 +173,9 @@ arf_sub_ui(arf_ptr z, arf_srcptr x, ulong y, slong prec, arf_rnd_t rnd)
 int
 arf_sub_fmpz(arf_ptr z, arf_srcptr x, const fmpz_t y, slong prec, arf_rnd_t rnd)
 {
-    slong xn, yn;
-    nn_srcptr xptr, yptr;
-    ulong ytmp;
+    mp_size_t xn, yn;
+    mp_srcptr xptr, yptr;
+    mp_limb_t ytmp;
     int xsgnbit, ysgnbit;
     fmpz yexp;
     slong shift;

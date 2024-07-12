@@ -18,7 +18,7 @@ TEST_FUNCTION_START(nmod_mat_can_solve, state)
 {
     nmod_mat_t A, X, X2, B, AX;
     slong i, k, m, n;
-    ulong mod;
+    mp_limb_t mod;
     int solved;
 
     /* test random systems */

@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "longlong.h"
 #include "fq_zech.h"
 #include "mpoly.h"
 #include "fq_zech_mpoly.h"

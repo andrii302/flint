@@ -10,7 +10,6 @@
 */
 
 #include "fmpz.h"
-#include "fmpz_poly.h"
 #include "arb_fmpz_poly.h"
 
 void

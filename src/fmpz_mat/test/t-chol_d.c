@@ -10,7 +10,6 @@
 */
 
 #include "test_helpers.h"
-#include "d_mat.h"
 #include "fmpz_mat.h"
 
 #define FMPZ_MAT_CHOL_EPS (1.0E-9)

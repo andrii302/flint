@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "fmpz_poly.h"
 #include "fmpz_poly_factor.h"
 #include "arb_poly.h"
 #include "acb.h"
@@ -18,7 +17,6 @@
 #include "gr_vec.h"
 #include "gr_poly.h"
 #include "gr_generic.h"
-#include "nfloat.h"
 
 typedef struct
 {
@@ -194,11 +192,6 @@ _gr_arf_set_other(arf_t res, gr_srcptr x, gr_ctx_t x_ctx, const gr_ctx_t ctx)
         case GR_CTX_RR_ARB:
             return _gr_arf_set(res, arb_midref((arb_srcptr) x), ctx);
 
-        case GR_CTX_NFLOAT:
-            nfloat_get_arf(res, x, x_ctx);
-            arf_set_round(res, res, ARF_CTX_PREC(ctx), ARF_CTX_RND(ctx));
-            return GR_SUCCESS;
-
         default:
             {
                 gr_ctx_t cctx;
@@ -319,7 +312,7 @@ truth_t
 _gr_arf_equal(const arf_t x, const arf_t y, const gr_ctx_t ctx)
 {
     if (arf_is_nan(x) || arf_is_nan(y))
-        return T_UNKNOWN;
+        return T_FALSE;
 
     return arf_equal(x, y) ? T_TRUE : T_FALSE;
 }

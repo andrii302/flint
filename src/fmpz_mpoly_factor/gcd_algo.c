@@ -34,7 +34,7 @@ void fmpz_mpoly_evals(
     ulong * Amin_exp,
     ulong * Amax_exp,
     ulong * Astride,
-    ulong * alpha,
+    mp_limb_t * alpha,
     const fmpz_mpoly_ctx_t ctx)
 {
     slong i, j;
@@ -47,8 +47,8 @@ void fmpz_mpoly_evals(
     slong N = mpoly_words_per_exp_sp(A->bits, ctx->minfo);
     ulong * Aexp = A->exps;
     fmpz * Acoeff = A->coeffs;
-    ulong meval;
-    ulong t;
+    mp_limb_t meval;
+    mp_limb_t t;
 
     FLINT_ASSERT(A->bits <= FLINT_BITS);
 
@@ -82,20 +82,20 @@ void fmpz_mpoly_evals(
     if (use_direct_LUT)
     {
         slong off;
-        ulong * LUT, ** LUTvalue, ** LUTvalueinv;
+        mp_limb_t * LUT, ** LUTvalue, ** LUTvalueinv;
 
         /* value of powers of alpha[j] */
-        LUT = (ulong *) flint_malloc(2*total_length*sizeof(ulong));
+        LUT = (mp_limb_t *) flint_malloc(2*total_length*sizeof(mp_limb_t));
 
         /* pointers into LUT */
-        LUTvalue    = (ulong **) flint_malloc(nvars*sizeof(ulong *));
-        LUTvalueinv = (ulong **) flint_malloc(nvars*sizeof(ulong *));
+        LUTvalue    = (mp_limb_t **) flint_malloc(nvars*sizeof(mp_limb_t *));
+        LUTvalueinv = (mp_limb_t **) flint_malloc(nvars*sizeof(mp_limb_t *));
 
         off = 0;
         for (j = 0; j < nvars; j++)
         {
             ulong k;
-            ulong alphainvj = nmod_inv(alpha[j], (out + 0)->mod);
+            mp_limb_t alphainvj = nmod_inv(alpha[j], (out + 0)->mod);
 
             LUTvalue[j] = LUT + off;
             LUTvalueinv[j] = LUT + total_length + off;
@@ -154,17 +154,17 @@ void fmpz_mpoly_evals(
         slong LUTlen;
         ulong * LUTmask;
         slong * LUToffset, * LUTvar;
-        ulong * LUTvalue, * LUTvalueinv;
-        ulong * vieval;
-        ulong t, xpoweval, xinvpoweval;
+        mp_limb_t * LUTvalue, * LUTvalueinv;
+        mp_limb_t * vieval;
+        mp_limb_t t, xpoweval, xinvpoweval;
 
         LUToffset   = (slong *) flint_malloc(N*FLINT_BITS*sizeof(slong));
         LUTmask     = (ulong *) flint_malloc(N*FLINT_BITS*sizeof(ulong));
-        LUTvalue    = (ulong *) flint_malloc(N*FLINT_BITS*sizeof(ulong));
+        LUTvalue    = (mp_limb_t *) flint_malloc(N*FLINT_BITS*sizeof(mp_limb_t));
         LUTvar      = (slong *) flint_malloc(N*FLINT_BITS*sizeof(slong));
-        LUTvalueinv = (ulong *) flint_malloc(N*FLINT_BITS*sizeof(ulong));
+        LUTvalueinv = (mp_limb_t *) flint_malloc(N*FLINT_BITS*sizeof(mp_limb_t));
 
-        vieval = (ulong *) flint_malloc(nvars*sizeof(ulong));
+        vieval = (mp_limb_t *) flint_malloc(nvars*sizeof(mp_limb_t));
 
         LUTlen = 0;
         for (j = nvars - 1; j >= 0; j--)
@@ -172,7 +172,7 @@ void fmpz_mpoly_evals(
             flint_bitcnt_t bits = FLINT_BIT_COUNT(Amax_exp[j]);
             xpoweval = alpha[j]; /* xpoweval = alpha[j]^(2^i) */
             xinvpoweval = nmod_inv(xpoweval, (out + 0)->mod); /* alpha[j]^(-2^i) */
-            for (i = 0; (flint_bitcnt_t) i < bits; i++)
+            for (i = 0; i < bits; i++)
             {
                 LUToffset[LUTlen] = offsets[j];
                 LUTmask[LUTlen] = (UWORD(1) << (shifts[j] + i));
@@ -244,16 +244,16 @@ void _set_estimates(
     slong i, j;
     nmod_poly_t Geval;
     nmod_poly_struct * Aevals, * Bevals;
-    ulong p = UWORD(1) << (FLINT_BITS - 1);
-    ulong * alpha;
+    mp_limb_t p = UWORD(1) << (FLINT_BITS - 1);
+    mp_limb_t * alpha;
     flint_rand_t randstate;
     slong ignore_limit;
     int * ignore;
 
-    flint_rand_init(randstate);
+    flint_randinit(randstate);
 
     ignore = (int *) flint_malloc(ctx->minfo->nvars*sizeof(int));
-    alpha = (ulong *) flint_malloc(ctx->minfo->nvars*sizeof(ulong));
+    alpha = (mp_limb_t *) flint_malloc(ctx->minfo->nvars*sizeof(mp_limb_t));
     Aevals = (nmod_poly_struct *) flint_malloc(
                                    ctx->minfo->nvars*sizeof(nmod_poly_struct));
     Bevals = (nmod_poly_struct *) flint_malloc(
@@ -351,7 +351,7 @@ cleanup:
     flint_free(Aevals);
     flint_free(Bevals);
 
-    flint_rand_clear(randstate);
+    flint_randclear(randstate);
 
     return;
 }
@@ -991,7 +991,7 @@ static int _try_zippel(
     FLINT_ASSERT(A->length > 0);
     FLINT_ASSERT(B->length > 0);
 
-    flint_rand_init(state);
+    flint_randinit(state);
 
     fmpz_mpoly_ctx_init(lctx, m, ORD_LEX);
 
@@ -1082,7 +1082,7 @@ cleanup:
 
     fmpz_mpoly_ctx_clear(lctx);
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 
     return success;
 }

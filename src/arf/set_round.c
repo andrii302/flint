@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "mpn_extras.h"
 #include "arf.h"
 
 int
@@ -24,12 +23,12 @@ arf_set_round(arf_t y, const arf_t x, slong prec, arf_rnd_t rnd)
     {
         int inexact;
         slong fix;
-        slong xn;
-        nn_srcptr xptr;
+        mp_size_t xn;
+        mp_srcptr xptr;
 
         if (y == x)
         {
-            nn_ptr xtmp;
+            mp_ptr xtmp;
             TMP_INIT;
 
             ARF_GET_MPN_READONLY(xptr, xn, x);
@@ -47,7 +46,7 @@ arf_set_round(arf_t y, const arf_t x, slong prec, arf_rnd_t rnd)
 
             /* inexact */
             TMP_START;
-            xtmp = TMP_ALLOC(xn * sizeof(ulong));
+            xtmp = TMP_ALLOC(xn * sizeof(mp_limb_t));
             flint_mpn_copyi(xtmp, xptr, xn);
             inexact = _arf_set_round_mpn(y, &fix, xtmp, xn, ARF_SGNBIT(x), prec, rnd);
             _fmpz_add_fast(ARF_EXPREF(y), ARF_EXPREF(x), fix);
@@ -67,14 +66,14 @@ arf_set_round(arf_t y, const arf_t x, slong prec, arf_rnd_t rnd)
 }
 
 int
-_arf_set_round_mpn(arf_t y, slong * exp_shift, nn_srcptr x, slong xn,
+_arf_set_round_mpn(arf_t y, slong * exp_shift, mp_srcptr x, mp_size_t xn,
     int sgnbit, slong prec, arf_rnd_t rnd)
 {
     unsigned int leading;
     flint_bitcnt_t exp, bc, val, val_bits;
-    slong yn, val_limbs;
-    nn_ptr yptr;
-    ulong t;
+    mp_size_t yn, val_limbs;
+    mp_ptr yptr;
+    mp_limb_t t;
     int increment, inexact;
 
     /* Compute the total bit length of x. */
@@ -121,7 +120,7 @@ _arf_set_round_mpn(arf_t y, slong * exp_shift, nn_srcptr x, slong xn,
             {
                 /* The bit to the right of the truncation point determines
                    the rounding direction. */
-                slong exc_limbs = (exp - prec - 1) / FLINT_BITS;
+                mp_size_t exc_limbs = (exp - prec - 1) / FLINT_BITS;
                 flint_bitcnt_t exc_bits = (exp - prec - 1) % FLINT_BITS;
 
                 increment = (x[exc_limbs] >> exc_bits) & 1;
@@ -234,7 +233,7 @@ _arf_set_round_mpn(arf_t y, slong * exp_shift, nn_srcptr x, slong xn,
         } \
         else \
         { \
-            ulong hi_mask, lo_mask, rndn_mask, __t, __u; \
+            mp_limb_t hi_mask, lo_mask, rndn_mask, __t, __u; \
             hi_mask = LIMB_ONES << (FLINT_BITS - prec); \
             __t = v & hi_mask; \
             inexact = (__t != v); \
@@ -287,7 +286,7 @@ _arf_set_round_ui(arf_t x, ulong v, int sgnbit, slong prec, arf_rnd_t rnd)
 }
 
 int
-_arf_set_round_uiui(arf_t z, slong * fix, ulong hi, ulong lo, int sgnbit, slong prec, arf_rnd_t rnd)
+_arf_set_round_uiui(arf_t z, slong * fix, mp_limb_t hi, mp_limb_t lo, int sgnbit, slong prec, arf_rnd_t rnd)
 {
     int leading, trailing, bc, inexact, zn, up, exp;
 
@@ -378,7 +377,7 @@ _arf_set_round_uiui(arf_t z, slong * fix, ulong hi, ulong lo, int sgnbit, slong 
 
                 if (up)
                 {
-                    ulong t, ovf;
+                    mp_limb_t t, ovf;
                     t = lo + (LIMB_ONE << (FLINT_BITS - prec));
                     ovf = (t == 0);
                     leading -= ovf;

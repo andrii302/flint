@@ -9,6 +9,9 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include <string.h>
+#include <stdlib.h>
+
 #include "mpoly.h"
 #include "fmpz_mpoly_q.h"
 #include "nf.h"
@@ -17,9 +20,7 @@
 /* Include functions *********************************************************/
 
 #include "t-acb.c"
-#include "t-acf.c"
 #include "t-arb.c"
-#include "t-arf.c"
 #include "t-ca.c"
 #include "t-dirichlet.c"
 #include "t-fmpq.c"
@@ -51,12 +52,10 @@
 #include "t-polynomial_nmod8.c"
 #include "t-psl2z.c"
 #include "t-qqbar.c"
-#include "t-series.c"
 #include "t-series_acb.c"
 #include "t-series_arb.c"
 #include "t-series_fmpq.c"
 #include "t-series_fmpz.c"
-#include "t-series_mod_gr_poly.c"
 #include "t-series_nmod8.c"
 #include "t-vector_acb.c"
 #include "t-vector_arb.c"
@@ -71,9 +70,7 @@
 test_struct tests[] =
 {
     TEST_FUNCTION(gr_acb),
-    TEST_FUNCTION(gr_acf),
     TEST_FUNCTION(gr_arb),
-    TEST_FUNCTION(gr_arf),
     TEST_FUNCTION(gr_ca),
     TEST_FUNCTION(gr_dirichlet),
     TEST_FUNCTION(gr_fmpq),
@@ -105,12 +102,10 @@ test_struct tests[] =
     TEST_FUNCTION(gr_polynomial_nmod8),
     TEST_FUNCTION(gr_psl2z),
     TEST_FUNCTION(gr_qqbar),
-    TEST_FUNCTION(gr_series),
     TEST_FUNCTION(gr_series_acb),
     TEST_FUNCTION(gr_series_arb),
     TEST_FUNCTION(gr_series_fmpq),
     TEST_FUNCTION(gr_series_fmpz),
-    TEST_FUNCTION(gr_series_mod_gr_poly),
     TEST_FUNCTION(gr_series_nmod8),
     TEST_FUNCTION(gr_vector_acb),
     TEST_FUNCTION(gr_vector_arb),

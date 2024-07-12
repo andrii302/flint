@@ -18,6 +18,7 @@
 
 #include "templates.h"
 
+#include "ulong_extras.h"
 
 void
 TEMPLATE(T, poly_factor_equal_deg) (TEMPLATE(T, poly_factor_t) factors,
@@ -35,14 +36,14 @@ TEMPLATE(T, poly_factor_equal_deg) (TEMPLATE(T, poly_factor_t) factors,
 
         TEMPLATE(T, poly_init) (f, ctx);
 
-        flint_rand_init(state);
+        flint_randinit(state);
 
         while (!TEMPLATE(T, poly_factor_equal_deg_prob)
                (f, state, pol, d, ctx))
         {
         };
 
-        flint_rand_clear(state);
+        flint_randclear(state);
 
         TEMPLATE(T, poly_init) (g, ctx);
         TEMPLATE(T, poly_init) (r, ctx);

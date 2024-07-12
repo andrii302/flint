@@ -9,7 +9,7 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "mpn_extras.h"
+#include "flint.h"
 #include "fft.h"
 
 void fft_butterfly_sqrt2(mp_limb_t * s, mp_limb_t * t,

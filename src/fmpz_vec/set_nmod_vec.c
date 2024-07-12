@@ -9,13 +9,14 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "fmpz.h"
 #include "fmpz_vec.h"
 #include "fmpz_poly.h"
 #include "nmod_poly.h"
 
 void
-_fmpz_vec_set_nmod_vec(fmpz * res, nn_srcptr poly, slong len, nmod_t mod)
+_fmpz_vec_set_nmod_vec(fmpz * res, mp_srcptr poly, slong len, nmod_t mod)
 {
     slong i;
 

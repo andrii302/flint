@@ -9,6 +9,7 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "mpoly.h"
 
 /* this file does not need to change with new orderings */
@@ -27,7 +28,7 @@ ulong mpoly_get_monomial_var_exp_ui_mp(const ulong * poly_exps,
                         slong var, flint_bitcnt_t bits, const mpoly_ctx_t mctx)
 {
     slong offset;
-    ulong j;
+    slong j;
     ulong wpf = bits/FLINT_BITS;
     ulong r, check;
 
@@ -48,7 +49,7 @@ slong mpoly_get_monomial_var_exp_si_mp(const ulong * poly_exps,
                         slong var, flint_bitcnt_t bits, const mpoly_ctx_t mctx)
 {
     slong offset;
-    ulong j;
+    slong j;
     ulong wpf = bits/FLINT_BITS;
     ulong r, check;
 

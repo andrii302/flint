@@ -9,14 +9,13 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "mpn_extras.h"
 #include "fexpr.h"
 
 void
 fexpr_call0(fexpr_t res, const fexpr_t f)
 {
     slong res_size, f_size;
-    nn_ptr out;
+    mp_ptr out;
 
     f_size = fexpr_size(f);
 

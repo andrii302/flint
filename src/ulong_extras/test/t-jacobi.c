@@ -19,9 +19,9 @@ TEST_FUNCTION_START(n_jacobi, state)
 
     for (i = 0; i < 10000 * flint_test_multiplier(); i++)
     {
-        ulong d;
+        mp_limb_t d;
         mpz_t a_m, d_m;
-        slong a;
+        mp_limb_signed_t a;
         int r1, r2;
 
         mpz_init(a_m);

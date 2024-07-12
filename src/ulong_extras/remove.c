@@ -9,14 +9,15 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "ulong_extras.h"
 
 int
-n_remove(ulong * n, ulong p)
+n_remove(mp_limb_t * n, mp_limb_t p)
 {
     int exp, i;
-    ulong powp[6];
-    ulong quot, rem;
+    mp_limb_t powp[6];
+    mp_limb_t quot, rem;
 
     if (p == 2)
     {

@@ -19,27 +19,34 @@
 #define MPOLY_INLINE static inline
 #endif
 
+#include <string.h>
 #include "mpoly_types.h"
 
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
 /* choose m so that (m + 1)/(n - m) ~= la/lb, i.e. m = (n*la - lb)/(la + lb) */
-slong mpoly_divide_threads(slong n, double la, double lb);
+FLINT_FORCE_INLINE slong mpoly_divide_threads(slong n, double la, double lb)
+{
+    double m_double = (n*la - lb)/(la + lb);
+    slong m = m_double + (2*m_double > n ? -0.5 : 0.5);
 
-#ifdef _MSC_VER
-# define DECLSPEC_IMPORT __declspec(dllimport)
-#else
-# define DECLSPEC_IMPORT
-#endif
-DECLSPEC_IMPORT ulong __gmpn_add_n(nn_ptr, nn_srcptr, nn_srcptr, long int);
-DECLSPEC_IMPORT ulong __gmpn_sub_n(nn_ptr, nn_srcptr, nn_srcptr, long int);
-DECLSPEC_IMPORT ulong __gmpn_addmul_1(nn_ptr, nn_srcptr, long int, ulong);
-DECLSPEC_IMPORT ulong __gmpn_submul_1(nn_ptr, nn_srcptr, long int, ulong);
-DECLSPEC_IMPORT ulong __gmpn_rshift(nn_ptr, nn_srcptr, long int, unsigned int);
-DECLSPEC_IMPORT ulong __gmpn_mul_1(nn_ptr, nn_srcptr, long int, ulong);
-#undef DECLSPEC_IMPORT
+    /* input must satisfy */
+    FLINT_ASSERT(n > 0);
+
+    if (m <= 0)
+        m = 0;
+
+    if (m >= n - 1)
+        m = n - 1;
+
+    /* output must satisfy */
+    FLINT_ASSERT(m >= 0);
+    FLINT_ASSERT(m < n);
+    return m;
+}
+
 
 /* context *******************************************************************/
 
@@ -49,7 +56,7 @@ void mpoly_ctx_init_rand(mpoly_ctx_t mctx, flint_rand_t state, slong max_nvars);
 
 void mpoly_monomial_randbits_fmpz(fmpz * exp, flint_rand_t state, flint_bitcnt_t exp_bits, const mpoly_ctx_t mctx);
 
-void mpoly_ctx_clear(mpoly_ctx_t FLINT_UNUSED(mctx));
+void mpoly_ctx_clear(mpoly_ctx_t mctx);
 
 /*
     number of words used by an exponent vector packed into "bits" bits:
@@ -155,7 +162,8 @@ void mpoly_rbtree_ui_init(mpoly_rbtree_ui_t T, slong data_size);
 
 void mpoly_rbtree_ui_clear(mpoly_rbtree_ui_t T);
 
-void * mpoly_rbtree_ui_lookup(mpoly_rbtree_ui_t T, int * its_new, ulong key);
+void * mpoly_rbtree_ui_lookup(mpoly_rbtree_ui_t T, int * its_new,
+                                                                    ulong key);
 
 FLINT_FORCE_INLINE slong mpoly_rbtree_ui_head(const mpoly_rbtree_ui_t T)
 {
@@ -241,7 +249,7 @@ FLINT_FORCE_INLINE
 void mpoly_monomial_add_mp(ulong * exp_ptr, const ulong * exp2,
                                                    const ulong * exp3, slong N)
 {
-    __gmpn_add_n(exp_ptr, exp2, exp3, N);
+    mpn_add_n(exp_ptr, exp2, exp3, N);
 }
 
 FLINT_FORCE_INLINE
@@ -257,7 +265,7 @@ FLINT_FORCE_INLINE
 void mpoly_monomial_sub_mp(ulong * exp_ptr, const ulong * exp2,
                                                    const ulong * exp3, slong N)
 {
-    __gmpn_sub_n(exp_ptr, exp2, exp3, N);
+    mpn_sub_n(exp_ptr, exp2, exp3, N);
 }
 
 FLINT_FORCE_INLINE
@@ -276,14 +284,14 @@ void mpoly_monomial_madd_mp(ulong * exp1, const ulong * exp2, ulong scalar,
     slong i;
     for (i = 0; i < N; i++)
         exp1[i] = exp2[i];
-    __gmpn_addmul_1(exp1, exp3, N, scalar);
+    mpn_addmul_1(exp1, exp3, N, scalar);
 }
 
 FLINT_FORCE_INLINE
 void mpoly_monomial_madd_inplace_mp(ulong * exp12, ulong scalar,
                                                    const ulong * exp3, slong N)
 {
-    __gmpn_addmul_1(exp12, exp3, N, scalar);
+    mpn_addmul_1(exp12, exp3, N, scalar);
 }
 
 FLINT_FORCE_INLINE
@@ -303,11 +311,37 @@ void mpoly_monomial_msub_mp(ulong * exp1, const ulong * exp2, ulong scalar,
     for (i = 0; i < N; i++)
         exp1[i] = exp2[i];
     FLINT_ASSERT(N > 0);
-    __gmpn_submul_1(exp1, exp3, N, scalar);
+    mpn_submul_1(exp1, exp3, N, scalar);
 }
 
-void mpoly_monomial_msub_ui_array(ulong * exp1, const ulong * exp2, const ulong * scalar, slong scalar_limbs, const ulong * exp3, slong N);
-void mpoly_monomial_madd_ui_array(ulong * exp1, const ulong * exp2, const ulong * scalar, slong scalar_limbs, const ulong * exp3, slong N);
+FLINT_FORCE_INLINE
+void mpoly_monomial_msub_ui_array(ulong * exp1, const ulong * exp2,
+                                     const ulong * scalar, slong scalar_limbs,
+                                                   const ulong * exp3, slong N)
+{
+    slong i;
+    for (i = 0; i < N; i++)
+        exp1[i] = exp2[i];
+    FLINT_ASSERT(scalar_limbs <= N);
+    for (i = 0; i < scalar_limbs; i++)
+    {
+        FLINT_ASSERT(N > i);
+        mpn_submul_1(exp1 + i, exp3, N - i, scalar[i]);
+    }
+}
+
+FLINT_FORCE_INLINE
+void mpoly_monomial_madd_ui_array(ulong * exp1, const ulong * exp2,
+                                     const ulong * scalar, slong scalar_limbs,
+                                                   const ulong * exp3, slong N)
+{
+    slong i;
+    for (i = 0; i < N; i++)
+        exp1[i] = exp2[i];
+    FLINT_ASSERT(scalar_limbs <= N);
+    for (i = 0; i < scalar_limbs; i++)
+        mpn_addmul_1(exp1 + i, exp3, N - i, scalar[i]);
+}
 
 FLINT_FORCE_INLINE
 void mpoly_monomial_madd_fmpz(ulong * exp1, const ulong * exp2,
@@ -315,8 +349,9 @@ void mpoly_monomial_madd_fmpz(ulong * exp1, const ulong * exp2,
 {
     if (COEFF_IS_MPZ(*scalar))
     {
-        zz_ptr mpz = FMPZ_TO_ZZ(*scalar);
-        mpoly_monomial_madd_ui_array(exp1, exp2, mpz->ptr, mpz->size, exp3, N);
+        __mpz_struct * mpz = COEFF_TO_PTR(*scalar);
+        mpoly_monomial_madd_ui_array(exp1, exp2,
+                                           mpz->_mp_d, mpz->_mp_size, exp3, N);
     }
     else
     {
@@ -341,7 +376,8 @@ ulong mpoly_overflow_mask_sp(flint_bitcnt_t bits)
 }
 
 FLINT_FORCE_INLINE
-ulong mpoly_monomial_max1(ulong exp2, ulong exp3, flint_bitcnt_t bits, ulong mask)
+ulong mpoly_monomial_max1(ulong exp2, ulong exp3,
+                                               flint_bitcnt_t bits, ulong mask)
 {
     ulong s, m, exp1;
     s = mask + exp2 - exp3;
@@ -351,10 +387,23 @@ ulong mpoly_monomial_max1(ulong exp2, ulong exp3, flint_bitcnt_t bits, ulong mas
     return exp1;
 }
 
-void mpoly_monomial_max(ulong * exp1, const ulong * exp2, const ulong * exp3, flint_bitcnt_t bits, slong N, ulong mask);
+FLINT_FORCE_INLINE
+void mpoly_monomial_max(ulong * exp1, const ulong * exp2, const ulong * exp3,
+                                      flint_bitcnt_t bits, slong N, ulong mask)
+{
+    ulong i, s, m;
+    for (i = 0; i < N; i++)
+    {
+        s = mask + exp2[i] - exp3[i];
+        m = mask & s;
+        m = m - (m >> (bits - 1));
+        exp1[i] = exp3[i] + (s & m);
+    }
+}
 
 FLINT_FORCE_INLINE
-ulong mpoly_monomial_min1(ulong exp2, ulong exp3, flint_bitcnt_t bits, ulong mask)
+ulong mpoly_monomial_min1(ulong exp2, ulong exp3,
+                                               flint_bitcnt_t bits, ulong mask)
 {
     ulong s, m, exp1;
     s = mask + exp2 - exp3;
@@ -364,10 +413,67 @@ ulong mpoly_monomial_min1(ulong exp2, ulong exp3, flint_bitcnt_t bits, ulong mas
     return exp1;
 }
 
-void mpoly_monomial_min(ulong * exp1, const ulong * exp2, const ulong * exp3, flint_bitcnt_t bits, slong N, ulong mask);
+FLINT_FORCE_INLINE
+void mpoly_monomial_min(ulong * exp1, const ulong * exp2, const ulong * exp3,
+                                      flint_bitcnt_t bits, slong N, ulong mask)
+{
+    ulong i, s, m;
+    for (i = 0; i < N; i++)
+    {
+        s = mask + exp2[i] - exp3[i];
+        m = mask & s;
+        m = m - (m >> (bits - 1));
+        exp1[i] = exp2[i] - (s & m);
+    }
+}
 
-void mpoly_monomial_max_mp(ulong * exp1, const ulong * exp2, const ulong * exp3, flint_bitcnt_t bits, slong N);
-void mpoly_monomial_min_mp(ulong * exp1, const ulong * exp2, const ulong * exp3, flint_bitcnt_t bits, slong N);
+FLINT_FORCE_INLINE
+void mpoly_monomial_max_mp(ulong * exp1, const ulong * exp2, const ulong * exp3,
+                                                  flint_bitcnt_t bits, slong N)
+{
+    slong i, j;
+    for (i = 0; i < N; i += bits/FLINT_BITS)
+    {
+        const ulong * t = exp2;
+        for (j = bits/FLINT_BITS - 1; j >= 0; j--)
+        {
+            if (exp3[i + j] != exp2[i + j])
+            {
+                if (exp3[i + j] > exp2[i + j])
+                    t = exp3;
+                break;
+            }
+        }
+        for (j = 0; j < bits/FLINT_BITS; j++)
+        {
+            exp1[i + j] = t[i + j];
+        }
+    }
+}
+
+FLINT_FORCE_INLINE
+void mpoly_monomial_min_mp(ulong * exp1, const ulong * exp2, const ulong * exp3,
+                                                     flint_bitcnt_t bits, slong N)
+{
+    slong i, j;
+    for (i = 0; i < N; i += bits/FLINT_BITS)
+    {
+        const ulong * t = exp2;
+        for (j = bits/FLINT_BITS - 1; j >= 0; j--)
+        {
+            if (exp3[i + j] != exp2[i + j])
+            {
+                if (exp3[i + j] < exp2[i + j])
+                    t = exp3;
+                break;
+            }
+        }
+        for (j = 0; j < bits/FLINT_BITS; j++)
+        {
+            exp1[i + j] = t[i + j];
+        }
+    }
+}
 
 FLINT_FORCE_INLINE
 int mpoly_monomial_overflows(ulong * exp2, slong N, ulong mask)
@@ -417,7 +523,8 @@ int mpoly_monomial_divides(ulong * exp_ptr, const ulong * exp2,
 }
 
 FLINT_FORCE_INLINE
-int mpoly_monomial_halves(ulong * exp_ptr, const ulong * exp2, slong N, ulong mask)
+int mpoly_monomial_halves(ulong * exp_ptr, const ulong * exp2,
+		                                           slong N, ulong mask)
 {
     slong i;
     for (i = 0; i < N; i++)
@@ -437,7 +544,7 @@ int mpoly_monomial_divides_mp(ulong * exp_ptr, const ulong * exp2,
 {
     slong i;
 
-    __gmpn_sub_n(exp_ptr, exp2, exp3, N);
+    mpn_sub_n(exp_ptr, exp2, exp3, N);
 
     i = bits/FLINT_BITS - 1;
     do {
@@ -456,7 +563,7 @@ int mpoly_monomial_halves_mp(ulong * exp_ptr, const ulong * exp2,
    slong i;
    ulong bw;
 
-   bw = __gmpn_rshift(exp_ptr, exp2, N, 1);
+   bw = mpn_rshift(exp_ptr, exp2, N, 1);
 
    if (bw != 0)
       return 0;
@@ -549,17 +656,24 @@ void mpoly_monomial_set_extra(ulong * exp2, const ulong * exp3,
     }
 }
 
-void mpoly_copy_monomials(ulong * exp1, const ulong * exp2, slong len, slong N);
-#if defined(__GNUC__)
-# define mpoly_copy_monomials(exp1, exp2, len, N) __builtin_memcpy(exp1, exp2, (N) * (len) * sizeof(ulong))
-#endif
+FLINT_FORCE_INLINE
+void mpoly_copy_monomials(ulong * exp1, const ulong * exp2, slong len, slong N)
+{
+    if (len > 0)
+        memcpy(exp1, exp2, N*len*sizeof(ulong));
+}
 
 FLINT_FORCE_INLINE
 void mpoly_monomial_swap(ulong * exp2, ulong * exp3, slong N)
 {
-    slong i;
-    for (i = 0; i < N; i++)
-        FLINT_SWAP(ulong, exp2[i], exp3[i]);
+   slong i;
+   ulong t;
+   for (i = 0; i < N; i++)
+   {
+      t = exp2[i];
+      exp2[i] = exp3[i];
+      exp3[i] = t;
+   }
 }
 
 FLINT_FORCE_INLINE
@@ -574,18 +688,21 @@ FLINT_FORCE_INLINE
 void mpoly_monomial_mul_ui_mp(ulong * exp2, const ulong * exp3, slong N, ulong c)
 {
     FLINT_ASSERT(N > 0);
-    __gmpn_mul_1(exp2, exp3, N, c);
+    mpn_mul_1(exp2, exp3, N, c);
 }
 
-void mpoly_monomial_mul_fmpz(ulong * exp2, const ulong * exp3, slong N, const fmpz_t c);
+void mpoly_monomial_mul_fmpz(ulong * exp2, const ulong * exp3,
+                                                      slong N, const fmpz_t c);
 
 FLINT_FORCE_INLINE
 int mpoly_monomial_is_zero(const ulong * exp, slong N)
 {
    slong i;
    for (i = 0; i < N; i++)
+   {
       if (exp[i] != 0)
          return 0;
+   }
 
    return 1;
 }
@@ -596,8 +713,10 @@ int mpoly_monomial_equal(const ulong * exp2, const ulong * exp3, slong N)
    slong i;
 
    for (i = 0; i < N; i++)
+   {
       if (exp2[i] != exp3[i])
          return 0;
+   }
 
    return 1;
 }
@@ -648,10 +767,12 @@ int mpoly_monomial_lt(const ulong * exp3, const ulong * exp2,
                                                 slong N, const ulong * cmpmask)
 {
     slong i = N - 1;
-    do
+    do {
         if (exp2[i] != exp3[i])
+        {
             return (exp3[i]^cmpmask[i]) < (exp2[i]^cmpmask[i]);
-    while (--i >= 0);
+        }
+    } while (--i >= 0);
     return 0;
 }
 
@@ -660,10 +781,12 @@ int mpoly_monomial_gt(const ulong * exp3, const ulong * exp2,
                                                 slong N, const ulong * cmpmask)
 {
     slong i = N - 1;
-    do
+    do {
         if (exp2[i] != exp3[i])
+        {
             return (exp3[i]^cmpmask[i]) > (exp2[i]^cmpmask[i]);
-    while (--i >= 0);
+        }
+    } while (--i >= 0);
     return 0;
 }
 
@@ -671,10 +794,12 @@ FLINT_FORCE_INLINE
 int mpoly_monomial_lt_nomask(const ulong * exp2, const ulong * exp3, slong N)
 {
     slong i = N - 1;
-    do
+    do {
         if (exp2[i] != exp3[i])
+        {
             return exp2[i] < exp3[i];
-    while (--i >= 0);
+        }
+    } while (--i >= 0);
     return 0;
 }
 
@@ -682,10 +807,12 @@ FLINT_FORCE_INLINE
 int mpoly_monomial_gt_nomask(const ulong * exp2, const ulong * exp3, slong N)
 {
     slong i = N - 1;
-    do
+    do {
         if (exp2[i] != exp3[i])
+        {
             return exp2[i] > exp3[i];
-    while (--i >= 0);
+        }
+    } while (--i >= 0);
     return 0;
 }
 
@@ -808,6 +935,21 @@ void mpoly_max_degrees_tight(slong * max_exp,
    }
 }
 
+
+/* ceiling(log_4(x)) - 1 */
+FLINT_FORCE_INLINE
+slong mpoly_geobucket_clog4(slong x)
+{
+    if (x <= 4)
+        return 0;
+    /*
+        FLINT_BIT_COUNT returns unsigned int.
+        Signed division is not defined.
+        Do the calculation with unsigned ints and then convert to slong.
+    */
+    return (slong)((FLINT_BIT_COUNT(x - 1) - UWORD(1))/(UWORD(2)));
+}
+
 /* single-limb packings ******************************************************/
 
 FLINT_FORCE_INLINE
@@ -837,11 +979,13 @@ ulong _mpoly_bidegree(const ulong * Aexps, flint_bitcnt_t Abits,
 
 /* generators ****************************************************************/
 
-void mpoly_gen_fields_ui(ulong * exp, slong var, const mpoly_ctx_t mctx);
+void mpoly_gen_fields_ui(ulong * exp, slong var,
+                                                       const mpoly_ctx_t mctx);
 
-void mpoly_gen_fields_fmpz(fmpz * exp, slong var, const mpoly_ctx_t mctx);
+void mpoly_gen_fields_fmpz(fmpz * exp, slong var,
+                                                       const mpoly_ctx_t mctx);
 
-flint_bitcnt_t mpoly_gen_bits_required(slong FLINT_UNUSED(var), const mpoly_ctx_t FLINT_UNUSED(mctx));
+flint_bitcnt_t mpoly_gen_bits_required(slong var, const mpoly_ctx_t mctx);
 
 /* return the index in the fields where the generator of index v is stored */
 FLINT_FORCE_INLINE slong mpoly_gen_index(slong v, const mpoly_ctx_t mctx)
@@ -858,7 +1002,8 @@ void mpoly_gen_monomial_offset_shift_sp(ulong * mexp, slong * offset,
 void mpoly_gen_monomial_sp(ulong * oneexp, slong var,
                                      flint_bitcnt_t bits, const mpoly_ctx_t mctx);
 
-slong mpoly_gen_offset_mp(slong var, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+slong mpoly_gen_offset_mp(slong var,
+                                     flint_bitcnt_t bits, const mpoly_ctx_t mctx);
 
 slong mpoly_gen_monomial_offset_mp(ulong * mexp, slong var,
                                      flint_bitcnt_t bits, const mpoly_ctx_t mctx);
@@ -889,28 +1034,49 @@ flint_bitcnt_t mpoly_exp_bits_required_ffmpz(const fmpz * user_exp,
 flint_bitcnt_t mpoly_exp_bits_required_pfmpz(fmpz * const * user_exp,
                                                        const mpoly_ctx_t mctx);
 
-flint_bitcnt_t mpoly_gen_pow_exp_bits_required(slong FLINT_UNUSED(v), ulong e, const mpoly_ctx_t FLINT_UNUSED(mctx));
+FLINT_FORCE_INLINE
+flint_bitcnt_t mpoly_gen_pow_exp_bits_required(slong v, ulong e,
+                                                        const mpoly_ctx_t mctx)
+{
+    return 1 + FLINT_BIT_COUNT(e); /* only lex and deg supported */
+}
 
-int mpoly_is_poly(const ulong * Aexps, slong Alen, flint_bitcnt_t Abits, slong var, const mpoly_ctx_t mctx);
+int mpoly_is_poly(const ulong * Aexps, slong Alen,
+                      flint_bitcnt_t Abits, slong var, const mpoly_ctx_t mctx);
 
-void mpoly_pack_vec_ui(ulong * exp1, const ulong * exp2, flint_bitcnt_t bits, slong nfields, slong len);
-void mpoly_pack_vec_fmpz(ulong * exp1, const fmpz * exp2, flint_bitcnt_t bits, slong nfields, slong len);
+void mpoly_pack_vec_ui(ulong * exp1, const ulong * exp2,
+                                flint_bitcnt_t bits, slong nfields, slong len);
+void mpoly_pack_vec_fmpz(ulong * exp1, const fmpz * exp2,
+                                flint_bitcnt_t bits, slong nfields, slong len);
 
-void mpoly_unpack_vec_ui(ulong * exp1, const ulong * exp2, flint_bitcnt_t bits, slong nfields, slong len);
+void mpoly_unpack_vec_ui(ulong * exp1, const ulong * exp2,
+                                flint_bitcnt_t bits, slong nfields, slong len);
 
-void mpoly_unpack_vec_fmpz(fmpz * exp1, const ulong * exp2, flint_bitcnt_t bits, slong nfields, slong len);
+void mpoly_unpack_vec_fmpz(fmpz * exp1, const ulong * exp2,
+                                flint_bitcnt_t bits, slong nfields, slong len);
 
-void mpoly_get_monomial_ui_unpacked_ui(ulong * user_exps, const ulong * poly_exps, const mpoly_ctx_t mctx);
-void mpoly_get_monomial_ui_unpacked_ffmpz(ulong * user_exps, const fmpz * poly_exps, const mpoly_ctx_t mctx);
-void mpoly_get_monomial_ffmpz_unpacked_ffmpz(fmpz * user_exps, const fmpz * poly_exps, const mpoly_ctx_t mctx);
-void mpoly_get_monomial_pfmpz_unpacked_ffmpz(fmpz ** user_exps, const fmpz * poly_exps, const mpoly_ctx_t mctx);
+void mpoly_get_monomial_ui_unpacked_ffmpz(ulong * user_exps,
+                               const fmpz * poly_exps, const mpoly_ctx_t mctx);
 
-void mpoly_get_monomial_ui_sp(ulong * user_exps, const ulong * poly_exps, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
-void mpoly_get_monomial_si_mp(slong * user_exps, const ulong * poly_exps, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
-void mpoly_get_monomial_ui_mp(ulong * user_exps, const ulong * poly_exps, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+void mpoly_get_monomial_ffmpz_unpacked_ffmpz(fmpz * user_exps,
+                               const fmpz * poly_exps, const mpoly_ctx_t mctx);
 
-MPOLY_INLINE
-void mpoly_get_monomial_ui(ulong * user_exps,
+void mpoly_get_monomial_pfmpz_unpacked_ffmpz(fmpz ** user_exps,
+                               const fmpz * poly_exps, const mpoly_ctx_t mctx);
+
+void mpoly_get_monomial_ui_unpacked_ui(ulong * user_exps,
+                              const ulong * poly_exps, const mpoly_ctx_t mctx);
+
+void mpoly_get_monomial_ui_sp(ulong * user_exps,
+         const ulong * poly_exps, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+
+void mpoly_get_monomial_ui_mp(ulong * user_exps,
+         const ulong * poly_exps, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+
+void mpoly_get_monomial_si_mp(slong * user_exps,
+         const ulong * poly_exps, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+
+MPOLY_INLINE void mpoly_get_monomial_ui(ulong * user_exps,
           const ulong * poly_exps, flint_bitcnt_t bits, const mpoly_ctx_t mctx)
 {
     if (bits <= FLINT_BITS)
@@ -929,9 +1095,14 @@ MPOLY_INLINE void mpoly_get_monomial_si(slong * user_exps,
         mpoly_get_monomial_si_mp(user_exps, poly_exps, bits, mctx);
 }
 
-ulong mpoly_get_monomial_var_exp_ui_sp(const ulong * poly_exps, slong var, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
-slong mpoly_get_monomial_var_exp_si_mp(const ulong * poly_exps, slong var, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
-ulong mpoly_get_monomial_var_exp_ui_mp(const ulong * poly_exps, slong var, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+ulong mpoly_get_monomial_var_exp_ui_sp(const ulong * poly_exps,
+                       slong var, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+
+ulong mpoly_get_monomial_var_exp_ui_mp(const ulong * poly_exps,
+                       slong var, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+
+slong mpoly_get_monomial_var_exp_si_mp(const ulong * poly_exps,
+                       slong var, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
 
 MPOLY_INLINE ulong mpoly_get_monomial_var_exp_ui(const ulong * poly_exps,
                         slong var, flint_bitcnt_t bits, const mpoly_ctx_t mctx)
@@ -951,56 +1122,103 @@ MPOLY_INLINE slong mpoly_get_monomial_var_exp_si(const ulong * poly_exps,
         return mpoly_get_monomial_var_exp_si_mp(poly_exps, var, bits, mctx);
 }
 
-void mpoly_get_monomial_ffmpz(fmpz * exps, const ulong * poly_exps, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
-void mpoly_get_monomial_pfmpz(fmpz ** exps, const ulong * poly_exps, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+void mpoly_get_monomial_ffmpz(fmpz * exps, const ulong * poly_exps,
+                                     flint_bitcnt_t bits, const mpoly_ctx_t mctx);
 
-void mpoly_set_monomial_ui(ulong * exp1, const ulong * exp2, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
-void mpoly_set_monomial_ffmpz(ulong * exp1, const fmpz * exp2, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
-void mpoly_set_monomial_pfmpz(ulong * exp1, fmpz * const * exp2, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+void mpoly_get_monomial_pfmpz(fmpz ** exps, const ulong * poly_exps,
+                                     flint_bitcnt_t bits, const mpoly_ctx_t mctx);
 
-int mpoly_repack_monomials(ulong * exps1, flint_bitcnt_t bits1, const ulong * exps2, flint_bitcnt_t bits2, slong len, const mpoly_ctx_t mctx);
-void mpoly_pack_monomials_tight(ulong * exp1, const ulong * exp2, slong len, const slong * mults, slong num, slong bits);
-void mpoly_unpack_monomials_tight(ulong * e1, ulong * e2, slong len, slong * mults, slong num, slong bits);
+void mpoly_set_monomial_ui(ulong * exp1, const ulong * exp2,
+                                  flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+void mpoly_set_monomial_ffmpz(ulong * exp1, const fmpz * exp2,
+                                  flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+void mpoly_set_monomial_pfmpz(ulong * exp1, fmpz * const * exp2,
+                                  flint_bitcnt_t bits, const mpoly_ctx_t mctx);
 
-int mpoly_monomial_exists(slong * index, const ulong * poly_exps, const ulong * exp, slong len, slong N, const ulong * cmpmask);
+int mpoly_repack_monomials(ulong * exps1, flint_bitcnt_t bits1,
+                        const ulong * exps2, flint_bitcnt_t bits2, slong len,
+                                                       const mpoly_ctx_t mctx);
+
+void mpoly_pack_monomials_tight(ulong * exp1,
+                  const ulong * exp2, slong len, const slong * mults,
+                                                        slong num, slong bits);
+
+void mpoly_unpack_monomials_tight(ulong * e1, ulong * e2, slong len,
+                                         slong * mults, slong num, slong bits);
+
+int mpoly_monomial_exists(slong * index, const ulong * poly_exps,
+                 const ulong * exp, slong len, slong N, const ulong * cmpmask);
 
 slong mpoly_monomial_index1_nomask(ulong * Aexps, slong Alen, ulong e);
-slong mpoly_monomial_index_ui(const ulong * Aexp, flint_bitcnt_t Abits, slong Alength, const ulong * exp, const mpoly_ctx_t mctx);
-slong mpoly_monomial_index_pfmpz(const ulong * Aexp, flint_bitcnt_t Abits, slong Alength, fmpz * const * exp, const mpoly_ctx_t mctx);
-slong mpoly_monomial_index_monomial(const ulong * Aexp, flint_bitcnt_t Abits, slong Alength, const ulong * Mexp, flint_bitcnt_t Mbits, const mpoly_ctx_t mctx);
 
-void mpoly_min_fields_ui_sp(ulong * min_fields, const ulong * poly_exps, slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
-void mpoly_min_fields_fmpz(fmpz * min_fields, const ulong * poly_exps, slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+slong mpoly_monomial_index_ui(const ulong * Aexp, flint_bitcnt_t Abits,
+                     slong Alength, const ulong * exp, const mpoly_ctx_t mctx);
 
-void mpoly_max_fields_ui_sp(ulong * max_fields, const ulong * poly_exps, slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
-void mpoly_max_fields_fmpz(fmpz * max_fields, const ulong * poly_exps, slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+slong mpoly_monomial_index_pfmpz(const ulong * Aexp, flint_bitcnt_t Abits,
+                    slong Alength, fmpz * const * exp, const mpoly_ctx_t mctx);
 
-int mpoly_degrees_fit_si(const ulong * poly_exps, slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+slong mpoly_monomial_index_monomial(const ulong * Aexp,
+                      flint_bitcnt_t Abits, slong Alength, const ulong * Mexp,
+                                    flint_bitcnt_t Mbits, const mpoly_ctx_t mctx);
 
-void mpoly_degrees_si(slong * user_degs, const ulong * poly_exps, slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
-void mpoly_degrees_si_threaded(slong * user_degs, const ulong * poly_exps, slong len,  flint_bitcnt_t bits, const mpoly_ctx_t mctx, const thread_pool_handle * handles, slong num_handles);
-void mpoly_degrees_ffmpz(fmpz * user_degs, const ulong * poly_exps, slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
-void mpoly_degrees_pfmpz(fmpz ** user_degs, const ulong * poly_exps, slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+void mpoly_min_fields_ui_sp(ulong * min_fields, const ulong * poly_exps,
+                          slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
 
-slong mpoly_degree_si(const ulong * poly_exps, slong len, flint_bitcnt_t bits, slong var, const mpoly_ctx_t mctx);
-void mpoly_degree_fmpz(fmpz_t deg, const ulong * poly_exps, slong len, flint_bitcnt_t bits, slong var, const mpoly_ctx_t mctx);
+void mpoly_min_fields_fmpz(fmpz * min_fields, const ulong * poly_exps,
+                          slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
 
-int  mpoly_total_degree_fits_si(const ulong * exps, slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+void mpoly_max_fields_ui_sp(ulong * max_fields, const ulong * poly_exps,
+                                slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
 
-slong mpoly_total_degree_si(const ulong * exps, slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
-void mpoly_total_degree_fmpz(fmpz_t totdeg, const ulong * exps, slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
-void mpoly_total_degree_fmpz_ref(fmpz_t totdeg, const ulong * exps, slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+void mpoly_max_fields_fmpz(fmpz * max_fields, const ulong * poly_exps,
+                                slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
 
-void mpoly_used_vars_or(int * used, const ulong * exps, slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+int mpoly_degrees_fit_si(const ulong * poly_exps,
+                                slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
 
-int mpoly_monomial_cmp_general(ulong * Aexp, flint_bitcnt_t Abits, ulong * Bexp, flint_bitcnt_t Bbits, const mpoly_ctx_t mctx);
+void mpoly_degrees_si(slong * user_degs, const ulong * poly_exps,
+                          slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+
+void mpoly_degrees_si_threaded(slong * user_degs, const ulong * poly_exps,
+                         slong len,  flint_bitcnt_t bits, const mpoly_ctx_t mctx,
+                        const thread_pool_handle * handles, slong num_handles);
+
+void mpoly_degrees_ffmpz(fmpz * user_degs, const ulong * poly_exps,
+                          slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+
+void mpoly_degrees_pfmpz(fmpz ** user_degs, const ulong * poly_exps,
+                          slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+
+slong mpoly_degree_si(const ulong * poly_exps,
+               slong len, flint_bitcnt_t bits, slong var, const mpoly_ctx_t mctx);
+
+void mpoly_degree_fmpz(fmpz_t deg, const ulong * poly_exps,
+               slong len, flint_bitcnt_t bits, slong var, const mpoly_ctx_t mctx);
+
+int  mpoly_total_degree_fits_si(const ulong * exps,
+                                slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+
+slong mpoly_total_degree_si(const ulong * exps,
+                                slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+
+void mpoly_total_degree_fmpz(fmpz_t totdeg, const ulong * exps,
+                                slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+
+void mpoly_total_degree_fmpz_ref(fmpz_t totdeg, const ulong * exps,
+                                slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+
+void mpoly_used_vars_or(int * used, const ulong * exps,
+                       slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+
+int mpoly_monomial_cmp_general(ulong * Aexp, flint_bitcnt_t Abits,
+                   ulong * Bexp, flint_bitcnt_t Bbits, const mpoly_ctx_t mctx);
 
 void mpoly_search_monomials(
-        slong ** e_ind, ulong * e, slong * e_score,
-        slong * t1, slong * t2, slong *t3,
-        slong lower, slong upper,
-        const ulong * a, slong a_len, const ulong * b, slong b_len,
-        slong N, const ulong * cmpmask);
+                slong ** e_ind, ulong * e, slong * e_score,
+                slong * t1, slong * t2, slong *t3,
+                slong lower, slong upper,
+                const ulong * a, slong a_len, const ulong * b, slong b_len,
+                                               slong N, const ulong * cmpmask);
 
 void mpoly_main_variable_split_LEX(slong * ind, ulong * pexp,
                                  const ulong * Aexp, slong l1, slong Alen,
@@ -1010,14 +1228,23 @@ void mpoly_main_variable_split_DEG(slong * ind, ulong * pexp,
                                   const ulong * Aexp,  slong l1, slong Alen,
                                             ulong deg, slong num, slong Abits);
 
-int mpoly_term_exp_fits_si(ulong * exps, flint_bitcnt_t bits, slong n, const mpoly_ctx_t mctx);
-int mpoly_term_exp_fits_ui(ulong * exps, flint_bitcnt_t bits, slong n, const mpoly_ctx_t mctx);
+int mpoly_term_exp_fits_si(ulong * exps, flint_bitcnt_t bits,
+                                              slong n, const mpoly_ctx_t mctx);
 
-int mpoly_is_gen(ulong * exps, slong var, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+int mpoly_term_exp_fits_ui(ulong * exps, flint_bitcnt_t bits,
+                                              slong n, const mpoly_ctx_t mctx);
 
-int mpoly_monomials_valid_test(ulong * exps, slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
-int mpoly_monomials_overflow_test(ulong * exps, slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
-int mpoly_monomials_inorder_test(ulong * exps, slong len, flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+int mpoly_is_gen(ulong * exps, slong var,
+                                  flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+
+int mpoly_monomials_valid_test(ulong * exps, slong len,
+                                  flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+
+int mpoly_monomials_overflow_test(ulong * exps, slong len,
+                                  flint_bitcnt_t bits, const mpoly_ctx_t mctx);
+
+int mpoly_monomials_inorder_test(ulong * exps, slong len,
+                                  flint_bitcnt_t bits, const mpoly_ctx_t mctx);
 
 void mpoly_reverse(ulong * Aexp, const ulong * Bexp, slong len, slong N);
 
@@ -1111,19 +1338,19 @@ slong mpoly_gcd_info_get_brown_upper_limit(const mpoly_gcd_info_t I,
                                                        slong var, slong bound);
 
 void mpoly_gcd_info_measure_hensel(mpoly_gcd_info_t I,
-                         slong Alength, slong Blength, const mpoly_ctx_t FLINT_UNUSED(mctx));
+                         slong Alength, slong Blength, const mpoly_ctx_t mctx);
 
 void mpoly_gcd_info_measure_brown(mpoly_gcd_info_t I,
-                         slong Alength, slong Blength, const mpoly_ctx_t FLINT_UNUSED(mctx));
+                         slong Alength, slong Blength, const mpoly_ctx_t mctx);
 
 void mpoly_gcd_info_measure_bma(mpoly_gcd_info_t I,
-                         slong Alength, slong Blength, const mpoly_ctx_t FLINT_UNUSED(mctx));
+                         slong Alength, slong Blength, const mpoly_ctx_t mctx);
 
 void mpoly_gcd_info_measure_zippel(mpoly_gcd_info_t I,
-                         slong FLINT_UNUSED(Alength), slong FLINT_UNUSED(Blength), const mpoly_ctx_t FLINT_UNUSED(mctx));
+                         slong Alength, slong Blength, const mpoly_ctx_t mctx);
 
 void mpoly_gcd_info_measure_zippel2(mpoly_gcd_info_t I,
-                         slong FLINT_UNUSED(Alength), slong FLINT_UNUSED(Blength), const mpoly_ctx_t FLINT_UNUSED(mctx));
+                         slong Alength, slong Blength, const mpoly_ctx_t mctx);
 
 int mpoly_monomial_cofactors(fmpz * Abarexps, fmpz * Bbarexps,
                                     const ulong * Aexps, flint_bitcnt_t Abits,
@@ -1153,6 +1380,7 @@ int _mpoly_test_irreducible(slong * Aexps, slong stride, slong Alen,
                             slong nvars, flint_rand_t state, slong tries_left);
 
 void mpoly_compression_init(mpoly_compression_t M);
+
 void mpoly_compression_clear(mpoly_compression_t M);
 
 void mpoly_compression_set(mpoly_compression_t M, const ulong * Aexps,
@@ -1205,15 +1433,20 @@ typedef struct {
 typedef mpoly_univar_struct mpoly_univar_t[1];
 
 void * mpoly_void_ring_elem_init(mpoly_void_ring_t R);
+
 void mpoly_void_ring_elem_clear(void * a, mpoly_void_ring_t R);
 
 void mpoly_univar_init(mpoly_univar_t A, mpoly_void_ring_t R);
-void mpoly_univar_init2(mpoly_univar_t A, slong len, mpoly_void_ring_t R);
+
 void mpoly_univar_clear(mpoly_univar_t A, mpoly_void_ring_t R);
 
 void mpoly_univar_swap(mpoly_univar_t A, mpoly_univar_t B);
 
-void mpoly_univar_fit_length(mpoly_univar_t A, slong len, mpoly_void_ring_t R);
+void mpoly_univar_fit_length(mpoly_univar_t A, slong len,
+                                                          mpoly_void_ring_t R);
+
+void mpoly_univar_init2(mpoly_univar_t A, slong len,
+                                                          mpoly_void_ring_t R);
 
 int mpoly_univar_pseudo_gcd_ducos(mpoly_univar_t G,
                       mpoly_univar_t B, mpoly_univar_t A, mpoly_void_ring_t R);
@@ -1221,7 +1454,8 @@ int mpoly_univar_pseudo_gcd_ducos(mpoly_univar_t G,
 int mpoly_univar_resultant(void * r, mpoly_univar_t fx,
                                        mpoly_univar_t gx, mpoly_void_ring_t R);
 
-int mpoly_univar_discriminant(void * d, mpoly_univar_t fx, mpoly_void_ring_t R);
+int mpoly_univar_discriminant(void * d, mpoly_univar_t fx,
+                                                          mpoly_void_ring_t R);
 
 typedef struct {
     char * str;
@@ -1246,11 +1480,14 @@ typedef struct {
 typedef mpoly_parse_struct mpoly_parse_t[1];
 
 void mpoly_parse_init(mpoly_parse_t E);
+
 void mpoly_parse_clear(mpoly_parse_t E);
 
-void mpoly_parse_add_terminal(mpoly_parse_t E, const char * s, const void * v);
+void mpoly_parse_add_terminal(mpoly_parse_t E,
+                                               const char * s, const void * v);
 
-int mpoly_parse_parse(mpoly_parse_t E, void * res, const char * s, slong len);
+int mpoly_parse_parse(mpoly_parse_t E, void * res,
+                                                    const char * s, slong len);
 
 /* chunking */
 
@@ -1260,8 +1497,24 @@ int mpoly_parse_parse(mpoly_parse_t E, void * res, const char * s, slong len);
    assumes there are l1 "coefficients" in a list of len1 exponents.
    Note this doesn't currently mask the relevant bits.
 */
+MPOLY_INLINE
 void mpoly_main_variable_terms1(slong * i1, slong * n1, const ulong * exp1,
-        slong l1, slong len1, slong k, slong FLINT_UNUSED(num), slong bits);
+                          slong l1, slong len1, slong k, slong num, slong bits)
+{
+   slong i, j = 0;
+   slong shift = bits*(k - 1);
+
+   i1[0] = 0;
+   for (i = 0; i < l1 - 1; i++)
+   {
+      while (j < len1 && (l1 - i - 1) == (slong) (exp1[j] >> shift))
+         j++;
+
+      i1[i + 1] = j;
+      n1[i] = j - i1[i];
+   }
+   n1[l1 - 1] = len1 - j;
+}
 
 #ifdef __cplusplus
 }

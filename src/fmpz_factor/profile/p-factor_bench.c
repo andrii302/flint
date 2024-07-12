@@ -10,6 +10,7 @@
 */
 
 #include "profiler.h"
+#include "flint.h"
 #include "fmpz.h"
 #include "fmpz_factor.h"
 #include "ulong_extras.h"

@@ -77,7 +77,7 @@ Groups
     larger than `10^{16}`, which is currently unsupported
     by the implementation.
 
-Basic rings and fields
+Base rings and fields
 -------------------------------------------------------------------------------
 
 .. function:: void gr_ctx_init_random(gr_ctx_t ctx, flint_rand_t state)
@@ -101,23 +101,6 @@ Basic rings and fields
     Initializes *ctx* to the ring of Gaussian integers
     `\mathbb{Z}[i]` with elements of type :type:`fmpzi_t`.
 
-Residue rings and finite fields
--------------------------------------------------------------------------------
-
-.. function:: int gr_ctx_set_is_field(gr_ctx_t ctx, truth_t is_field)
-
-    Set whether the given ring is actually a field. For example,
-    in the case of `\mathbb{Z}/n\mathbb{Z}`, this sets whether
-    the modulus is prime. This can speed up some computations and
-    enable some functions to complete that otherwise would
-    return ``GR_UNABLE``.
-
-.. function:: void gr_ctx_init_nmod(gr_ctx_t ctx, ulong n)
-
-    Initializes *ctx* to the ring `\mathbb{Z}/n\mathbb{Z}`
-    of integers modulo *n* where
-    elements have type :type:`ulong`. We require `n \ne 0`.
-
 .. function:: void gr_ctx_init_nmod8(gr_ctx_t ctx, unsigned char n)
               void gr_ctx_init_nmod32(gr_ctx_t ctx, unsigned int n)
 
@@ -126,12 +109,11 @@ Residue rings and finite fields
     elements have type :type:`uint8` or :type:`uint32`. The modulus must be
     nonzero.
 
-    .. note ::
+.. function:: void gr_ctx_init_nmod(gr_ctx_t ctx, ulong n)
 
-        Presently, many operations for these types are not as optimized
-        as those for full-word ``nmods``. It is currently recommended
-        to use :func:`gr_ctx_init_nmod` for best performance unless
-        one specifically wants to minimize memory usage.
+    Initializes *ctx* to the ring `\mathbb{Z}/n\mathbb{Z}`
+    of integers modulo *n* where
+    elements have type :type:`ulong`. We require `n \ne 0`.
 
 .. function:: void gr_ctx_init_fmpz_mod(gr_ctx_t ctx, const fmpz_t n)
 
@@ -139,11 +121,13 @@ Residue rings and finite fields
     of integers modulo *n* where
     elements have type :type:`fmpz`. The modulus must be positive.
 
-* :func:`gr_ctx_init_mpn_mod`
+.. function:: void gr_ctx_nmod_set_primality(gr_ctx_t ctx, truth_t is_prime)
+              void gr_ctx_fmpz_mod_set_primality(gr_ctx_t ctx, truth_t is_prime)
 
-    Initializes *ctx* to the ring `\mathbb{Z}/n\mathbb{Z}`
-    of integers modulo *n* where
-    elements are flat limb arrays with the same number of limbs as *n*.
+    For a ring initialized with :func:`gr_ctx_init_nmod`
+    or :func:`gr_ctx_init_fmpz_mod` respectively,
+    indicate whether the modulus is prime. This can speed up
+    some computations.
 
 .. function:: void gr_ctx_init_fq(gr_ctx_t ctx, const fmpz_t p, slong d, const char * var)
               void gr_ctx_init_fq_nmod(gr_ctx_t ctx, ulong p, slong d, const char * var)
@@ -156,9 +140,6 @@ Residue rings and finite fields
     The corresponding element types are ``fq_t``, ``fq_nmod_t``, ``fq_zech_t``.
     The ``fq_zech`` context requires `q < 2^{64}` (and in practice a much
     smaller value than this).
-
-Number fields and algebraic numbers
--------------------------------------------------------------------------------
 
 .. function:: void gr_ctx_init_nf(gr_ctx_t ctx, const fmpq_poly_t poly)
               void gr_ctx_init_nf_fmpz_poly(gr_ctx_t ctx, const fmpz_poly_t poly)
@@ -182,9 +163,6 @@ Number fields and algebraic numbers
     adding two degree-100 algebraic numbers
     requires a degree limit of at least 10000.
     Warning: currently not all methods respect these limits.
-
-Real and complex numbers
--------------------------------------------------------------------------------
 
 .. function:: void gr_ctx_init_real_arb(gr_ctx_t ctx, slong prec)
               void gr_ctx_init_complex_acb(gr_ctx_t ctx, slong prec)
@@ -314,25 +292,6 @@ Polynomial rings
     polynomials in *nvars* variables over the given *base_ring*,
     with monomial ordering *ord*.
     Elements have type :type:`gr_mpoly_struct`.
-
-Power series
--------------------------------------------------------------------------------
-
-.. function:: void gr_ctx_init_series_mod_gr_poly(gr_ctx_t ctx, gr_ctx_t base_ring, slong n)
-
-    Initializes *ctx* to a ring of truncated power series `R[[x]] / \langle x^n \rangle`
-    over the given *base_ring*.
-    Elements have type :type:`gr_poly_struct`.
-    It is assumed that all inputs are already truncated to length *n*,
-    and this invariant is enforced for all outputs.
-
-.. function:: void gr_ctx_init_gr_series(gr_ctx_t ctx, gr_ctx_t base_ring, slong prec)
-
-    Initializes *ctx* to a ring of power series `R[[x]]` over the given *base_ring*.
-    Elements are generally inexact, having an error term `O(x^n)`.
-    The parameter *prec* defines the default precision.
-    Elements have type ``gr_series_struct`` (this type is currently internal).
-
 
 Fraction fields
 -------------------------------------------------------------------------------

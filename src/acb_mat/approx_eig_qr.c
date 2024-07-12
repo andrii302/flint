@@ -19,7 +19,6 @@ Todo items present in the original code:
 - Aggressive early deflation
 */
 
-#include "acb.h"
 #include "acb_mat.h"
 
 static void

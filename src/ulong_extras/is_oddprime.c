@@ -15,7 +15,7 @@
 
 #if FLINT64
 
-ulong FLINT_ODD_PRIME_LOOKUP[] =
+mp_limb_t FLINT_ODD_PRIME_LOOKUP[] =
 {
     0x816d129a64b4cb6eUL, UWORD(0x2196820d864a4c32), UWORD(0xa48961205a0434c9),
     UWORD(0x4a2882d129861144), UWORD(0x834992132424030),  0x148a48844225064bUL,
@@ -32,7 +32,7 @@ ulong FLINT_ODD_PRIME_LOOKUP[] =
 
 #else
 
-ulong FLINT_ODD_PRIME_LOOKUP[] =
+mp_limb_t FLINT_ODD_PRIME_LOOKUP[] =
 {
     0x64b4cb6eUL, 0x816d129aUL, UWORD(0x864a4c32), 0x2196820dUL,
     UWORD(0x5a0434c9), UWORD(0xa4896120), UWORD(0x29861144), UWORD(0x4a2882d1),
@@ -54,17 +54,17 @@ ulong FLINT_ODD_PRIME_LOOKUP[] =
 
 #endif
 
-int n_is_oddprime_small(ulong n)
+int n_is_oddprime_small(mp_limb_t n)
 {
-    ulong q = n / 2;
-    ulong x = (q & (FLINT_BITS - UWORD(1)));
+    mp_limb_t q = n / 2;
+    mp_limb_t x = (q & (FLINT_BITS - UWORD(1)));
     return (FLINT_ODD_PRIME_LOOKUP[q / FLINT_BITS] & (UWORD(1) << x)) >> x;
 }
 
-int n_is_oddprime_binary(ulong n)
+int n_is_oddprime_binary(mp_limb_t n)
 {
     ulong diff, prime_lo, prime_hi;
-    const ulong * primes;
+    const mp_limb_t * primes;
 
     n_prime_pi_bounds(&prime_lo, &prime_hi, n);
     primes = n_primes_arr_readonly(prime_hi + 1);

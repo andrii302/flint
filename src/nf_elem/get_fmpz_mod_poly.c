@@ -17,16 +17,16 @@ void _nf_elem_get_fmpz_mod_poly(fmpz_mod_poly_t pol, const nf_elem_t a,
 {
     if (nf_elem_is_zero(a, nf))
     {
-        fmpz_mod_poly_zero(pol, ctx);
+        FMPZ_MOD_POLY_ZERO(pol, ctx);
 
         return;
     }
     if (nf->flag & NF_LINEAR)
     {
         {
-            fmpz_mod_poly_fit_length(pol, 1, ctx);
+            FMPZ_MOD_POLY_FIT_LENGTH(pol, 1, ctx);
 
-            fmpz_mod(pol->coeffs + 0, LNF_ELEM_NUMREF(a), ctx->n);
+            FMPZ_MOD(pol->coeffs + 0, LNF_ELEM_NUMREF(a), ctx, &(pol->p));
 
             _fmpz_mod_poly_set_length(pol, 1);
             _fmpz_mod_poly_normalise(pol);
@@ -34,11 +34,11 @@ void _nf_elem_get_fmpz_mod_poly(fmpz_mod_poly_t pol, const nf_elem_t a,
         }
     } else if (nf->flag & NF_QUADRATIC)
     {
-        fmpz_mod_poly_fit_length(pol, 3, ctx);
+        FMPZ_MOD_POLY_FIT_LENGTH(pol, 3, ctx);
 
-        fmpz_mod(pol->coeffs + 0, QNF_ELEM_NUMREF(a) + 0, ctx->n);
-        fmpz_mod(pol->coeffs + 1, QNF_ELEM_NUMREF(a) + 1, ctx->n);
-        fmpz_mod(pol->coeffs + 2, QNF_ELEM_NUMREF(a) + 2, ctx->n);
+        FMPZ_MOD(pol->coeffs + 0, QNF_ELEM_NUMREF(a), ctx, &(pol->p));
+        FMPZ_MOD(pol->coeffs + 1, QNF_ELEM_NUMREF(a) + 1, ctx, &(pol->p));
+        FMPZ_MOD(pol->coeffs + 2, QNF_ELEM_NUMREF(a) + 2, ctx, &(pol->p));
 
         _fmpz_mod_poly_set_length(pol, 3);
         _fmpz_mod_poly_normalise(pol);
@@ -47,10 +47,10 @@ void _nf_elem_get_fmpz_mod_poly(fmpz_mod_poly_t pol, const nf_elem_t a,
         slong len = NF_ELEM(a)->length;
         slong i;
 
-        fmpz_mod_poly_fit_length(pol, len, ctx);
+        FMPZ_MOD_POLY_FIT_LENGTH(pol, len, ctx);
 
         for (i = 0; i < len; i++)
-            fmpz_mod(pol->coeffs + i, NF_ELEM_NUMREF(a) + i, ctx->n);
+            FMPZ_MOD(pol->coeffs + i, NF_ELEM_NUMREF(a) + i, ctx, &(pol->p));
 
         _fmpz_mod_poly_set_length(pol, len);
         _fmpz_mod_poly_normalise(pol);
@@ -64,11 +64,11 @@ void nf_elem_get_fmpz_mod_poly_den(fmpz_mod_poly_t pol, const nf_elem_t a,
     if (den)
     {
         if (nf->flag & NF_LINEAR)
-            fmpz_mod_poly_scalar_div_fmpz(pol, pol, LNF_ELEM_DENREF(a), ctx);
+            FMPZ_MOD_POLY_SCALAR_DIV_FMPZ(pol, pol, LNF_ELEM_DENREF(a), ctx);
         else if (nf->flag & NF_QUADRATIC)
-            fmpz_mod_poly_scalar_div_fmpz(pol, pol, QNF_ELEM_DENREF(a), ctx);
+            FMPZ_MOD_POLY_SCALAR_DIV_FMPZ(pol, pol, QNF_ELEM_DENREF(a), ctx);
         else
-            fmpz_mod_poly_scalar_div_fmpz(pol, pol, NF_ELEM_DENREF(a), ctx);
+            FMPZ_MOD_POLY_SCALAR_DIV_FMPZ(pol, pol, NF_ELEM_DENREF(a), ctx);
     }
 }
 

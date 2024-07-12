@@ -19,7 +19,7 @@ nmod_mat_solve_tril_classical(nmod_mat_t X, const nmod_mat_t L, const nmod_mat_t
     int nlimbs;
     slong i, j, n, m;
     nmod_t mod;
-    nn_ptr inv, tmp;
+    mp_ptr inv, tmp;
 
     n = L->r;
     m = B->c;
@@ -44,7 +44,7 @@ nmod_mat_solve_tril_classical(nmod_mat_t X, const nmod_mat_t L, const nmod_mat_t
 
         for (j = 0; j < n; j++)
         {
-            ulong s;
+            mp_limb_t s;
             s = _nmod_vec_dot(L->rows[j], tmp, j, mod, nlimbs);
             s = nmod_sub(nmod_mat_entry(B, j, i), s, mod);
             if (!unit)

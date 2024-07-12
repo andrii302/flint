@@ -9,17 +9,16 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include <gmp.h>
+#include "flint.h"
 #include "fmpz.h"
 
 void fmpz_clear_readonly(fmpz_t f)
 {
     if (COEFF_IS_MPZ(*f))
     {
-        mpz_ptr ptr = COEFF_TO_PTR(*f);
+        __mpz_struct *ptr = COEFF_TO_PTR(*f);
 
-        /* NOTE: Do not feed the collector anything less than two limbs! */
-        mpz_init2(ptr, 2 * FLINT_BITS);
+        mpz_init(ptr);
         _fmpz_clear_mpz(*f);
         *f = WORD(0);
     }

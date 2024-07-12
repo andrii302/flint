@@ -17,7 +17,7 @@ TEST_FUNCTION_START(n_is_probabprime_lucas, state)
 {
     int i, result;
     ulong count = UWORD(0);
-    ulong d;
+    mp_limb_t d;
     mpz_t d_m;
     slong test_multiplier;
 

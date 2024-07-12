@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include <string.h>
 #include "thread_pool.h"
 #include "thread_support.h"
 #include "fmpz.h"
@@ -17,9 +16,9 @@
 #include "mpoly.h"
 #include "fmpz_mpoly.h"
 
-static slong _fmpz_mpoly_mul_heap_part1(fmpz ** A_coeff, ulong ** A_exp, slong * A_alloc,
+slong _fmpz_mpoly_mul_heap_part1(fmpz ** A_coeff, ulong ** A_exp, slong * A_alloc,
               const fmpz * Bcoeff, const ulong * Bexp, slong Blen,
-              const fmpz * Ccoeff, const ulong * Cexp, slong FLINT_UNUSED(Clen),
+              const fmpz * Ccoeff, const ulong * Cexp, slong Clen,
          slong * start, slong * end, slong * hind, const fmpz_mpoly_stripe_t S)
 {
     const int flint_small = S->flint_small;
@@ -182,9 +181,9 @@ static slong _fmpz_mpoly_mul_heap_part1(fmpz ** A_coeff, ulong ** A_exp, slong *
 }
 
 
-static slong _fmpz_mpoly_mul_heap_part(fmpz ** A_coeff, ulong ** A_exp, slong * A_alloc,
+slong _fmpz_mpoly_mul_heap_part(fmpz ** A_coeff, ulong ** A_exp, slong * A_alloc,
                  const fmpz * Bcoeff, const ulong * Bexp, slong Blen,
-                 const fmpz * Ccoeff, const ulong * Cexp, slong FLINT_UNUSED(Clen),
+                 const fmpz * Ccoeff, const ulong * Cexp, slong Clen,
          slong * start, slong * end, slong * hind, const fmpz_mpoly_stripe_t S)
 {
     const int flint_small = S->flint_small;

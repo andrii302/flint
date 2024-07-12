@@ -11,7 +11,6 @@
 
 #include "ulong_extras.h"
 #include "fmpz_vec.h"
-#include "arb.h"
 #include "arb_hypgeom.h"
 
 #define UNROLL 4

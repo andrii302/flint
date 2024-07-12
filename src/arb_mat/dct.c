@@ -10,7 +10,6 @@
 */
 
 #include "arb_mat.h"
-#include "acb.h"
 #include "acb_dirichlet.h"
 
 void

@@ -10,20 +10,17 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "mpn_extras.h"
 #include "nmod_poly.h"
 #include "fmpz.h"
 
-#define r_shift(in, c) (((c) == FLINT_BITS) ? WORD(0) : ((in) >> (c)))
-
 /* Assumes length > 0, bits > 0. */
 void
-_nmod_poly_bit_pack(nn_ptr res, nn_srcptr poly, slong len, flint_bitcnt_t bits)
+_nmod_poly_bit_pack(mp_ptr res, mp_srcptr poly, slong len, flint_bitcnt_t bits)
 {
     slong i;
     ulong current_bit = 0, current_limb = 0;
     ulong total_limbs = (len * bits - 1) / FLINT_BITS + 1;
-    ulong temp_lower, temp_upper;
+    mp_limb_t temp_lower, temp_upper;
 
     res[0] = WORD(0);
 
@@ -129,8 +126,7 @@ nmod_poly_bit_pack(fmpz_t f, const nmod_poly_t poly,
                    flint_bitcnt_t bit_size)
 {
     slong len, limbs;
-    mpz_ptr mpz;
-    mp_ptr mp;
+    __mpz_struct * mpz;
     slong i;
 
     len = nmod_poly_length(poly);
@@ -142,14 +138,15 @@ nmod_poly_bit_pack(fmpz_t f, const nmod_poly_t poly,
     }
 
     mpz = _fmpz_promote(f);
-    limbs = (len * bit_size - 1) / FLINT_BITS + 1;
-    mp = FLINT_MPZ_REALLOC(mpz, limbs);
+    mpz_realloc2(mpz, len * bit_size);
 
-    _nmod_poly_bit_pack(mp, poly->coeffs, len, bit_size);
+    limbs = (len * bit_size - 1) / FLINT_BITS + 1;
+
+    _nmod_poly_bit_pack(mpz->_mp_d, poly->coeffs, len, bit_size);
 
     for (i = limbs - 1; i >= 0; i--)
     {
-        if (mp[i] != 0)
+        if (mpz->_mp_d[i] != 0)
             break;
     }
 

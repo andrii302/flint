@@ -65,7 +65,7 @@ int nmod_poly_is_irreducible_ddf(const nmod_poly_t poly)
 
     if (FLINT_BIT_COUNT(poly->mod.n) > ((n_sqrt(v->length - 1) + 1)*3)/4)
     {
-        for (i = 1; i < (slong) FLINT_BIT_COUNT(l); i++)
+        for (i = 1; i < FLINT_BIT_COUNT (l); i++)
             nmod_poly_compose_mod_brent_kung_vec_preinv(h + 1 +
                             (1 << (i - 1)), h + 1, (1 << (i - 1)),
                             (1 << (i - 1)), h + (1 << (i - 1)), v, vinv);
@@ -173,7 +173,7 @@ nmod_poly_is_irreducible_rabin(const nmod_poly_t f)
 {
     if (nmod_poly_length(f) > 2)
     {
-        const ulong p = nmod_poly_modulus(f);
+        const mp_limb_t p = nmod_poly_modulus(f);
         const slong n     = nmod_poly_degree(f);
         nmod_poly_t a, x, x_p;
 

@@ -12,7 +12,6 @@
 
 #include "thread_pool.h"
 #include "thread_support.h"
-#include "acb.h"
 #include "acb_mat.h"
 
 typedef struct

@@ -10,7 +10,6 @@
 */
 
 #include "fmpq.h"
-#include "arb.h"
 #include "arb_hypgeom.h"
 
 static void

@@ -11,7 +11,6 @@
 */
 
 #include <float.h>
-#include "d_mat.h"
 #include "fmpz.h"
 #include "fmpz_mat.h"
 

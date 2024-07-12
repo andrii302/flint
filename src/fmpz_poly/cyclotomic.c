@@ -14,11 +14,10 @@
 #include "fmpz_poly.h"
 
 void
-_fmpz_poly_cyclotomic(fmpz * a, ulong n, nn_ptr factors,
+_fmpz_poly_cyclotomic(fmpz * a, ulong n, mp_ptr factors,
                                         slong num_factors, ulong phi)
 {
-    ulong i;
-    slong j, k;
+    slong i, k;
     int small;
     ulong D;
 
@@ -58,11 +57,11 @@ _fmpz_poly_cyclotomic(fmpz * a, ulong n, nn_ptr factors,
 
         mu = (num_factors & 1) ? -1 : 1;
         d = WORD(1);
-        for (j = 0; j < num_factors; j++)
+        for (i = 0; i < num_factors; i++)
         {
-            if ((k >> j) & 1)
+            if ((k >> i) & 1)
             {
-                d *= factors[j];
+                d *= factors[i];
                 mu = -mu;
             }
         }
@@ -89,8 +88,7 @@ void
 fmpz_poly_cyclotomic(fmpz_poly_t poly, ulong n)
 {
     n_factor_t factors;
-    slong i;
-    ulong k;
+    slong i, j;
     ulong s, phi;
 
     if (n <= 2)
@@ -130,8 +128,8 @@ fmpz_poly_cyclotomic(fmpz_poly_t poly, ulong n)
     _fmpz_poly_cyclotomic(poly->coeffs, n / s, factors.p, factors.num, phi);
 
     /* Palindromic extension */
-    for (k = 0; k < (phi + 1) / 2; k++)
-        fmpz_set(poly->coeffs + phi - k, poly->coeffs + k);
+    for (i = 0; i < (phi + 1) / 2; i++)
+        fmpz_set(poly->coeffs + phi - i, poly->coeffs + i);
 
     /* Stretch */
     if (s != 1)
@@ -139,8 +137,8 @@ fmpz_poly_cyclotomic(fmpz_poly_t poly, ulong n)
         for (i = phi; i > 0; i--)
         {
             fmpz_set(poly->coeffs + i*s, poly->coeffs + i);
-            for (k = 1; k < s; k++)
-                fmpz_zero(poly->coeffs + i*s - k);
+            for (j = 1; j < s; j++)
+                fmpz_zero(poly->coeffs + i*s - j);
         }
     }
 

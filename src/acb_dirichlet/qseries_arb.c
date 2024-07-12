@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "acb.h"
 #include "acb_dirichlet.h"
 
 /* sum a_k x^(k^2), assume a[0] = 0 */

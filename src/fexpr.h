@@ -23,16 +23,7 @@ extern "C" {
 #endif
 
 #include "mpoly_types.h"
-#include "arf_types.h"
-#include "gr_types.h"
-
-/* FIXME: We need calcium_stream in ca_types.h, but this header includes qqbar.h
-   which conditionally defines functions using fexpr_t if and only if FEXPR_H is
-   defined. And at this point FEXPR_H is defined, but not fexpr_t... */
-#ifndef calcium_stream_struct
-# define calcium_stream_struct gr_stream_struct
-# define calcium_stream_t gr_stream_t
-#endif
+#include "calcium.h"
 
 #define FEXPR_TYPE_SMALL_INT     UWORD(0)
 #define FEXPR_TYPE_SMALL_SYMBOL  UWORD(1)
@@ -147,11 +138,9 @@ fexpr_set(fexpr_t res, const fexpr_t expr)
 {
     if (res != expr)
     {
-        slong i;
         slong size = fexpr_size(expr);
         fexpr_fit_size(res, size);
-        for (i = 0; i < size; i++)
-            res->data[i] = expr->data[i];
+        flint_mpn_copyi(res->data, expr->data, size);
     }
 }
 
@@ -162,10 +151,22 @@ fexpr_swap(fexpr_t a, fexpr_t b)
 }
 
 FEXPR_INLINE int
+_mpn_equal(mp_srcptr a, mp_srcptr b, slong len)
+{
+    slong i;
+
+    for (i = 0; i < len; i++)
+        if (a[i] != b[i])
+            return 0;
+
+    return 1;
+}
+
+FEXPR_INLINE int
 fexpr_equal(const fexpr_t a, const fexpr_t b)
 {
     ulong ha, hb;
-    slong i, sa, sb;
+    slong sa, sb;
 
     ha = a->data[0];
     hb = b->data[0];
@@ -179,11 +180,7 @@ fexpr_equal(const fexpr_t a, const fexpr_t b)
     if (sa != sb)
         return 0;
 
-    for (i = 1; i < sa; i++)
-        if (a->data[i] != b->data[i])
-            return 0;
-
-    return 1;
+    return _mpn_equal(a->data + 1, b->data + 1, sa - 1);
 }
 
 /* todo: document, test */

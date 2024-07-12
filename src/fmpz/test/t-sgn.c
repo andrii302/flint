@@ -21,7 +21,7 @@ TEST_FUNCTION_START(fmpz_sgn, state)
     {
         fmpz_t a;
         mpz_t b;
-        slong r1, r2;
+        mp_size_t r1, r2;
 
         fmpz_init(a);
 

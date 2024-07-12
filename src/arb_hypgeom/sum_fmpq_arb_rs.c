@@ -11,7 +11,6 @@
 
 #include "ulong_extras.h"
 #include "fmpz_vec.h"
-#include "arb.h"
 #include "arb_hypgeom.h"
 
 #ifdef __GNUC__
@@ -70,8 +69,8 @@ arf_get_d_log2_abs_approx_clamped(const arf_t x)
     }
     else
     {
-        nn_srcptr tp;
-        slong tn;
+        mp_srcptr tp;
+        mp_size_t tn;
         double v;
         slong e = ARF_EXP(x);
 

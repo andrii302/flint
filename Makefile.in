@@ -45,7 +45,7 @@ EXEEXT:=@EXEEXT@
 
 AR:=@AR@
 CC:=@CC@
-CXX:=@CXX@
+CXX:=@CC@
 DLLTOOL:=@DLLTOOL@
 LD:=@LD@
 LN_S:=@LN_S@
@@ -56,7 +56,6 @@ RM_F:=rm -f
 RM_RF:=rm -rf
 CP:=cp
 CP_A:=cp -a
-GDB:=gdb
 
 STATIC:=@STATIC@
 SHARED:=@SHARED@
@@ -68,8 +67,7 @@ WANT_DEPS:=@WANT_DEPS@
 
 WANT_CXX:=@WANT_CXX@
 
-WANT_ASSEMBLY:=@WANT_ASSEMBLY@
-ASM_PATH:=$(SRC_DIR)/mpn_extras/@ASM_PATH@
+WANT_ADX_ASSEMBLY:=@WANT_ADX_ASSEMBLY@
 
 GMP_LIB_PATH:=@GMP_LIB_PATH@
 MPFR_LIB_PATH:=@MPFR_LIB_PATH@
@@ -90,7 +88,7 @@ endif
 LIBS2:=-lflint $(LIBS)
 PIC_FLAG:=@PIC_FLAG@
 
-ifeq ($(WANT_ASSEMBLY),1)
+ifeq ($(WANT_ADX_ASSEMBLY),1)
 ASM_OBJ_FLAGS:=$(filter-out -D%,$(CPPFLAGS) $(LIB_CPPFLAGS)) $(filter-out -funroll-loops -pedantic, $(CFLAGS))
 ASM_LOBJ_FLAGS:=$(filter-out -D%,$(PIC_FLAG)) $(ASM_OBJ_FLAGS)
 endif
@@ -135,9 +133,9 @@ endif
 CFG_FILES :=                                                                \
         $(FLINT_DIR)/config.h           $(SRC_DIR)/flint-config.h           \
         $(FLINT_DIR)/config.log         $(SRC_DIR)/flint.h                  \
-        $(SRC_DIR)/gmpcompat.h          $(FLINT_DIR)/flint.pc               \
+        $(SRC_DIR)/fft_tuning.h         $(FLINT_DIR)/flint.pc               \
         $(FLINT_DIR)/Makefile           $(SRC_DIR)/fmpz/fmpz.c              \
-        $(SRC_DIR)/config.m4            $(SRC_DIR)/flint-mparam.h
+        $(SRC_DIR)/gmpcompat.h          $(SRC_DIR)/config.m4
 
 ################################################################################
 # directories
@@ -152,11 +150,9 @@ HEADER_DIRS :=                                                              \
         long_extras                                                         \
         perm                                                                \
         double_extras   d_vec           d_mat                               \
-        nfloat                                                              \
         mpn_extras                                                          \
         mpfr_vec                        mpfr_mat                            \
         nmod            nmod_vec        nmod_mat        nmod_poly           \
-        mpn_mod                                                             \
         fmpz            fmpz_vec        fmpz_mat        fmpz_poly           \
         fmpz_mod        fmpz_mod_vec    fmpz_mod_mat    fmpz_mod_poly       \
         fmpq            fmpq_vec        fmpq_mat        fmpq_poly           \
@@ -205,8 +201,8 @@ HEADER_DIRS :=                                                              \
         gr_poly         gr_mpoly        gr_special                          \
                                                                             \
         calcium                                                             \
+        fmpz_mod_mpoly_q						    \
         fmpz_mpoly_q                                                        \
-		fmpz_mod_mpoly_q                                                        \
         fexpr           fexpr_builtin                                       \
         qqbar                                                               \
         ca              ca_ext          ca_field        ca_vec              \
@@ -235,9 +231,9 @@ ifneq ($(COVERAGE), 0)
 BUILD_DIRS +=                                                               \
         $(BUILD_DIR)/coverage
 endif
-ifeq ($(WANT_ASSEMBLY),1)
+ifeq ($(WANT_ADX_ASSEMBLY),1)
 BUILD_DIRS +=                                                               \
-        $(patsubst $(SRC_DIR)/%,$(BUILD_DIR)/%,$(ASM_PATH))
+        $(BUILD_DIR)/mpn_extras/broadwell
 endif
 
 INSTALL_DIRS :=                                                             \
@@ -251,7 +247,33 @@ endif
 # headers
 ################################################################################
 
-HEADERS := $(wildcard $(SRC_DIR)/*.h)
+SINGLE_HEADERS :=                                                           \
+        flint.h         flint-config.h    gmpcompat.h                       \
+        profiler.h      templates.h       fft_tuning.h                      \
+                                                                            \
+        longlong.h                        longlong_asm_clang.h              \
+        longlong_asm_gcc.h                longlong_div_gnu.h                \
+        longlong_msc_arm64.h              longlong_msc_x86.h                \
+                                                                            \
+        crt_helpers.h   machine_vectors.h                                   \
+                                                                            \
+        mpf-impl.h                      fq_zech_vec.h                       \
+                                                                            \
+        limb_types.h                    nmod_types.h                        \
+        fmpz_types.h                    fmpq_types.h                        \
+        fmpz_mod_types.h                fq_nmod_types.h                     \
+        fq_zech_types.h                 fq_types.h                          \
+        padic_types.h                                                       \
+        n_poly_types.h                  mpoly_types.h                       \
+        arf_types.h                     acf_types.h                         \
+        arb_types.h                     acb_types.h                         \
+        NTL-interface.h
+
+HEADERS :=  $(patsubst %,$(SRC_DIR)/%,                                      \
+                $(patsubst %,%,$(SINGLE_HEADERS))                           \
+                $(patsubst %,%.h,$(HEADER_DIRS))                            \
+                $(patsubst %,%.h,$(TEMPLATE_DIRS))                          \
+            )
 
 ################################################################################
 # sources
@@ -267,8 +289,8 @@ fmpz_lll_SOURCES := $(filter-out $(SRC_DIR)/fmpz_lll/babai.c $(SRC_DIR)/fmpz_lll
 
 SOURCES := $(foreach dir,$(DIRS),$($(dir)_SOURCES))
 
-ifeq ($(WANT_ASSEMBLY),1)
-mpn_extras_ASM_SOURCES := $(wildcard $(ASM_PATH)/*.asm)
+ifeq ($(WANT_ADX_ASSEMBLY),1)
+mpn_extras_ASM_SOURCES := $(wildcard $(SRC_DIR)/mpn_extras/broadwell/*.asm)
 mpn_extras_PIC_S_SOURCES := $(patsubst $(SRC_DIR)/%.asm,$(BUILD_DIR)/%_pic.s,$(mpn_extras_ASM_SOURCES))
 mpn_extras_S_SOURCES := $(patsubst $(SRC_DIR)/%.asm,$(BUILD_DIR)/%.s,$(mpn_extras_ASM_SOURCES))
 ifneq ($(SHARED), 0)
@@ -318,7 +340,7 @@ define xxx_OBJS
 $(1)_OBJS := $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(filter-out %.s,$($(1)_SOURCES)))
 endef
 $(foreach dir, $(DIRS), $(eval $(call xxx_OBJS,$(dir))))
-ifeq ($(WANT_ASSEMBLY),1)
+ifeq ($(WANT_ADX_ASSEMBLY),1)
 mpn_extras_OBJS += $(patsubst %.s,%.o,$(mpn_extras_S_SOURCES))
 endif
 OBJS := $(foreach dir, $(DIRS), $($(dir)_OBJS))
@@ -333,7 +355,7 @@ define xxx_LOBJS
 $(1)_LOBJS := $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.lo,$(filter-out %.s, $($(1)_SOURCES)))
 endef
 $(foreach dir, $(DIRS), $(eval $(call xxx_LOBJS,$(dir))))
-ifeq ($(WANT_ASSEMBLY),1)
+ifeq ($(WANT_ADX_ASSEMBLY),1)
 mpn_extras_LOBJS += $(patsubst %_pic.s,%.lo,$(mpn_extras_PIC_S_SOURCES))
 endif
 LOBJS := $(foreach dir, $(DIRS), $($(dir)_LOBJS))
@@ -437,9 +459,6 @@ endif
 $(BUILD_DIRS) $(INSTALL_DIRS):
 	$(MKDIR_P) $@
 
-$(BUILD_DIR)/include: $(HEADERS)
-	$(MKDIR_P) $@/flint && $(CP) $(HEADERS) $@/flint
-
 ################################################################################
 # inclusions
 ################################################################################
@@ -502,16 +521,6 @@ else
 -include $(BUILD_DIR)/test/*.d
 -include $(BUILD_DIR)/*/test/*.d
 endif
-else ifeq ($(MAKECMDGOALS), debug)
-ifdef MOD
-$(warning Dependency tracking only set to cover the test executables of $(MOD).)
--include $(foreach dir, $(MOD), $(BUILD_DIR)/$(dir)/test/*.d)
-else
--include $(BUILD_DIR)/*/*.o.d
--include $(BUILD_DIR)/*/*.lo.d
--include $(BUILD_DIR)/test/*.d
--include $(BUILD_DIR)/*/test/*.d
-endif
 else ifeq ($(MAKECMDGOALS), tune)
 -include $(BUILD_DIR)/*/*.o.d
 -include $(BUILD_DIR)/*/*.lo.d
@@ -559,11 +568,11 @@ DEPFLAGS = -MMD -MP -MF $(@:%=%.d)
 # generated sources
 ################################################################################
 
-ifeq ($(WANT_ASSEMBLY),1)
-$(BUILD_DIR)/%.s: $(SRC_DIR)/%.asm $(FLINT_DIR)/config.m4 | $(BUILD_DIR)/mpn_extras/@ASM_PATH@
+ifeq ($(WANT_ADX_ASSEMBLY),1)
+$(BUILD_DIR)/%.s: $(SRC_DIR)/%.asm $(FLINT_DIR)/config.m4 $(SRC_DIR)/mpn_extras/asm-defs.m4 $(SRC_DIR)/mpn_extras/broadwell/x86_64-defs.m4 | $(BUILD_DIR)/mpn_extras/broadwell
 	@$(M4) $< > $@
 
-$(BUILD_DIR)/%_pic.s: $(SRC_DIR)/%.asm $(FLINT_DIR)/config.m4 | $(BUILD_DIR)/mpn_extras/@ASM_PATH@
+$(BUILD_DIR)/%_pic.s: $(SRC_DIR)/%.asm $(FLINT_DIR)/config.m4 $(SRC_DIR)/mpn_extras/asm-defs.m4 $(SRC_DIR)/mpn_extras/broadwell/x86_64-defs.m4 | $(BUILD_DIR)/mpn_extras/broadwell
 	@$(M4) -DPIC $< > $@
 endif
 
@@ -578,7 +587,7 @@ $(BUILD_DIR)/$(1)/%.o: $(SRC_DIR)/$(1)/%.c | $(BUILD_DIR)/$(1)
 	@$(CC) $(CFLAGS) $($(1)_CFLAGS) $(CPPFLAGS) $(LIB_CPPFLAGS) -c $$< -o $$@ $$(DEPFLAGS)
 endef
 
-ifeq ($(WANT_ASSEMBLY),1)
+ifeq ($(WANT_ADX_ASSEMBLY),1)
 %.o: %.s
 	@echo "  CC  $(<:$(BUILD_DIR)/%.s=%.asm)"
 	@$(CC) $(ASM_OBJ_FLAGS) -c $< -o $@
@@ -598,7 +607,7 @@ $(BUILD_DIR)/$(1)/%.lo: $(SRC_DIR)/$(1)/%.c | $(BUILD_DIR)/$(1)
 	@$(CC) $(PIC_FLAG) $(CFLAGS) $($(1)_CFLAGS) $(CPPFLAGS) $(LIB_CPPFLAGS) -c $$< -o $$@ $$(DEPFLAGS)
 endef
 
-ifeq ($(WANT_ASSEMBLY),1)
+ifeq ($(WANT_ADX_ASSEMBLY),1)
 %.lo: %_pic.s
 	@echo "  CC  $(<:$(BUILD_DIR)/%.s=%.asm)"
 	@$(CC) $(ASM_LOBJ_FLAGS) -c $< -o $@
@@ -702,13 +711,13 @@ endif
 $(foreach dir, $(DIRS), $(eval $(call xxx_TUNES_rule,$(dir))))
 
 ifeq ($(SHARED), 0)
-$(BUILD_DIR)/examples/%$(EXEEXT): $(FLINT_DIR)/examples/%.c $(FLINT_DIR)/$(FLINT_LIB_STATIC) | $(BUILD_DIR)/examples $(BUILD_DIR)/include
+$(BUILD_DIR)/examples/%$(EXEEXT): $(FLINT_DIR)/examples/%.c $(FLINT_DIR)/$(FLINT_LIB_STATIC) | $(BUILD_DIR)/examples
 	@echo "  CC  $(<:$(SRC_DIR)/%=%)"
-	@$(CC) $(TESTCFLAGS) $(CPPFLAGS2) $< -o $@ $(EXE_LDFLAGS) $(LIBS2) $(DEPFLAGS) -I$(BUILD_DIR)/include
+	@$(CC) $(TESTCFLAGS) $(CPPFLAGS2) $< -o $@ $(EXE_LDFLAGS) $(LIBS2) $(DEPFLAGS)
 else
-$(BUILD_DIR)/examples/%$(EXEEXT): $(FLINT_DIR)/examples/%.c | $(FLINT_DIR)/$(FLINT_LIB_FULL) $(BUILD_DIR)/examples $(BUILD_DIR)/include
+$(BUILD_DIR)/examples/%$(EXEEXT): $(FLINT_DIR)/examples/%.c | $(FLINT_DIR)/$(FLINT_LIB_FULL) $(BUILD_DIR)/examples
 	@echo "  CC  $(<:$(SRC_DIR)/%=%)"
-	@$(CC) $(TESTCFLAGS) $(CPPFLAGS2) $< -o $@ $(EXE_LDFLAGS) $(LIBS2) $(DEPFLAGS) -I$(BUILD_DIR)/include
+	@$(CC) $(TESTCFLAGS) $(CPPFLAGS2) $< -o $@ $(EXE_LDFLAGS) $(LIBS2) $(DEPFLAGS)
 endif
 
 ################################################################################
@@ -742,9 +751,6 @@ tests: library $(TESTS)
 %_TEST_RUN: %
 	@$<
 
-%_TEST_RUN_ARGS: %
-	@$< $(ARGS)
-
 # Parallel running of same test file
 ifneq ($(NJOBS),)
 number_generator=$(words $2) $(if $(word $1,$2),,$(call number_generator,$1,w $2))
@@ -771,15 +777,6 @@ check: library
 	@echo 'All Python tests passed.'
 endif
 else ifdef MOD
-ifdef ARGS
-ifneq ($(words $(sort $(MOD))),1)
-$(error Can only check one modules with arguments.)
-else
-check: library $(patsubst %,%_TEST_RUN_ARGS, $($(sort $(MOD))_TESTS))
-	@echo ''
-	@echo 'All tests passed for $(sort $(MOD)).'
-endif
-else
 ifeq ($(NJOBS),)
 check: library $(patsubst %,%_TEST_RUN,$(foreach dir, $(MOD), $($(dir)_TESTS)))
 	@echo ''
@@ -805,30 +802,10 @@ else
 	@echo 'All tests passed for $(foreach dir,$(filter-out $(lastword $(filter-out $(lastword $(sort $(MOD))),$(sort $(MOD)))) $(lastword $(sort $(MOD))),$(sort $(MOD))),$(dir),) $(lastword $(filter-out $(lastword $(sort $(MOD))),$(sort $(MOD)))) and $(lastword $(sort $(MOD))).'
 endif
 endif
-endif
 else
 check: library $(TESTS:%=%_TEST_RUN)
 	@echo ''
 	@echo 'All tests passed.'
-endif
-
-################################################################################
-# debugging
-################################################################################
-
-%_TEST_DBG_RUN_ARGS: %
-	@$(GDB) --args $< $(ARGS)
-
-ifdef MOD
-ifdef ARGS
-DEBUG:=1
-debug: library $(patsubst %,%_TEST_DBG_RUN_ARGS, $($(sort $(MOD))_TESTS))
-endif
-endif
-
-ifneq ($(DEBUG),1)
-debug:
-	$(error Can only run debugger with one module and one argument at a time)
 endif
 
 ################################################################################
@@ -855,9 +832,11 @@ endif
 ################################################################################
 
 ifneq ($(COVERAGE), 0)
-# NOTE: Requires lcov v2.0
 coverage: | $(BUILD_DIR)/coverage
-	lcov -j $(NJOBS) --capture --rc geninfo_unexecuted_blocks=1 --ignore-errors unused --omit-lines "flint_throw" --omit-lines '^}$$' --exclude "/usr/*" --exclude "src/*/inlines.c" --exclude "src/test/main.c" --exclude "src/test/t-*.c" --exclude "src/*/test/main.c" --exclude "src/*/test/t-*.c" --exclude "src/generic_files/exception.c" --exclude "src/generic_files/profiler.c" --exclude "src/profiler.h" --directory build --output-file build/coverage/coverage.info
+	lcov --capture  --exclude "*test/t-*.c" --exclude "*test/main.c" --exclude "/usr/*" --directory $(BUILD_DIR) --output-file $(BUILD_DIR)/coverage/coverage.info
+
+# TODO: Add -j $(NJOBS) and --omit-lines "flint_throw" --omit-lines '^}$$' to
+# lcov flags when next Ubuntu LTS ships lcov v2.0.0+.
 
 coverage_html: coverage
 	genhtml $(NJOBS) $(BUILD_DIR)/coverage/coverage.info --output-directory $(BUILD_DIR)/coverage
@@ -964,16 +943,14 @@ src/flint.h: src/flint.h.in config.status
 libtool: config.status
 	./config.status $@
 
-# The following are only linked during configuration
+src/fft_tuning.h: @FFT_TUNING_IN@ config.status
+	./config.status $@
 
-# src/gmpcompat.h: src/@GMPCOMPAT_H_IN@ config.status
-# 	./config.status $@
-# 
-# src/fmpz/fmpz.c: @FMPZ_C_IN@ config.status
-# 	./config.status $@
-#
-# src/flint-mparam.h: src/mpn_extras/@PARAM_PATH@/flint-mparam.h config.status
-# 	./config.status $@
+src/fmpz/fmpz.c: @FMPZ_C_IN@ config.status
+	./config.status $@
+
+src/gmpcompat.h: src/@GMPCOMPAT_H_IN@ config.status
+	./config.status $@
 
 ################################################################################
 # maintainer stuff
@@ -983,11 +960,11 @@ dist:
 	dev/make_dist.sh $(FLINT_VERSION)
 
 ################################################################################
-# makefile debugging
+# debugging
 ################################################################################
 
 print-%:
 	@echo "$*=$($*)"
 
-.PHONY: all library shared static examples checkexamples profile tests check tune valgrind clean distclean install uninstall dist %_TEST_RUN %_TEST_RUN_% %_TEST_DGB_RUN_ARGS %_VALGRIND_RUN print-% coverage coverage_html debug
-.PRECIOUS: $(mpn_extras_PIC_S_SOURCES) $(mpn_extras_S_SOURCES)
+.PHONY: all library shared static examples checkexamples profile tests check tune valgrind clean distclean install uninstall dist %_TEST_RUN %_VALGRIND_RUN print-% coverage coverage_html
+.SILENT: $(mpn_extras_S_SOURCES)

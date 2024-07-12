@@ -13,8 +13,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-#include "gmpcompat.h"
-#include "mpn_extras.h"
+#include <gmpcompat.h>
 #include "fmpz.h"
 #include "fmpz_vec.h"
 #include "fmpz_poly.h"
@@ -274,7 +273,7 @@ int fmpz_poly_fread_pretty(FILE *file, fmpz_poly_t poly, char **x)
 
     fmpz_poly_zero(poly);
     if (poly->alloc)
-        flint_mpn_zero((nn_ptr) poly->coeffs, poly->alloc);
+        flint_mpn_zero((mp_ptr) poly->coeffs, poly->alloc);
 
     i = 0;
     N = 80;

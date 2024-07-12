@@ -10,7 +10,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "long_extras.h"
 #include "fmpq_mat.h"
 
 void fmpq_mat_init(fmpq_mat_t mat, slong rows, slong cols)
@@ -18,24 +17,13 @@ void fmpq_mat_init(fmpq_mat_t mat, slong rows, slong cols)
     slong i;
 
     if (rows != 0)
-        mat->rows = flint_malloc(rows * sizeof(fmpq *));
+        mat->rows = (fmpq **) flint_malloc(rows * sizeof(fmpq *));
     else
         mat->rows = NULL;
 
-    mat->r = rows;
-    mat->c = cols;
-
     if (rows != 0 && cols != 0)
     {
-        slong num;
-        int of;
-
-        of = z_mul_checked(&num, rows, cols);
-
-        if (of)
-            flint_throw(FLINT_ERROR, "Overflow creating a %wd x %wd object\n", rows, cols);
-
-        mat->entries = flint_calloc(num, sizeof(fmpq));
+        mat->entries = (fmpq *) flint_calloc(flint_mul_sizes(rows, cols), sizeof(fmpq));
 
         /* Set denominators */
         for (i = 0; i < rows * cols; i++)
@@ -53,4 +41,7 @@ void fmpq_mat_init(fmpq_mat_t mat, slong rows, slong cols)
                 mat->rows[i] = NULL;
         }
     }
+
+    mat->r = rows;
+    mat->c = cols;
 }

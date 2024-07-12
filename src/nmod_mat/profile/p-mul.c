@@ -12,12 +12,13 @@
 */
 
 #include "profiler.h"
+#include "flint.h"
 #include "nmod_mat.h"
 #include "ulong_extras.h"
 #include "thread_support.h"
 
-#if FLINT_USES_BLAS
-# include <cblas.h>
+#if FLINT_HAVE_BLAS
+#include "cblas.h"
 #endif
 
 typedef struct
@@ -25,7 +26,7 @@ typedef struct
     slong dim_m;
     slong dim_n;
     slong dim_k;
-    ulong modulus;
+    mp_limb_t modulus;
     int algorithm;
 } mat_mul_t;
 
@@ -37,7 +38,7 @@ void sample(void * arg, ulong count)
     ulong i;
     flint_rand_t state;
 
-    flint_rand_init(state);
+    flint_randinit(state);
 
     nmod_mat_init(A, params->dim_m, params->dim_k, params->modulus);
     nmod_mat_init(B, params->dim_k, params->dim_n, params->modulus);
@@ -70,7 +71,7 @@ void sample(void * arg, ulong count)
     nmod_mat_clear(B);
     nmod_mat_clear(C);
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 }
 
 int main(void)

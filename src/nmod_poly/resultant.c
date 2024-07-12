@@ -17,9 +17,9 @@
 #include "nmod_poly.h"
 #include "gr_poly.h"
 
-ulong
-_nmod_poly_resultant(nn_srcptr poly1, slong len1,
-                               nn_srcptr poly2, slong len2, nmod_t mod)
+mp_limb_t
+_nmod_poly_resultant(mp_srcptr poly1, slong len1,
+                               mp_srcptr poly2, slong len2, nmod_t mod)
 {
     if (poly1 == poly2)
     {
@@ -32,7 +32,7 @@ _nmod_poly_resultant(nn_srcptr poly1, slong len1,
     else
     {
         slong cutoff = NMOD_BITS(mod) <= 8 ? NMOD_POLY_SMALL_GCD_CUTOFF : NMOD_POLY_GCD_CUTOFF;
-        ulong res;
+        mp_limb_t res;
         gr_ctx_t ctx;
 
         _gr_ctx_init_nmod(ctx, &mod);
@@ -49,12 +49,12 @@ _nmod_poly_resultant(nn_srcptr poly1, slong len1,
     }
 }
 
-ulong
+mp_limb_t
 nmod_poly_resultant(const nmod_poly_t f, const nmod_poly_t g)
 {
     const slong len1 = f->length;
     const slong len2 = g->length;
-    ulong r;
+    mp_limb_t r;
 
     if (len1 == 0 || len2 == 0)
     {
@@ -77,9 +77,9 @@ nmod_poly_resultant(const nmod_poly_t f, const nmod_poly_t g)
     return r;
 }
 
-ulong
-_nmod_poly_resultant_euclidean(nn_srcptr poly1, slong len1,
-                               nn_srcptr poly2, slong len2, nmod_t mod)
+mp_limb_t
+_nmod_poly_resultant_euclidean(mp_srcptr poly1, slong len1,
+                               mp_srcptr poly2, slong len2, nmod_t mod)
 {
     if (poly1 == poly2)
     {
@@ -102,11 +102,11 @@ _nmod_poly_resultant_euclidean(nn_srcptr poly1, slong len1,
     }
     else  /* len1 >= len2 >= 2 */
     {
-        ulong res = 1;
+        mp_limb_t res = 1;
 
-        nn_ptr u, v, r, t, w;
+        mp_ptr u, v, r, t, w;
         slong l0, l1, l2;
-        ulong lc;
+        mp_limb_t lc;
 
         w = _nmod_vec_init(3 * len1);
         u = w;
@@ -165,12 +165,12 @@ _nmod_poly_resultant_euclidean(nn_srcptr poly1, slong len1,
     }
 }
 
-ulong
+mp_limb_t
 nmod_poly_resultant_euclidean(const nmod_poly_t f, const nmod_poly_t g)
 {
     const slong len1 = f->length;
     const slong len2 = g->length;
-    ulong r;
+    mp_limb_t r;
 
     if (len1 == 0 || len2 == 0)
     {
@@ -196,13 +196,13 @@ nmod_poly_resultant_euclidean(const nmod_poly_t f, const nmod_poly_t g)
     return r;
 }
 
-ulong
-_nmod_poly_resultant_hgcd(nn_srcptr poly1, slong len1,
-                               nn_srcptr poly2, slong len2, nmod_t mod)
+mp_limb_t
+_nmod_poly_resultant_hgcd(mp_srcptr poly1, slong len1,
+                               mp_srcptr poly2, slong len2, nmod_t mod)
 {
     gr_ctx_t ctx;
     slong cutoff = NMOD_BITS(mod) <= 8 ? NMOD_POLY_SMALL_GCD_CUTOFF : NMOD_POLY_GCD_CUTOFF;
-    ulong res;
+    mp_limb_t res;
 
     _gr_ctx_init_nmod(ctx, &mod);
     GR_MUST_SUCCEED(_gr_poly_resultant_hgcd(&res, poly1, len1, poly2, len2, NMOD_POLY_HGCD_CUTOFF, cutoff, ctx));
@@ -210,12 +210,12 @@ _nmod_poly_resultant_hgcd(nn_srcptr poly1, slong len1,
     return res;
 }
 
-ulong
+mp_limb_t
 nmod_poly_resultant_hgcd(const nmod_poly_t f, const nmod_poly_t g)
 {
     const slong len1 = f->length;
     const slong len2 = g->length;
-    ulong r;
+    mp_limb_t r;
 
     if (len1 == 0 || len2 == 0)
     {

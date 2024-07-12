@@ -9,6 +9,7 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "ulong_extras.h"
 #include "mpn_extras.h"
 #include "fft.h"
@@ -24,6 +25,9 @@ main(void)
 
     flint_printf("mul_truncate_sqrt2....");
     fflush(stdout);
+
+
+    _flint_rand_init_gmp(state);
 
     depth = 13;
     w = 1;
@@ -45,8 +49,8 @@ main(void)
        r1 = i2 + int_limbs;
        /* r2 = r1 + 2*int_limbs; */
 
-       flint_mpn_urandomb(i1, state, int_limbs*FLINT_BITS);
-       flint_mpn_urandomb(i2, state, int_limbs*FLINT_BITS);
+       flint_mpn_urandomb(i1, state->gmp_state, int_limbs*FLINT_BITS);
+       flint_mpn_urandomb(i2, state->gmp_state, int_limbs*FLINT_BITS);
 
        /* mpn_mul(r2, i1, int_limbs, i2, int_limbs); */
        for (j = 0; j < iters; j++)
@@ -55,7 +59,7 @@ main(void)
        flint_free(i1);
     }
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 
     flint_printf("done\n");
     return 0;

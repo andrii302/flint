@@ -21,7 +21,7 @@ void n_bpoly_mod_interp_reduce_2sm_poly(
 {
     slong i, Alen = A->length;
     const n_poly_struct * Ac = A->coeffs;
-    ulong * Apc, * Amc;
+    mp_limb_t * Apc, * Amc;
 
     n_poly_fit_length(Ap, Alen);
     n_poly_fit_length(Am, Alen);
@@ -43,20 +43,20 @@ void n_bpoly_mod_interp_lift_2sm_poly(
     n_bpoly_t T,
     const n_poly_t A,
     const n_poly_t B,
-    ulong alpha,
+    mp_limb_t alpha,
     nmod_t mod)
 {
     slong i;
     slong lastlength = 0;
-    const ulong * Acoeffs = A->coeffs;
-    const ulong * Bcoeffs = B->coeffs;
+    const mp_limb_t * Acoeffs = A->coeffs;
+    const mp_limb_t * Bcoeffs = B->coeffs;
     n_poly_struct * Tcoeffs;
     slong Alen = A->length;
     slong Blen = B->length;
     slong Tlen = FLINT_MAX(Alen, Blen);
-    ulong d0 = (1 + mod.n)/2;
-    ulong d1 = nmod_inv(nmod_add(alpha, alpha, mod), mod);
-    ulong Avalue, Bvalue, u, v;
+    mp_limb_t d0 = (1 + mod.n)/2;
+    mp_limb_t d1 = nmod_inv(nmod_add(alpha, alpha, mod), mod);
+    mp_limb_t Avalue, Bvalue, u, v;
 
     n_bpoly_fit_length(T, Tlen);
 
@@ -107,11 +107,11 @@ int n_bpoly_mod_interp_crt_2sm_poly(
     slong Flen = F->length;
     slong Tlen = FLINT_MAX(FLINT_MAX(Alen, Blen), Flen);
     n_poly_struct * Tcoeffs, * Fcoeffs;
-    ulong * Acoeffs, * Bcoeffs;
+    mp_limb_t * Acoeffs, * Bcoeffs;
     n_poly_t zero;
-    ulong Avalue, Bvalue, FvalueA, FvalueB, u, v;
+    mp_limb_t Avalue, Bvalue, FvalueA, FvalueB, u, v;
     n_poly_struct * Fvalue;
-    ulong alpha = alphapow->coeffs[1];
+    mp_limb_t alpha = alphapow->coeffs[1];
 
     zero->alloc = 0;
     zero->length = 0;
@@ -170,7 +170,7 @@ int n_bpoly_mod_gcd_brown_smprime(
 {
     int success;
     slong bound;
-    ulong alpha, temp, gammaevalp, gammaevalm;
+    mp_limb_t alpha, temp, gammaevalp, gammaevalm;
     n_poly_struct * Aevalp, * Bevalp, * Gevalp, * Abarevalp, * Bbarevalp;
     n_poly_struct * Aevalm, * Bevalm, * Gevalm, * Abarevalm, * Bbarevalm;
     n_bpoly_struct * T;

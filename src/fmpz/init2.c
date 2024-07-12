@@ -9,7 +9,8 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include <gmp.h>
+#include "flint.h"
+#include "ulong_extras.h"
 #include "fmpz.h"
 
 void
@@ -17,9 +18,9 @@ fmpz_init2(fmpz_t f, ulong limbs)
 {
     if (limbs)
     {
-        mpz_ptr mf = _fmpz_new_mpz();
+        __mpz_struct * mf = _fmpz_new_mpz();
         *f = PTR_TO_COEFF(mf);
-        FLINT_MPZ_REALLOC(mf, limbs);
+        _mpz_realloc(mf, limbs);
     }
     else
     {

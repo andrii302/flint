@@ -20,15 +20,11 @@
 #define GR_MPOLY_INLINE static inline
 #endif
 
-#include "mpoly_types.h"
+#include "mpoly.h"
 #include "gr_vec.h"
 
-#if FLINT_WANT_ASSERT
-# include "mpoly.h"
-#endif
-
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
 typedef struct
@@ -37,7 +33,7 @@ typedef struct
     ulong * exps;
     slong length;
     flint_bitcnt_t bits;    /* number of bits per exponent */
-    slong coeffs_alloc;     /* abs size in ulong units */
+    slong coeffs_alloc;     /* abs size in mp_limb_t units */
     slong exps_alloc;       /* abs size in ulong units */
 }
 gr_mpoly_struct;

@@ -14,7 +14,7 @@
 #ifndef ACB_DIRICHLET_H
 #define ACB_DIRICHLET_H
 
-#include "acb_types.h"
+#include "acb.h"
 #include "dirichlet.h"
 
 #ifdef __cplusplus

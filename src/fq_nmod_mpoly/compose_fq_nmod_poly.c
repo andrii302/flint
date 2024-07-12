@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "longlong.h"
 #include "fmpz.h"
 #include "fq_nmod.h"
 #include "fq_nmod_poly.h"
@@ -24,10 +23,10 @@ int _fq_nmod_mpoly_compose_fq_nmod_poly_sp(fq_nmod_poly_t A, const fq_nmod_mpoly
     slong d = fq_nmod_ctx_degree(ctx->fqctx);
     int success = 1;
     flint_bitcnt_t bits = B->bits;
-    slong i, k, N, nvars = ctx->minfo->nvars;
+    slong i, j, k, N, nvars = ctx->minfo->nvars;
     slong entries, k_len, shift, off;
     slong Blen = B->length;
-    const ulong * Bcoeff = B->coeffs;
+    const mp_limb_t * Bcoeff = B->coeffs;
     ulong * Bexp = B->exps;
     slong * degrees;
     slong * offs;
@@ -65,9 +64,7 @@ int _fq_nmod_mpoly_compose_fq_nmod_poly_sp(fq_nmod_poly_t A, const fq_nmod_mpoly
     k = 0;
     for (i = 0; i < nvars; i++)
     {
-        flint_bitcnt_t j, varibits;
-
-        varibits = FLINT_BIT_COUNT(degrees[i]);
+        flint_bitcnt_t varibits = FLINT_BIT_COUNT(degrees[i]);
 
         mpoly_gen_offset_shift_sp(&off, &shift, i, bits, ctx->minfo);
         for (j = 0; j < varibits; j++)
@@ -128,7 +125,7 @@ int _fq_nmod_mpoly_compose_fq_nmod_poly_mp(fq_nmod_poly_t A, const fq_nmod_mpoly
     slong i, k, N, nvars = ctx->minfo->nvars;
     slong entries, k_len, off;
     slong Blen = B->length;
-    const ulong * Bcoeff = B->coeffs;
+    const mp_limb_t * Bcoeff = B->coeffs;
     ulong * Bexp = B->exps;
     fmpz * degrees;
     slong * offs;

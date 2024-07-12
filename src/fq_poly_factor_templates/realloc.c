@@ -15,6 +15,7 @@
 
 #include "templates.h"
 
+#include "flint.h"
 void
 TEMPLATE(T, poly_factor_realloc) (TEMPLATE(T, poly_factor_t) fac, slong alloc,
                                   const TEMPLATE(T, ctx_t) ctx)

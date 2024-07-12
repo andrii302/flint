@@ -3,13 +3,12 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <flint/fmpz_poly.h>
-#include <flint/fmpz_poly_factor.h>
-#include <flint/fmpq_poly.h>
-#include <flint/acb.h>
-#include <flint/arb_fmpz_poly.h>
-#include <flint/arith.h>
-#include <flint/profiler.h>
+#include "fmpz_poly_factor.h"
+#include "fmpq_poly.h"
+#include "acb.h"
+#include "arb_fmpz_poly.h"
+#include "arith.h"
+#include "profiler.h"
 
 int main(int argc, char *argv[])
 {

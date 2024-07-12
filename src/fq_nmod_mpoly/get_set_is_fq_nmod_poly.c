@@ -32,7 +32,7 @@ int fq_nmod_mpoly_get_fq_nmod_poly(
 {
     slong d = fq_nmod_ctx_degree(ctx->fqctx);
     slong Blen = B->length;
-    const ulong * Bcoeffs = B->coeffs;
+    const mp_limb_t * Bcoeffs = B->coeffs;
     const ulong * Bexps = B->exps;
     flint_bitcnt_t Bbits = B->bits;
     slong i, N = mpoly_words_per_exp(Bbits, ctx->minfo);
@@ -69,8 +69,8 @@ int fq_nmod_mpoly_get_fq_nmod_poly(
     }
     else
     {
-        slong j, off, wpf = Bbits/FLINT_BITS;
-        ulong check;
+        slong j, off;
+        ulong check, wpf = Bbits/FLINT_BITS;
 
         off = mpoly_gen_offset_mp(var, Bbits, ctx->minfo);
 

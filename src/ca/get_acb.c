@@ -10,7 +10,6 @@
 */
 
 #include "arb_fmpz_poly.h"
-#include "calcium.h"
 #include "ca.h"
 
 void

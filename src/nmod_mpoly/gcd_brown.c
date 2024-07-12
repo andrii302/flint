@@ -36,7 +36,7 @@ typedef struct
     _splitbase_struct * base;
     nmod_mpolyn_t G, Abar, Bbar;
     n_poly_t modulus;
-    ulong alpha;
+    mp_limb_t alpha;
     slong required_images;
 }
 _splitworker_arg_struct;
@@ -50,8 +50,8 @@ static void _splitworker_bivar(void * varg)
     n_poly_t Aevalp, Bevalp, Gevalp, Abarevalp, Bbarevalp;
     n_poly_t Aevalm, Bevalm, Gevalm, Abarevalm, Bbarevalm;
     nmod_mpolyn_t T;
-    ulong gammaevalp, alpha, temp;
-    ulong gammaevalm;
+    mp_limb_t gammaevalp, alpha, temp;
+    mp_limb_t gammaevalm;
     int gstab, astab, bstab, use_stab;
     slong ldeg;
     slong N, off, shift;
@@ -189,11 +189,11 @@ static void _splitworker_bivar(void * varg)
         if (n_poly_degree(arg->modulus) > 0)
         {
             FLINT_ASSERT(arg->G->length > 0);
-            if ((ulong) n_poly_degree(Gevalp) > ((arg->G->exps + N*0)[off]>>shift))
+            if (n_poly_degree(Gevalp) > ((arg->G->exps + N*0)[off]>>shift))
             {
                 continue;
             }
-            else if ((ulong) n_poly_degree(Gevalp) < ((arg->G->exps + N*0)[off]>>shift))
+            else if (n_poly_degree(Gevalp) < ((arg->G->exps + N*0)[off]>>shift))
             {
                 n_poly_one(arg->modulus);
             }
@@ -267,8 +267,8 @@ static void _splitworker(void * varg)
     nmod_mpolyn_t Aevalp, Bevalp, Gevalp, Abarevalp, Bbarevalp;
     nmod_mpolyn_t Aevalm, Bevalm, Gevalm, Abarevalm, Bbarevalm;
     nmod_mpolyn_t T;
-    ulong gammaevalp, alpha, temp;
-    ulong gammaevalm;
+    mp_limb_t gammaevalp, alpha, temp;
+    mp_limb_t gammaevalm;
     slong ldeg;
     int success;
     nmod_poly_stack_t Sp;
@@ -821,11 +821,11 @@ int nmod_mpolyn_gcd_brown_smprime_threaded_pool(
     flint_bitcnt_t bits = A->bits;
     slong N = mpoly_words_per_exp_sp(bits, ctx->minfo);
     slong offset, shift;
-    slong num_threads;
+    ulong num_threads;
     int success;
-    slong bound, best_est;
+    ulong bound, best_est;
     slong g_stab_est, abar_stab_est, bbar_stab_est, upper_limit;
-    ulong alpha;
+    mp_limb_t alpha;
     slong deggamma, ldegA, ldegB;
     slong ldegGs_Abars_Bbars[3];
     n_poly_t cA, cB, cG, cAbar, cBbar, gamma;
@@ -957,7 +957,7 @@ compute_split:
 
     splitbase->bound = best_est;
 
-    if (alpha <= (ulong) num_threads)
+    if (alpha <= num_threads)
     {
         success = 0;
         goto cleanup_split;

@@ -28,7 +28,7 @@ typedef struct
     int sparse_modulus;
     int is_conway; /* whether field was generated using Flint Conway table (assures primitivity */
 
-    ulong *a;
+    mp_limb_t *a;
     slong *j;
     slong len;
 
@@ -74,11 +74,11 @@ fq_nmod_poly_factor_struct;
 typedef fq_nmod_poly_factor_struct fq_nmod_poly_factor_t[1];
 
 typedef struct {
-    ulong * coeffs;
+    mp_limb_t * coeffs;
     ulong * exps;
     slong length;
     flint_bitcnt_t bits;    /* number of bits per exponent */
-    slong coeffs_alloc;     /* abs size in ulong units */
+    slong coeffs_alloc;     /* abs size in mp_limb_t units */
     slong exps_alloc;       /* abs size in ulong units */
 } fq_nmod_mpoly_struct;
 

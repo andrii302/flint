@@ -9,6 +9,7 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "nmod_poly.h"
 #include "ulong_extras.h"
 #include "fmpz.h"
@@ -28,7 +29,7 @@ main(void)
     int result;
     nmod_mat_t A, B, C;
     nmod_poly_t poly;
-    ulong n;
+    mp_limb_t n;
     clock_t horner_begin, paterson_begin;
     double horner_time, paterson_time;
     FLINT_TEST_INIT(state);

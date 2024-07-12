@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include <gmp.h>
 #include "test_helpers.h"
 #include "fmpz_extras.h"
 
@@ -21,9 +20,9 @@ TEST_FUNCTION_START(fmpz_lshift_mpn, state)
     {
         fmpz_t a, b, c;
         ulong e;
-        ulong atmp;
-        nn_ptr aptr;
-        slong an;
+        mp_limb_t atmp;
+        mp_ptr aptr;
+        mp_size_t an;
         int asgnbit;
 
         fmpz_init(a);

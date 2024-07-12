@@ -16,7 +16,6 @@
        nmod_poly_factor.rst
        nmod_mpoly.rst
        nmod_mpoly_factor.rst
-       mpn_mod.rst
        fmpz_mod.rst
        fmpz_mod_vec.rst
        fmpz_mod_mat.rst

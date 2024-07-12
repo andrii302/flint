@@ -9,12 +9,13 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "ulong_extras.h"
 
-ulong
-n_divrem2_precomp(ulong * q, ulong a, ulong n, double npre)
+mp_limb_t
+n_divrem2_precomp(mp_limb_t * q, mp_limb_t a, mp_limb_t n, double npre)
 {
-    ulong quot;
+    mp_limb_t quot;
     slong rem;
 
     if (a < n)
@@ -23,7 +24,7 @@ n_divrem2_precomp(ulong * q, ulong a, ulong n, double npre)
         return a;
     }
 
-    if ((slong) n < WORD(0))
+    if ((mp_limb_signed_t) n < WORD(0))
     {
         (*q) = UWORD(1);
         return a - n;
@@ -39,10 +40,10 @@ n_divrem2_precomp(ulong * q, ulong a, ulong n, double npre)
         rem = a - quot * n;
     }
 
-    if (rem < (slong) (-n))
-        quot -= (ulong) ((double) (-rem) * npre);
+    if (rem < (mp_limb_signed_t) (-n))
+        quot -= (mp_limb_t) ((double) (-rem) * npre);
     else if (rem >= (slong) n)
-        quot += (ulong) ((double) rem * npre);
+        quot += (mp_limb_t) ((double) rem * npre);
     else if (rem < WORD(0))
     {
         (*q) = quot - 1;

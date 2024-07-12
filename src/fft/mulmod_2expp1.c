@@ -9,8 +9,10 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "flint-mparam.h"
+#include "flint.h"
 #include "fft.h"
+#include "ulong_extras.h"
+#include "fft_tuning.h"
 #include "mpn_extras.h"
 
 static mp_size_t mulmod_2expp1_table_n[FFT_N_NUM] = MULMOD_TAB;
@@ -160,7 +162,7 @@ void _fft_mulmod_2expp1(mp_limb_t * r1, mp_limb_t * i1, mp_limb_t * i2,
 void fft_mulmod_2expp1(mp_limb_t * r, mp_limb_t * i1, mp_limb_t * i2,
                            mp_size_t n, mp_size_t w, mp_limb_t * tt)
 {
-   flint_bitcnt_t bits = n*w;
+   mp_size_t bits = n*w;
    mp_size_t limbs = bits/FLINT_BITS;
    flint_bitcnt_t depth1, depth = 1;
 

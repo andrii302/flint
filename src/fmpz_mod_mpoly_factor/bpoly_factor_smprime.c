@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "longlong.h"
 #include "fmpz_vec.h"
 #include "fmpz_mod.h"
 #include "fmpz_mod_vec.h"
@@ -520,7 +519,7 @@ static void _fmpz_mod_bpoly_lift_build_steps(
 /* linear lifting has large memory requirements wrt r */
 static int _use_linear_cutoff(slong r, slong degx)
 {
-    return r < 30 + 5 * (slong) FLINT_BIT_COUNT(degx);
+    return r < 30 + 5*FLINT_BIT_COUNT(degx);
 }
 
 static void fmpz_mod_bpoly_lift_start(

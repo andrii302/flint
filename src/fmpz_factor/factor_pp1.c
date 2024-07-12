@@ -43,14 +43,14 @@ ulong pp1_primorial[9] =
 #define num_primorials 9
 #endif
 
-void pp1_set(nn_ptr x1, nn_ptr y1,
-              nn_srcptr x2, nn_srcptr y2, slong nn)
+void pp1_set(mp_ptr x1, mp_ptr y1,
+              mp_srcptr x2, mp_srcptr y2, mp_size_t nn)
 {
     flint_mpn_copyi(x1, x2, nn);
     flint_mpn_copyi(y1, y2, nn);
 }
 
-void pp1_set_ui(nn_ptr x, slong nn, ulong norm, ulong c)
+void pp1_set_ui(mp_ptr x, mp_size_t nn, ulong norm, ulong c)
 {
     mpn_zero(x, nn);
     x[0] = (c << norm);
@@ -58,8 +58,8 @@ void pp1_set_ui(nn_ptr x, slong nn, ulong norm, ulong c)
         x[1] = (c >> (FLINT_BITS - norm));
 }
 
-void pp1_2k(nn_ptr x, nn_ptr y, slong nn, nn_srcptr n,
-            nn_srcptr ninv, nn_srcptr x0, ulong norm)
+void pp1_2k(mp_ptr x, mp_ptr y, mp_size_t nn, mp_srcptr n,
+            mp_srcptr ninv, mp_srcptr x0, ulong norm)
 {
     pp1_mulmod(y, y, x, nn, n, ninv, norm);
     if (mpn_sub_n(y, y, x0, nn))
@@ -70,8 +70,8 @@ void pp1_2k(nn_ptr x, nn_ptr y, slong nn, nn_srcptr n,
         mpn_add_n(x, x, n, nn);
 }
 
-void pp1_2kp1(nn_ptr x, nn_ptr y, slong nn, nn_srcptr n,
-              nn_srcptr ninv, nn_srcptr x0, ulong norm)
+void pp1_2kp1(mp_ptr x, mp_ptr y, mp_size_t nn, mp_srcptr n,
+              mp_srcptr ninv, mp_srcptr x0, ulong norm)
 {
     pp1_mulmod(x, x, y, nn, n, ninv, norm);
     if (mpn_sub_n(x, x, x0, nn))
@@ -82,15 +82,15 @@ void pp1_2kp1(nn_ptr x, nn_ptr y, slong nn, nn_srcptr n,
         mpn_add_n(y, y, n, nn);
 }
 
-void pp1_pow_ui(nn_ptr x, nn_ptr y, slong nn,
-                ulong exp, nn_srcptr n, nn_srcptr ninv, ulong norm)
+void pp1_pow_ui(mp_ptr x, mp_ptr y, mp_size_t nn,
+                ulong exp, mp_srcptr n, mp_srcptr ninv, ulong norm)
 {
-    ulong t[30];
-    nn_ptr x0 = t;
+    mp_limb_t t[30];
+    mp_ptr x0 = t;
     ulong bit = ((UWORD(1) << FLINT_BIT_COUNT(exp)) >> 2);
 
     if (nn > 30)
-        x0 = flint_malloc(nn*sizeof(ulong));
+        x0 = flint_malloc(nn*sizeof(mp_limb_t));
     flint_mpn_copyi(x0, x, nn);
 
     pp1_mulmod(y, x, x, nn, n, ninv, norm);
@@ -111,13 +111,13 @@ void pp1_pow_ui(nn_ptr x, nn_ptr y, slong nn,
         flint_free(x0);
 }
 
-slong pp1_factor(nn_ptr factor, nn_srcptr n,
-                     nn_srcptr x, slong nn, ulong norm)
+mp_size_t pp1_factor(mp_ptr factor, mp_srcptr n,
+                     mp_srcptr x, mp_size_t nn, ulong norm)
 {
-    slong ret = 0, xn = nn;
+    mp_size_t ret = 0, xn = nn;
 
-    nn_ptr n2 = flint_malloc(nn*sizeof(ulong));
-    nn_ptr x2 = flint_malloc(nn*sizeof(ulong));
+    mp_ptr n2 = flint_malloc(nn*sizeof(mp_limb_t));
+    mp_ptr x2 = flint_malloc(nn*sizeof(mp_limb_t));
 
     if (norm)
         mpn_rshift(n2, n, nn, norm);
@@ -147,10 +147,10 @@ cleanup:
     return ret;
 }
 
-slong pp1_find_power(nn_ptr factor, nn_ptr x, nn_ptr y, slong nn,
-                          ulong p, nn_srcptr n, nn_srcptr ninv, ulong norm)
+mp_size_t pp1_find_power(mp_ptr factor, mp_ptr x, mp_ptr y, mp_size_t nn,
+                          ulong p, mp_srcptr n, mp_srcptr ninv, ulong norm)
 {
-    slong ret;
+    mp_size_t ret;
 
     do
     {
@@ -165,8 +165,8 @@ int fmpz_factor_pp1(fmpz_t fac, const fmpz_t n_in, ulong B1, ulong B2sqrt, ulong
 {
     slong i, j;
     int ret = 0;
-    slong nn = fmpz_size(n_in), r;
-    nn_ptr x, y, oldx, oldy, n, ninv, factor, ptr_0, ptr_1, ptr_2, ptr_k;
+    mp_size_t nn = fmpz_size(n_in), r;
+    mp_ptr x, y, oldx, oldy, n, ninv, factor, ptr_0, ptr_1, ptr_2, ptr_k;
     ulong pr, oldpr, sqrt, bits0, norm;
     n_primes_t iter;
 
@@ -185,13 +185,13 @@ int fmpz_factor_pp1(fmpz_t fac, const fmpz_t n_in, ulong B1, ulong B2sqrt, ulong
     sqrt = n_sqrt(B1);
     bits0 = FLINT_BIT_COUNT(B1);
 
-    x      = flint_malloc(nn*sizeof(ulong));
-    y      = flint_malloc(nn*sizeof(ulong));
-    oldx   = flint_malloc(nn*sizeof(ulong));
-    oldy   = flint_malloc(nn*sizeof(ulong));
-    n      = flint_malloc(nn*sizeof(ulong));
-    ninv   = flint_malloc(nn*sizeof(ulong));
-    factor = flint_malloc(nn*sizeof(ulong));
+    x      = flint_malloc(nn*sizeof(mp_limb_t));
+    y      = flint_malloc(nn*sizeof(mp_limb_t));
+    oldx   = flint_malloc(nn*sizeof(mp_limb_t));
+    oldy   = flint_malloc(nn*sizeof(mp_limb_t));
+    n      = flint_malloc(nn*sizeof(mp_limb_t));
+    ninv   = flint_malloc(nn*sizeof(mp_limb_t));
+    factor = flint_malloc(nn*sizeof(mp_limb_t));
 
     if (nn == 1)
     {
@@ -200,7 +200,7 @@ int fmpz_factor_pp1(fmpz_t fac, const fmpz_t n_in, ulong B1, ulong B2sqrt, ulong
         n[0] <<= norm;
     } else
     {
-        nn_ptr np = COEFF_TO_PTR(*n_in)->_mp_d;
+        mp_ptr np = COEFF_TO_PTR(*n_in)->_mp_d;
         norm = flint_clz(np[nn - 1]);
         if (norm)
             mpn_lshift(n, np, nn, norm);
@@ -278,10 +278,9 @@ int fmpz_factor_pp1(fmpz_t fac, const fmpz_t n_in, ulong B1, ulong B2sqrt, ulong
         int num;
         char * sieve = flint_malloc(32768);
         slong * sieve_index = flint_malloc(32768*sizeof(slong));
-        nn_ptr diff = flint_malloc(16384*nn*sizeof(ulong));
+        mp_ptr diff = flint_malloc(16384*nn*sizeof(mp_limb_t));
         ulong offset[15], num_roots;
-        ulong s;
-        slong k, index = 0;
+        slong k, index = 0, s;
         fmpz * roots, * roots2, * evals;
         fmpz_poly_struct ** tree2;
 
@@ -332,17 +331,17 @@ int fmpz_factor_pp1(fmpz_t fac, const fmpz_t n_in, ulong B1, ulong B2sqrt, ulong
 
         /* construct roots */
         roots = _fmpz_vec_init(num_roots);
-        for (i = 0; (ulong) i < num_roots; i++)
+        for (i = 0; i < num_roots; i++)
         {
-            mpz_ptr m = _fmpz_promote(roots + i);
-            FLINT_MPZ_REALLOC(m, nn);
+            __mpz_struct * m = _fmpz_promote(roots + i);
+            mpz_realloc(m, nn);
         }
 
         roots2 = _fmpz_vec_init(num_roots);
-        for (i = 0; (ulong) i < num_roots; i++)
+        for (i = 0; i < num_roots; i++)
         {
-            mpz_ptr m = _fmpz_promote(roots2 + i);
-            FLINT_MPZ_REALLOC(m, nn);
+            __mpz_struct * m = _fmpz_promote(roots2 + i);
+            mpz_realloc(m, nn);
         }
 
         evals = _fmpz_vec_init(num_roots);
@@ -450,7 +449,7 @@ int fmpz_factor_pp1(fmpz_t fac, const fmpz_t n_in, ulong B1, ulong B2sqrt, ulong
         if (mpn_sub_1(ptr_1, ptr_1, nn, UWORD(2) << norm))
             mpn_add_n(ptr_1, ptr_1, n, nn);
 
-        for (i = 2; (ulong) i < num_roots; i++)
+        for (i = 2; i < num_roots; i++)
         {
             /* V_{k+n} = V_k V_n - V_{k-n} */
             ptr_2 = COEFF_TO_PTR(roots2[i])->_mp_d;
@@ -467,11 +466,11 @@ int fmpz_factor_pp1(fmpz_t fac, const fmpz_t n_in, ulong B1, ulong B2sqrt, ulong
         flint_printf("roots2 computed %wu\n", num_roots);
 #endif
 
-        for (i = 0; (ulong) i < num_roots; i++)
+        for (i = 0; i < num_roots; i++)
         {
-            slong sn;
-            mpz_ptr m1 = COEFF_TO_PTR(roots[i]);
-            mpz_ptr m2 = COEFF_TO_PTR(roots2[i]);
+            mp_size_t sn;
+            __mpz_struct * m1 = COEFF_TO_PTR(roots[i]);
+            __mpz_struct * m2 = COEFF_TO_PTR(roots2[i]);
 
             ptr_1 = m1->_mp_d;
             ptr_2 = m2->_mp_d;
@@ -521,7 +520,7 @@ int fmpz_factor_pp1(fmpz_t fac, const fmpz_t n_in, ulong B1, ulong B2sqrt, ulong
         flint_printf("evaluated at roots\n");
 #endif
 
-        for (i = 0; (ulong) i < num_roots; i++)
+        for (i = 0; i < num_roots; i++)
         {
             fmpz_gcd(fac, n_in, evals + i);
             if (!fmpz_is_zero(fac) && !fmpz_is_one(fac))
@@ -538,7 +537,7 @@ int fmpz_factor_pp1(fmpz_t fac, const fmpz_t n_in, ulong B1, ulong B2sqrt, ulong
         flint_free(sieve_index);
         flint_free(diff);
 
-        if ((ulong) i < num_roots)
+        if (i < num_roots)
             goto cleanup2;
     }
 
@@ -550,9 +549,9 @@ cleanup:
 
     if (ret)
     {
-        mpz_ptr fm = _fmpz_promote(fac);
-        mp_ptr fp = FLINT_MPZ_REALLOC(fm, r);
-        flint_mpn_copyi(fp, factor, r);
+        __mpz_struct * fm = _fmpz_promote(fac);
+        mpz_realloc(fm, r);
+        flint_mpn_copyi(fm->_mp_d, factor, r);
         fm->_mp_size = r;
         _fmpz_demote_val(fac);
     }

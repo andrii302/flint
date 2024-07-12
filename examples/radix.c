@@ -19,10 +19,10 @@
 #include <stdio.h>
 #include <time.h>
 #include <gmp.h>
-#include <flint/flint.h>
-#include <flint/fmpz.h>
-#include <flint/fmpz_mod.h>
-#include <flint/fmpz_mod_poly.h>
+#include "flint.h"
+#include "fmpz.h"
+#include "fmpz_mod.h"
+#include "fmpz_mod_poly.h"
 
 int main(void)
 {
@@ -122,7 +122,7 @@ int main(void)
     flint_free(b);
     fmpz_mod_ctx_clear(ctx);
 
-    FLINT_TEST_CLEANUP(state);
+    flint_randclear(state);
 
     return 0;
 }

@@ -19,7 +19,7 @@
 TEST_FUNCTION_START(arith_number_of_partitions_vec, state)
 {
     fmpz * p;
-    nn_ptr pmod;
+    mp_ptr pmod;
     slong k, n;
 
     const slong maxn = 1000;

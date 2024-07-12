@@ -9,6 +9,7 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "gmpcompat.h"
 #include "fmpz.h"
 #include "ulong_extras.h"
@@ -23,7 +24,7 @@ void fmpz_nextprime(fmpz_t res, const fmpz_t n, int proved)
     else if (COEFF_IS_MPZ(*n))
     {
         /* n is big */
-        mpz_ptr res_mpz = _fmpz_promote(res);
+        __mpz_struct *res_mpz = _fmpz_promote(res);
         mpz_nextprime(res_mpz, COEFF_TO_PTR(*n));
     }
     else if (FLINT_BIT_COUNT(*n) < SMALL_FMPZ_BITCOUNT_MAX)
@@ -37,7 +38,7 @@ void fmpz_nextprime(fmpz_t res, const fmpz_t n, int proved)
     {
         /* n is small, but res might not be */
         mpz_t temp_n;
-        mpz_ptr res_mpz = _fmpz_promote(res);
+        __mpz_struct *res_mpz = _fmpz_promote(res);
         flint_mpz_init_set_ui(temp_n, *n);
         mpz_nextprime(res_mpz, temp_n);
         _fmpz_demote_val(res);
@@ -46,7 +47,7 @@ void fmpz_nextprime(fmpz_t res, const fmpz_t n, int proved)
     else
     {
         /* same as above case, but need to handle aliasing here. */
-        mpz_ptr res_mpz = _fmpz_promote_val(res);
+        __mpz_struct *res_mpz = _fmpz_promote_val(res);
         mpz_nextprime(res_mpz, res_mpz);
         _fmpz_demote_val(res);
     }

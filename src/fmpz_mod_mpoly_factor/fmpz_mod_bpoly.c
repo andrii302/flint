@@ -61,7 +61,7 @@ void fmpz_mod_bpoly_fit_length(
     A->alloc = len;
 }
 
-void fmpz_mod_bpoly_zero(fmpz_mod_bpoly_t A, const fmpz_mod_ctx_t FLINT_UNUSED(ctx))
+void fmpz_mod_bpoly_zero(fmpz_mod_bpoly_t A, const fmpz_mod_ctx_t ctx)
 {
     A->length = 0;
 }
@@ -119,7 +119,7 @@ void fmpz_mod_bpoly_one(fmpz_mod_bpoly_t A, const fmpz_mod_ctx_t ctx)
 
 slong fmpz_mod_bpoly_degree1(
     const fmpz_mod_bpoly_t A,
-    const fmpz_mod_ctx_t FLINT_UNUSED(ctx))
+    const fmpz_mod_ctx_t ctx)
 {
     slong i, len = 0;
     for (i = 0; i < A->length; i++)
@@ -603,7 +603,7 @@ int fmpz_mod_bpoly_divides(
         {
             for (j = order - 1; j >= 0; j--)
             {
-                ulong qc = n_poly_get_coeff(q, order*i + j);
+                mp_limb_t qc = n_poly_get_coeff(q, order*i + j);
                 if (qc == 0)
                     continue;
 

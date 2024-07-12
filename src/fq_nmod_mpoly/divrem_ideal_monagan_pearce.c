@@ -22,7 +22,7 @@
 int _fq_nmod_mpoly_divrem_ideal_monagan_pearce(
     fq_nmod_mpoly_struct ** Q,
     fq_nmod_mpoly_t R,
-    const ulong * poly2, const ulong * exp2, slong len2,
+    const mp_limb_t * poly2, const ulong * exp2, slong len2,
     fq_nmod_mpoly_struct * const * poly3, ulong * const * exp3, slong len,
     slong N,
     flint_bitcnt_t bits,
@@ -39,7 +39,7 @@ int _fq_nmod_mpoly_divrem_ideal_monagan_pearce(
     mpoly_nheap_t ** chains, * chains_ptr;
     slong ** hinds, * hinds_ptr;
     mpoly_nheap_t * x;
-    ulong * r_coeff = R->coeffs;
+    mp_limb_t * r_coeff = R->coeffs;
     ulong * r_exp = R->exps;
     slong r_len;
     ulong * exp, * exps, * texp;
@@ -47,7 +47,7 @@ int _fq_nmod_mpoly_divrem_ideal_monagan_pearce(
     slong exp_next;
     ulong mask;
     slong * q_len, * s;
-    ulong * acc, * pp, * lc_minus_inv;
+    mp_limb_t * acc, * pp, * lc_minus_inv;
     TMP_INIT;
 
     TMP_START;
@@ -107,9 +107,9 @@ int _fq_nmod_mpoly_divrem_ideal_monagan_pearce(
 
     /* precompute leading coeff info */
 
-    pp = (ulong *) TMP_ALLOC(d*sizeof(ulong));
-    acc = (ulong *) TMP_ALLOC(d*sizeof(ulong));
-    lc_minus_inv = (ulong *) TMP_ALLOC(d*len*sizeof(ulong));
+    pp = (mp_limb_t *) TMP_ALLOC(d*sizeof(mp_limb_t));
+    acc = (mp_limb_t *) TMP_ALLOC(d*sizeof(mp_limb_t));
+    lc_minus_inv = (mp_limb_t *) TMP_ALLOC(d*len*sizeof(mp_limb_t));
     for (w = 0; w < len; w++)
     {
         n_fq_inv(lc_minus_inv + d*w, poly3[w]->coeffs + d*0, ctx->fqctx);
@@ -140,7 +140,7 @@ int _fq_nmod_mpoly_divrem_ideal_monagan_pearce(
                 *store++ = x->j;
                 *store++ = x->p;
 
-                if (x->i == -UWORD(1))
+                if (x->i == -WORD(1))
                 {
                     n_fq_sub(acc, acc, poly2 + d*x->j, ctx->fqctx);
                 }

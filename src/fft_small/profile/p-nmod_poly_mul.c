@@ -101,7 +101,7 @@ int main(void)
     ulong an, bn, zn, i, nreps;
     ulong zn_max = 10000000;
 
-    flint_rand_init(state);
+    flint_randinit(state);
     mpn_ctx_init(R, UWORD(0x0003f00000000001));
 
     //flint_set_num_threads(8);
@@ -181,7 +181,7 @@ int main(void)
     }
 
     mpn_ctx_clear(R);
-    flint_rand_clear(state);
+    flint_randclear(state);
 
     return 0;
 }

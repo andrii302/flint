@@ -31,7 +31,8 @@ void _fmpq_poly_legendre_p(fmpz * coeffs, fmpz_t den, ulong n)
 {
     fmpz * r;
     int odd;
-    ulong k, L;
+    slong k;
+    ulong L;
 
     if (n == 0)
     {

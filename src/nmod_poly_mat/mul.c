@@ -21,8 +21,7 @@ void
 nmod_poly_mat_mul(nmod_poly_mat_t C, const nmod_poly_mat_t A,
     const nmod_poly_mat_t B)
 {
-    slong ar, bc, br;
-    ulong dim;
+    slong ar, bc, br, dim;
 
     ar = A->r;
     br = B->r;
@@ -37,14 +36,14 @@ nmod_poly_mat_mul(nmod_poly_mat_t C, const nmod_poly_mat_t A,
     else
     {
         slong Alen, Blen;
-        ulong mod = nmod_poly_mat_modulus(A);
+        mp_limb_t mod = nmod_poly_mat_modulus(A);
 
         Alen = nmod_poly_mat_max_length(A);
         Blen = nmod_poly_mat_max_length(B);
 
         if ((FLINT_BIT_COUNT(mod) > FLINT_BITS / 4)
             && (dim > INTERPOLATE_MIN_DIM + n_sqrt(FLINT_MIN(Alen, Blen)))
-            && (mod >= (ulong) (Alen + Blen - 1)) && n_is_prime(mod))
+            && (mod >= Alen + Blen - 1) && n_is_prime(mod))
             nmod_poly_mat_mul_interpolate(C, A, B);
 
         else if (Alen > KS_MAX_LENGTH || Blen > KS_MAX_LENGTH)

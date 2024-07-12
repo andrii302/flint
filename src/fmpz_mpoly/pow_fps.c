@@ -11,7 +11,6 @@
 */
 
 #include "long_extras.h"
-#include "mpn_extras.h"
 #include "fmpz.h"
 #include "fmpz_vec.h"
 #include "mpoly.h"
@@ -253,7 +252,7 @@ static slong _fmpz_mpoly_pow_fps1(
             {
                 Gexps = FLINT_ARRAY_REALLOC(Gexps, 2*Galloc, ulong);
                 Gcoeffs = FLINT_ARRAY_REALLOC(Gcoeffs, 2*Galloc, fmpz);
-                flint_mpn_zero((nn_ptr) Gcoeffs + Galloc, Galloc);
+                flint_mpn_zero(Gcoeffs + Galloc, Galloc);
                 Galloc *= 2;
             }
         }
@@ -490,7 +489,7 @@ static slong _fmpz_mpoly_pow_fps(
             {
                 Gexps = FLINT_ARRAY_REALLOC(Gexps, 2*N*Galloc, ulong);
                 Gcoeffs = FLINT_ARRAY_REALLOC(Gcoeffs, 2*Galloc, fmpz);
-                flint_mpn_zero((nn_ptr) Gcoeffs + Galloc, Galloc);
+                flint_mpn_zero(Gcoeffs + Galloc, Galloc);
                 Galloc *= 2;
             }
         }

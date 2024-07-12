@@ -9,6 +9,7 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "fmpz.h"
 #include "profiler.h"
 
@@ -44,7 +45,7 @@ void sample_xgcd_small(void * arg, ulong count)
     fmpz_clear(b);
     fmpz_clear(nmax);
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 }
 
 void sample_xgcd_mixed(void * arg, ulong count)
@@ -79,7 +80,7 @@ void sample_xgcd_mixed(void * arg, ulong count)
     fmpz_clear(b);
     fmpz_clear(nmax);
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 }
 
 void sample_xgcd_big(void * arg, ulong count)
@@ -114,7 +115,7 @@ void sample_xgcd_big(void * arg, ulong count)
     fmpz_clear(b);
     fmpz_clear(nmax);
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 }
 
 void sample_xgcd_canonical_bezout_small(void * arg, ulong count)
@@ -149,7 +150,7 @@ void sample_xgcd_canonical_bezout_small(void * arg, ulong count)
     fmpz_clear(b);
     fmpz_clear(nmax);
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 }
 
 void sample_xgcd_canonical_bezout_mixed(void * arg, ulong count)
@@ -184,7 +185,7 @@ void sample_xgcd_canonical_bezout_mixed(void * arg, ulong count)
     fmpz_clear(b);
     fmpz_clear(nmax);
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 }
 
 void sample_xgcd_canonical_bezout_big(void * arg, ulong count)
@@ -219,7 +220,7 @@ void sample_xgcd_canonical_bezout_big(void * arg, ulong count)
     fmpz_clear(b);
     fmpz_clear(nmax);
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 }
 
 int main(void)

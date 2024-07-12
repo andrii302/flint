@@ -18,9 +18,9 @@
 #include <stdio.h>
 #include <gmp.h>
 
-#include <flint/flint.h>
-#include <flint/fmpz.h>
-#include <flint/arith.h>
+#include "flint.h"
+#include "fmpz.h"
+#include "arith.h"
 
 int main(int argc, char* argv[])
 {

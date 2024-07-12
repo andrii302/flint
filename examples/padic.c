@@ -17,8 +17,8 @@
 #include <stdio.h>
 #include <gmp.h>
 
-#include <flint/flint.h>
-#include <flint/padic.h>
+#include "flint.h"
+#include "padic.h"
 
 int main(void)
 {

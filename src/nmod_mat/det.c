@@ -14,19 +14,19 @@
 #include "nmod_poly.h"
 #include "perm.h"
 
-static ulong
-_nmod_mat_det_2x2(ulong a, ulong b, ulong c, ulong d, nmod_t mod)
+static mp_limb_t
+_nmod_mat_det_2x2(mp_limb_t a, mp_limb_t b, mp_limb_t c, mp_limb_t d, nmod_t mod)
 {
     b = nmod_neg(b, mod);
     return nmod_addmul(nmod_mul(a, d, mod), b, c, mod);
 }
 
-static ulong
-_nmod_mat_det_3x3(ulong a, ulong b, ulong c,
-                  ulong d, ulong e, ulong f,
-                  ulong g, ulong h, ulong i, nmod_t mod)
+static mp_limb_t
+_nmod_mat_det_3x3(mp_limb_t a, mp_limb_t b, mp_limb_t c,
+                  mp_limb_t d, mp_limb_t e, mp_limb_t f,
+                  mp_limb_t g, mp_limb_t h, mp_limb_t i, nmod_t mod)
 {
-    ulong s, t, u;
+    mp_limb_t s, t, u;
 
     s = _nmod_mat_det_2x2(e, f, h, i, mod);
     t = _nmod_mat_det_2x2(g, i, d, f, mod);
@@ -39,10 +39,10 @@ _nmod_mat_det_3x3(ulong a, ulong b, ulong c,
     return s;
 }
 
-static ulong
-_nmod_mat_det_4x4(ulong ** const mat, nmod_t mod)
+static mp_limb_t
+_nmod_mat_det_4x4(mp_limb_t ** const mat, nmod_t mod)
 {
-    ulong s, t, u, v;
+    mp_limb_t s, t, u, v;
 
     s = _nmod_mat_det_3x3(mat[1][1], mat[1][2], mat[1][3],
                           mat[2][1], mat[2][2], mat[2][3],
@@ -71,10 +71,10 @@ _nmod_mat_det_4x4(ulong ** const mat, nmod_t mod)
     return s;
 }
 
-ulong
+mp_limb_t
 _nmod_mat_det(nmod_mat_t A)
 {
-    ulong det;
+    mp_limb_t det;
     slong * P;
 
     slong m = A->r;
@@ -101,11 +101,11 @@ _nmod_mat_det(nmod_mat_t A)
     return det;
 }
 
-ulong
+mp_limb_t
 nmod_mat_det(const nmod_mat_t A)
 {
     nmod_mat_t tmp;
-    ulong det;
+    mp_limb_t det;
     slong dim = A->r;
 
     if (dim != A->c)
@@ -130,7 +130,7 @@ nmod_mat_det(const nmod_mat_t A)
 
     if (dim <= 8)
     {
-        ulong cp[9];
+        mp_limb_t cp[9];
         _nmod_mat_charpoly_berkowitz(cp, A, A->mod);
         if (dim % 2)
             return nmod_neg(cp[0], A->mod);

@@ -10,6 +10,7 @@
 */
 
 #include <stdlib.h>
+#include "flint.h"
 #include "fmpz.h"
 #include "fq.h"
 #include "fq_poly.h"

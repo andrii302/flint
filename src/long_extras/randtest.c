@@ -11,14 +11,15 @@
 
 #include <limits.h>
 
+#include "flint.h"
 #include "fmpz.h"
 #include "ulong_extras.h"
 #include "long_extras.h"
 
-slong z_randtest(flint_rand_t state)
+mp_limb_signed_t z_randtest(flint_rand_t state)
 {
-    ulong m;
-    slong z;
+    mp_limb_t m;
+    mp_limb_signed_t z;
 
     m = n_randlimb(state);
 
@@ -46,9 +47,9 @@ slong z_randtest(flint_rand_t state)
     return z;
 }
 
-slong z_randtest_not_zero(flint_rand_t state)
+mp_limb_signed_t z_randtest_not_zero(flint_rand_t state)
 {
-    slong z;
+    mp_limb_signed_t z;
 
     while ((z = z_randtest(state)) == 0) ;
     return z;

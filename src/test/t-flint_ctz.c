@@ -12,26 +12,21 @@
 #include "ulong_extras.h"
 #include "test_helpers.h"
 
-#define l_shift(in, shift) \
-    ((shift == FLINT_BITS) ? WORD(0) : ((in) << (shift)))
-
 TEST_FUNCTION_START(flint_ctz, state)
 {
    int i, result;
 
    for (i = 0; i < 100000 * flint_test_multiplier(); i++)
    {
-      ulong n;
-      unsigned int count;
+      mp_limb_t n;
+      unsigned int count = 0;
 
       n = n_randtest(state);
 
-      if (n == 0)
-         continue;
+      if (n != 0)
+         count = flint_ctz(n);
 
-      count = flint_ctz(n);
-
-      result = ((n >> count) & UWORD(1)) && (l_shift(n, FLINT_BITS-count) == UWORD(0));
+      result = ((n == UWORD(0)) || (((n >> count) & UWORD(1)) && (l_shift(n, FLINT_BITS-count) == UWORD(0))));
       if (!result)
             TEST_FUNCTION_FAIL("n = %wu, count = %u\n", n, count);
    }

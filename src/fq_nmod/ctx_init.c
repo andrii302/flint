@@ -65,7 +65,7 @@ void fq_nmod_ctx_init_ui(fq_nmod_ctx_t ctx, ulong p, slong d, const char *var)
 
         ctx->is_conway = 0;
 
-        flint_rand_init(state);
+        flint_randinit(state);
 
         nmod_poly_init2(poly, p, d + 1);
         nmod_poly_randtest_sparse_irreducible(poly, state, d + 1);
@@ -73,7 +73,7 @@ void fq_nmod_ctx_init_ui(fq_nmod_ctx_t ctx, ulong p, slong d, const char *var)
         fq_nmod_ctx_init_modulus(ctx, poly, var);
 
         nmod_poly_clear(poly);
-        flint_rand_clear(state);
+        flint_randclear(state);
     }
 }
 
@@ -90,7 +90,7 @@ fq_nmod_ctx_init_randtest(fq_nmod_ctx_t ctx, flint_rand_t state, int type)
     if (n_randint(state, 2))
     {
         nmod_poly_t modulus;
-        ulong x;
+        mp_limb_t x;
 
         nmod_poly_init(modulus, ctx->mod.n);
         nmod_poly_set(modulus, ctx->modulus);

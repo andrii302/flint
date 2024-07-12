@@ -18,7 +18,7 @@
 #define LONG_EXTRAS_INLINE static inline
 #endif
 
-#include "longlong.h"
+#include "flint.h"
 
 #ifdef __cplusplus
  extern "C" {
@@ -32,25 +32,19 @@ size_t z_sizeinbase(slong n, int b);
 
 LONG_EXTRAS_INLINE int z_mul_checked(slong * a, slong b, slong c)
 {
-#if defined(__GNUC__)
-    return __builtin_mul_overflow(b, c, a);
-#else
+    /* TODO __builtin_mul_overflow */
 	ulong ahi, alo;
 	smul_ppmm(ahi, alo, b, c);
 	*a = alo;
 	return FLINT_SIGN_EXT(alo) != ahi;
-#endif
 }
 
 LONG_EXTRAS_INLINE int z_add_checked(slong * a, slong b, slong c)
 {
-#if defined(__GNUC__)
-    return __builtin_add_overflow(b, c, a);
-#else
+    /* TODO __builtin_add_overflow */
     int of = (b > 0 && c > WORD_MAX - b) || (b < 0 && c < WORD_MIN - b);
     *a = b + c;
     return of;
-#endif
 }
 
 LONG_EXTRAS_INLINE
@@ -65,11 +59,11 @@ int z_mat22_det_is_negative(slong m11, slong m12, slong m21, slong m22)
 
 /* Randomisation  ************************************************************/
 
-slong z_randtest(flint_rand_t state);
+mp_limb_signed_t z_randtest(flint_rand_t state);
 
-slong z_randtest_not_zero(flint_rand_t state);
+mp_limb_signed_t z_randtest_not_zero(flint_rand_t state);
 
-slong z_randint(flint_rand_t state, ulong limit);
+mp_limb_signed_t z_randint(flint_rand_t state, mp_limb_t limit);
 
 /*****************************************************************************/
 

@@ -56,7 +56,7 @@ static void
 __nmod_poly_factor_berlekamp(nmod_poly_factor_t factors,
     flint_rand_t state, const nmod_poly_t f)
 {
-    const ulong p = nmod_poly_modulus(f);
+    const mp_limb_t p = nmod_poly_modulus(f);
     const slong n = nmod_poly_degree(f);
 
     nmod_poly_factor_t fac1, fac2;
@@ -64,7 +64,7 @@ __nmod_poly_factor_berlekamp(nmod_poly_factor_t factors,
     nmod_poly_t x_pi, x_pi2;
     nmod_poly_t Q;
     nmod_mat_t matrix;
-    ulong coeff;
+    mp_limb_t coeff;
     slong i, nullity, col, row, *shift;
     nmod_poly_t *basis;
 
@@ -231,9 +231,9 @@ nmod_poly_factor_berlekamp(nmod_poly_factor_t factors, const nmod_poly_t f)
 {
     flint_rand_t r;
 
-    flint_rand_init(r);
+    flint_randinit(r);
 
     __nmod_poly_factor_berlekamp(factors, r, f);
 
-    flint_rand_clear(r);
+    flint_randclear(r);
 }

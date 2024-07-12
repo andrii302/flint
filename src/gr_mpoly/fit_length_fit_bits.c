@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "mpoly.h"
 #include "gr_mpoly.h"
 
 void gr_mpoly_fit_length_fit_bits(

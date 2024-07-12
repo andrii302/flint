@@ -139,7 +139,6 @@ Integers mod n
    nmod_poly_factor.rst
    nmod_mpoly.rst
    nmod_mpoly_factor.rst
-   mpn_mod.rst
    fmpz_mod.rst
    fmpz_mod_vec.rst
    fmpz_mod_mat.rst
@@ -189,7 +188,6 @@ Real and complex numbers
    issues.rst
    examples_arb.rst
    mag.rst
-   nfloat.rst
    arf.rst
    acf.rst
    arb.rst

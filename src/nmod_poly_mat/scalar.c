@@ -14,7 +14,7 @@
 
 void
 nmod_poly_mat_scalar_mul_nmod(nmod_poly_mat_t B, const nmod_poly_mat_t A,
-                                                    ulong c)
+                                                    mp_limb_t c)
 {
     slong i, j;
 

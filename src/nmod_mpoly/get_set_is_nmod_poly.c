@@ -38,7 +38,7 @@ int nmod_mpoly_get_n_poly(
     const nmod_mpoly_ctx_t ctx)
 {
     slong Blen = B->length;
-    const ulong * Bcoeffs = B->coeffs;
+    const mp_limb_t * Bcoeffs = B->coeffs;
     const ulong * Bexps = B->exps;
     flint_bitcnt_t Bbits = B->bits;
     slong i, N = mpoly_words_per_exp(Bbits, ctx->minfo);
@@ -65,8 +65,8 @@ int nmod_mpoly_get_n_poly(
     }
     else
     {
-        slong off;
-        ulong j, check, wpf = Bbits/FLINT_BITS;
+        slong j, off;
+        ulong check, wpf = Bbits/FLINT_BITS;
 
         off = mpoly_gen_offset_mp(var, Bbits, ctx->minfo);
 
@@ -89,7 +89,7 @@ int nmod_mpoly_get_n_poly(
 void _nmod_mpoly_set_nmod_poly(
     nmod_mpoly_t A,
     flint_bitcnt_t Abits,
-    const ulong * Bcoeffs,
+    const mp_limb_t * Bcoeffs,
     slong Blen,
     slong var,
     const nmod_mpoly_ctx_t ctx)

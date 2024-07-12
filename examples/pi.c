@@ -2,8 +2,8 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <flint/arb.h>
-#include <flint/profiler.h>
+#include "arb.h"
+#include "profiler.h"
 
 int main(int argc, char *argv[])
 {

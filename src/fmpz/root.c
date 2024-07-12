@@ -9,7 +9,8 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include <gmp.h>
+
+#include "flint.h"
 #include "ulong_extras.h"
 #include "fmpz.h"
 
@@ -31,7 +32,7 @@ fmpz_root(fmpz_t r, const fmpz_t f, slong n)
 
     if (!COEFF_IS_MPZ(c)) /* f is small */
     {
-        ulong rem, root;
+        mp_limb_t rem, root;
         int sgn = c < 0;
 
         if (n == 2)
@@ -69,8 +70,8 @@ fmpz_root(fmpz_t r, const fmpz_t f, slong n)
         }
     } else /* f is large */
     {
-        mpz_ptr mpz2 = COEFF_TO_PTR(c);
-        mpz_ptr mpz1 = _fmpz_promote(r);
+        __mpz_struct * mpz2 = COEFF_TO_PTR(c);
+        __mpz_struct * mpz1 = _fmpz_promote(r);
 
         int exact = mpz_root(mpz1, mpz2, n);
         _fmpz_demote_val(r); /* root may be small */

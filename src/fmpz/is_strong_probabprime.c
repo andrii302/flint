@@ -9,7 +9,12 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include <math.h>
+#include <assert.h>
+#include "flint.h"
+#include "ulong_extras.h"
 #include "fmpz.h"
+#include "fmpz_vec.h"
 
 int fmpz_is_strong_probabprime(const fmpz_t n, const fmpz_t base)
 {
@@ -46,15 +51,13 @@ int fmpz_is_strong_probabprime(const fmpz_t n, const fmpz_t base)
          res = 1;
       else
       {
-         res = fmpz_equal(y, nm1);
-         
-         for (s--; s > 0 && !res; s--)
+         for (s--; s > 0 && !fmpz_equal(y, nm1); s--)
          {
             fmpz_mul(t, y, y);
             fmpz_mod(y, t, n);
-            
-            res = fmpz_equal(y, nm1);
          }
+
+         res = fmpz_equal(y, nm1);
       }
 
       fmpz_clear(y);

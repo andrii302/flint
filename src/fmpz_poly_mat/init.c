@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "long_extras.h"
 #include "fmpz_poly.h"
 #include "fmpz_poly_mat.h"
 
@@ -19,24 +18,13 @@ fmpz_poly_mat_init(fmpz_poly_mat_t A, slong rows, slong cols)
     slong i;
 
     if (rows != 0)
-        A->rows = flint_malloc(rows * sizeof(fmpz_poly_struct *));
+        A->rows = (fmpz_poly_struct **) flint_malloc(rows * sizeof(fmpz_poly_struct *));
     else
         A->rows = NULL;
 
-    A->r = rows;
-    A->c = cols;
-
     if (rows != 0 && cols != 0)
     {
-        slong num;
-        int of;
-
-        of = z_mul_checked(&num, rows, cols);
-
-        if (of)
-            flint_throw(FLINT_ERROR, "Overflow creating a %wd x %wd object\n", rows, cols);
-
-        A->entries = flint_malloc(num * sizeof(fmpz_poly_struct));
+        A->entries = (fmpz_poly_struct *) flint_malloc(flint_mul_sizes(rows, cols) * sizeof(fmpz_poly_struct));
 
         for (i = 0; i < rows * cols; i++)
             fmpz_poly_init(A->entries + i);
@@ -53,6 +41,9 @@ fmpz_poly_mat_init(fmpz_poly_mat_t A, slong rows, slong cols)
                 A->rows[i] = NULL;
         }
     }
+
+    A->r = rows;
+    A->c = cols;
 }
 
 void

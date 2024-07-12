@@ -11,8 +11,6 @@
 
 #include <stdlib.h>
 #include "profiler.h"
-#include "arb_mat.h"
-#include "acb.h"
 #include "acb_mat.h"
 #include "acb_theta.h"
 
@@ -38,7 +36,7 @@ int main(int argc, char * argv[])
     cstep = atol(argv[3]);
     cmax = atol(argv[4]);
 
-    flint_rand_init(state);
+    flint_randinit(state);
 
     /* Profile with different splittings on reduced input */
     for (c = cstep; c <= cmax; c += cstep)
@@ -145,7 +143,7 @@ int main(int argc, char * argv[])
         arb_clear(test);
     }
 
-    flint_rand_clear(state);
+    flint_randclear(state);
     flint_cleanup();
     return 0;
 }

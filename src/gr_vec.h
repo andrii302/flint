@@ -21,7 +21,7 @@
 #include "gr.h"
 
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
 void gr_vec_init(gr_vec_t vec, slong len, gr_ctx_t ctx);
@@ -42,7 +42,7 @@ gr_vec_entry_srcptr(const gr_vec_t vec, slong i, gr_ctx_t ctx)
 }
 
 
-GR_VEC_INLINE slong gr_vec_length(const gr_vec_t vec, gr_ctx_t FLINT_UNUSED(ctx))
+GR_VEC_INLINE slong gr_vec_length(const gr_vec_t vec, gr_ctx_t ctx)
 {
     return vec->length;
 }

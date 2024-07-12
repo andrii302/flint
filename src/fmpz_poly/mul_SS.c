@@ -10,6 +10,8 @@
 */
 
 #include "fmpz_poly.h"
+#include "fft.h"
+#include "fft_tuning.h"
 
 void _fmpz_poly_mul_SS(fmpz *output, const fmpz *input1, slong len1,
                        const fmpz *input2, slong len2)

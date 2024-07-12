@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "acb.h"
 #include "acb_mat.h"
 #include "acb_dirichlet.h"
 
@@ -21,8 +20,8 @@ acb_mat_dft(acb_mat_t res, int kind, slong prec)
     acb_t v;
     slong n, r, c, i, j;
 
-    r = acb_mat_nrows(res);
-    c = acb_mat_ncols(res);
+    r = arb_mat_nrows(res);
+    c = arb_mat_ncols(res);
     n = FLINT_MIN(r, c);
 
     if (n == 0)

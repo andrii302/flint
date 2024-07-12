@@ -20,7 +20,7 @@ TEST_FUNCTION_START(nmod_mat_solve_triu, state)
     for (i = 0; i < 10 * flint_test_multiplier(); i++)
     {
         nmod_mat_t A, X, B, Y;
-        ulong m;
+        mp_limb_t m;
         slong rows, cols;
         int unit;
 

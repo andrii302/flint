@@ -9,17 +9,16 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "mpn_extras.h"
 #include "nmod.h"
 #include "nmod_vec.h"
 #include "mpoly.h"
 #include "nmod_mpoly.h"
 
 slong _nmod_mpoly_scalar_addmul_ui1(
-    ulong * Acoeffs, ulong * Aexps,
-    const ulong * Bcoeffs, const ulong * Bexps, slong Blen,
-    const ulong * Ccoeffs, const ulong * Cexps, slong Clen,
-    ulong d,
+    mp_limb_t * Acoeffs, ulong * Aexps,
+    const mp_limb_t * Bcoeffs, const ulong * Bexps, slong Blen,
+    const mp_limb_t * Ccoeffs, const ulong * Cexps, slong Clen,
+    mp_limb_t d,
     ulong maskhi,
     nmod_t fctx)
 {
@@ -71,10 +70,10 @@ slong _nmod_mpoly_scalar_addmul_ui1(
 }
 
 static slong _nmod_mpoly_scalar_addmul_ui(
-    ulong * Acoeffs, ulong * Aexps,
-    const ulong * Bcoeffs, const ulong * Bexps, slong Blen,
-    const ulong * Ccoeffs, const ulong * Cexps, slong Clen,
-    ulong d,
+    mp_limb_t * Acoeffs, ulong * Aexps,
+    const mp_limb_t * Bcoeffs, const ulong * Bexps, slong Blen,
+    const mp_limb_t * Ccoeffs, const ulong * Cexps, slong Clen,
+    mp_limb_t d,
     slong N,
     const ulong * cmpmask,
     nmod_t fctx)
@@ -139,11 +138,10 @@ void nmod_mpoly_scalar_addmul_ui(
     nmod_mpoly_t A,
     const nmod_mpoly_t B,
     const nmod_mpoly_t C,
-    ulong d,
+    mp_limb_t d,
     const nmod_mpoly_ctx_t ctx)
 {
-    ulong Abits;
-    slong N;
+    slong Abits, N;
     ulong * Bexps = B->exps, * Cexps = C->exps;
     ulong * cmpmask;
     int freeBexps = 0, freeCexps = 0;
@@ -220,7 +218,7 @@ void nmod_mpoly_scalar_addmul_ui(
 void nmod_mpoly_scalar_mul_nmod_invertible(
     nmod_mpoly_t A,
     const nmod_mpoly_t B,
-    ulong c,
+    mp_limb_t c,
     const nmod_mpoly_ctx_t ctx)
 {
     FLINT_ASSERT(c != 0);
@@ -258,13 +256,13 @@ void nmod_mpoly_scalar_mul_nmod_invertible(
 void nmod_mpoly_scalar_mul_nmod_general(
     nmod_mpoly_t A,
     const nmod_mpoly_t B,
-    ulong c,
+    mp_limb_t c,
     const nmod_mpoly_ctx_t ctx)
 {
     slong i, N;
     slong Alen, Blen;
     ulong * Aexp, * Bexp;
-    ulong * Acoeff, * Bcoeff;
+    mp_limb_t * Acoeff, * Bcoeff;
 
     FLINT_ASSERT(c < ctx->mod.n);
 

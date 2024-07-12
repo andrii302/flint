@@ -42,7 +42,7 @@ fmpz_pow_ui(fmpz_t f, const fmpz_t g, ulong exp)
         }
         else
         {
-            mpz_ptr mf = _fmpz_promote_val(f);
+            __mpz_struct * mf = _fmpz_promote_val(f);
 
             flint_mpz_set_ui(mf, u1);
             flint_mpz_pow_ui(mf, mf, exp);
@@ -54,7 +54,7 @@ fmpz_pow_ui(fmpz_t f, const fmpz_t g, ulong exp)
     }
     else
     {
-        mpz_ptr mf = _fmpz_promote_val(f);
+        __mpz_struct * mf = _fmpz_promote_val(f);
         flint_mpz_pow_ui(mf, COEFF_TO_PTR(c1), exp);
         /* no need to demote as it can't get smaller */
     }
@@ -99,7 +99,7 @@ fmpz_ui_pow_ui(fmpz_t x, ulong b, ulong e)
     }
     else if (e == 2)
     {
-        ulong t[2];
+        mp_limb_t t[2];
         umul_ppmm(t[1], t[0], b, b);
         fmpz_set_uiui(x, t[1], t[0]);
     }
@@ -117,7 +117,7 @@ fmpz_ui_pow_ui(fmpz_t x, ulong b, ulong e)
         }
         else
         {
-            mpz_ptr z = _fmpz_promote(x);
+            __mpz_struct * z = _fmpz_promote(x);
             flint_mpz_set_ui(z, b);
             flint_mpz_pow_ui(z, z, e);
             _fmpz_demote_val(x);

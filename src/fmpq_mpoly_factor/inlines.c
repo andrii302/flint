@@ -11,4 +11,6 @@
 
 #define FMPQ_MPOLY_FACTOR_INLINES_C
 
+#include "flint.h"
+#include "ulong_extras.h"
 #include "fmpq_mpoly_factor.h"

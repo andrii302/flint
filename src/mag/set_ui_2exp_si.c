@@ -9,7 +9,6 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "longlong.h"
 #include "mag.h"
 
 void
@@ -25,7 +24,7 @@ mag_set_ui_2exp_si(mag_t z, ulong x, slong e)
     else
     {
         slong bits;
-        ulong overflow;
+        mp_limb_t overflow;
 
         bits = flint_clz(x);
         bits = FLINT_BITS - bits;

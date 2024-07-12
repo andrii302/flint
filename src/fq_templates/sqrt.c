@@ -50,12 +50,12 @@ int TEMPLATE(T, sqrt)(TEMPLATE(T, t) rop, const TEMPLATE(T, t) op,
         {
             flint_rand_t state;
 
-            flint_rand_init(state);
+            flint_randinit(state);
 
             while (TEMPLATE(T, is_square)(z, ctx))
                 TEMPLATE(T, rand)(z, state, ctx);
 
-            flint_rand_clear(state);
+            flint_randclear(state);
         }
 
         TEMPLATE(T, ctx_order)(ord, ctx);

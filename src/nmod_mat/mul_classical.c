@@ -23,11 +23,11 @@ with op = -1, computes D = C - A*B
 */
 
 static inline void
-_nmod_mat_addmul_basic_op(nn_ptr * D, nn_ptr * const C, nn_ptr * const A,
-    nn_ptr * const B, slong m, slong k, slong n, int op, nmod_t mod, int nlimbs)
+_nmod_mat_addmul_basic_op(mp_ptr * D, mp_ptr * const C, mp_ptr * const A,
+    mp_ptr * const B, slong m, slong k, slong n, int op, nmod_t mod, int nlimbs)
 {
     slong i, j;
-    ulong c;
+    mp_limb_t c;
 
     for (i = 0; i < m; i++)
     {
@@ -46,14 +46,14 @@ _nmod_mat_addmul_basic_op(nn_ptr * D, nn_ptr * const C, nn_ptr * const A,
 }
 
 static inline void
-_nmod_mat_addmul_transpose_op(nn_ptr * D, const nn_ptr * C, const nn_ptr * A,
-    const nn_ptr * B, slong m, slong k, slong n, int op, nmod_t mod, int nlimbs)
+_nmod_mat_addmul_transpose_op(mp_ptr * D, const mp_ptr * C, const mp_ptr * A,
+    const mp_ptr * B, slong m, slong k, slong n, int op, nmod_t mod, int nlimbs)
 {
-    nn_ptr tmp;
-    ulong c;
+    mp_ptr tmp;
+    mp_limb_t c;
     slong i, j;
 
-    tmp = flint_malloc(sizeof(ulong) * k * n);
+    tmp = flint_malloc(sizeof(mp_limb_t) * k * n);
 
     for (i = 0; i < k; i++)
         for (j = 0; j < n; j++)
@@ -77,17 +77,17 @@ _nmod_mat_addmul_transpose_op(nn_ptr * D, const nn_ptr * C, const nn_ptr * A,
     flint_free(tmp);
 }
 
-/* Assumes nlimbs = 1 */
-static void
-_nmod_mat_addmul_packed_op(nn_ptr * D, const nn_ptr * C, const nn_ptr * A,
-    const nn_ptr * B, slong M, slong N, slong K, int op, nmod_t mod)
+/* requires nlimbs = 1 */
+void
+_nmod_mat_addmul_packed_op(mp_ptr * D, const mp_ptr * C, const mp_ptr * A,
+    const mp_ptr * B, slong M, slong N, slong K, int op, nmod_t mod, int nlimbs)
 {
     slong i, j, k;
     slong Kpack;
     int pack, pack_bits;
-    ulong c, d, mask;
-    nn_ptr tmp;
-    nn_ptr Aptr, Tptr;
+    mp_limb_t c, d, mask;
+    mp_ptr tmp;
+    mp_ptr Aptr, Tptr;
 
     /* bound unreduced entry */
     c = N * (mod.n-1) * (mod.n-1);
@@ -186,7 +186,7 @@ _nmod_mat_mul_classical_op(nmod_mat_t D, const nmod_mat_t C,
     if (nlimbs == 1 && m > 10 && k > 10 && n > 10)
     {
         _nmod_mat_addmul_packed_op(D->rows, (op == 0) ? NULL : C->rows,
-            A->rows, B->rows, m, k, n, op, D->mod);
+            A->rows, B->rows, m, k, n, op, D->mod, nlimbs);
     }
     else if (m < NMOD_MAT_MUL_TRANSPOSE_CUTOFF
         || n < NMOD_MAT_MUL_TRANSPOSE_CUTOFF

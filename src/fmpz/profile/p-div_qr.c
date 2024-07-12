@@ -9,6 +9,7 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "flint.h"
 #include "fmpz.h"
 #include "fmpz_vec.h"
 #include "profiler.h"
@@ -50,7 +51,7 @@ void sample_ndiv_qr(void * arg, ulong count)
     fmpz_clear(b);
     fmpz_clear(nmax);
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 }
 
 void sample_fdiv_qr(void * arg, ulong count)
@@ -90,7 +91,7 @@ void sample_fdiv_qr(void * arg, ulong count)
     fmpz_clear(b);
     fmpz_clear(nmax);
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 }
 
 void sample_cdiv_qr(void * arg, ulong count)
@@ -130,7 +131,7 @@ void sample_cdiv_qr(void * arg, ulong count)
     fmpz_clear(b);
     fmpz_clear(nmax);
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 }
 
 void sample_tdiv_qr(void * arg, ulong count)
@@ -170,7 +171,7 @@ void sample_tdiv_qr(void * arg, ulong count)
     fmpz_clear(b);
     fmpz_clear(nmax);
 
-    flint_rand_clear(state);
+    flint_randclear(state);
 }
 
 int main(void)
@@ -213,7 +214,7 @@ int main(void)
         flint_rand_t state;
         timeit_t timer;
 
-        flint_rand_init(state);
+        flint_randinit(state);
 
         as = _fmpz_vec_init(len);
         bs = _fmpz_vec_init(len);
@@ -249,7 +250,7 @@ int main(void)
         _fmpz_vec_clear(as, len);
         _fmpz_vec_clear(bs, len);
 
-        flint_rand_clear(state);
+        flint_randclear(state);
     }
 
     return 0;

@@ -3,10 +3,6 @@
 **mpfr_mat.h** -- matrices of MPFR floating-point numbers
 ===============================================================================
 
-.. note::
-
-    This module is deprecated, and will probably removed completely in the
-    future.
 
 
 Memory management
@@ -33,6 +29,15 @@ Basic manipulation
     Return a reference to the entry at row `i` and column `j` of the given
     matrix. The values `i` and `j` must be within the bounds for the matrix.
     The reference can be used to either return or set the given entry.
+
+.. function:: void mpfr_mat_swap(mpfr_mat_t mat1, mpfr_mat_t mat2)
+
+    Efficiently swap matrices ``mat1`` and ``mat2``.
+
+.. function:: void mpfr_mat_swap_entrywise(mpfr_mat_t mat1, mpfr_mat_t mat2)
+
+    Swaps two matrices by swapping the individual entries rather than swapping
+    the contents of the structs.
 
 .. function:: void mpfr_mat_set(mpfr_mat_t mat1, const mpfr_mat_t mat2)
 

@@ -22,7 +22,7 @@ TEST_FUNCTION_START(nmod_poly_taylor_shift_convolution, state)
     {
         nmod_poly_t f, g;
         slong n;
-        ulong c, mod;
+        mp_limb_t c, mod;
 
         n = n_randint(state, 100);
         do {
@@ -55,7 +55,7 @@ TEST_FUNCTION_START(nmod_poly_taylor_shift_convolution, state)
     for (i = 0; i < 1000 * flint_test_multiplier(); i++)
     {
         nmod_poly_t f, g, h1, h2;
-        ulong mod, c;
+        mp_limb_t mod, c;
         slong n;
 
         n = n_randint(state, 100);

@@ -10,6 +10,7 @@
 */
 
 #include "double_extras.h"
+#include "ulong_extras.h"
 
 #define EXP_MINUS_32 2.3283064365386962891e-10
 #define EXP_MINUS_64 5.42101086242752217e-20
@@ -17,7 +18,7 @@
 double
 d_randtest(flint_rand_t state)
 {
-    ulong m1, m2;
+    mp_limb_t m1, m2;
     double t;
 
     if (FLINT_BITS == 64)

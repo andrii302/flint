@@ -11,6 +11,8 @@
 
 #define FQ_DEFAULT_POLY_FACTOR_INLINES_C
 
+#include "flint.h"
+#include "ulong_extras.h"
 #include "fq_default.h"
 #include "fq_default_poly.h"
 #include "fq_default_poly_factor.h"
