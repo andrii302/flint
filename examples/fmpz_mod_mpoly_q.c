@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
     fmpz_mod_mpoly_q_set_str_pretty(y, "(3*y^4+7*z^5)", vars, ctx);
     fmpz_mod_mpoly_q_mul(x, x, y, ctx);
     
-    strf = fmpz_mod_mpoly_q_get_str_pretty(x, vars, ctx);
+    // strf = fmpz_mod_mpoly_q_get_str_pretty(x, vars, ctx);
     flint_printf("%s\n", strf);
     fmpz_mod_mpoly_q_clear(x, ctx);
     fmpz_mod_mpoly_q_clear(y, ctx);

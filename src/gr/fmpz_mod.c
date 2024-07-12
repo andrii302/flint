@@ -16,6 +16,7 @@
 #include "fmpz_mod_vec.h"
 #include "fmpz_mod_mat.h"
 #include "fmpz_mod_poly.h"
+#include "fmpz_mod_mpoly.h"
 #include "fmpz_mod_poly_factor.h"
 #include "gr.h"
 #include "gr_vec.h"
@@ -30,9 +31,19 @@ typedef struct
 }
 _gr_fmpz_mod_ctx_struct;
 
+typedef struct
+{
+    fmpz_mod_mpoly_ctx_t mctx;
+    char ** vars;
+}
+_gr_fmpz_mod_mpoly_ctx_t;
+
 #define FMPZ_MOD_CTX(ring_ctx) ((((_gr_fmpz_mod_ctx_struct *)(ring_ctx))->ctx))
 #define FMPZ_MOD_IS_PRIME(ring_ctx) (((_gr_fmpz_mod_ctx_struct *)(ring_ctx))->is_prime)
 #define FMPZ_MOD_CTX_A(ring_ctx) (&((((_gr_fmpz_mod_ctx_struct *)(ring_ctx))->a)))
+
+#define MPOLYNOMIAL_CTX(ring_ctx) ((_gr_fmpz_mod_mpoly_ctx_t *)(GR_CTX_DATA_AS_PTR(ring_ctx)))
+#define MPOLYNOMIAL_MCTX(ring_ctx) (MPOLYNOMIAL_CTX(ring_ctx)->mctx)
 
 int
 _gr_fmpz_mod_ctx_write(gr_stream_t out, gr_ctx_t ctx)
@@ -752,6 +763,78 @@ gr_method_tab_input _fmpz_mod_methods_input[] =
     {0,                         (gr_funcptr) NULL},
 };
 
+int _gr_fmpz_mod_mpoly_q_methods_initialized = 0;
+
+gr_static_method_table _gr_fmpz_mod_mpoly_q_methods;
+
+gr_method_tab_input _gr_fmpz_mod_mpoly_q_methods_input[] =
+{
+    {GR_METHOD_CTX_WRITE,       (gr_funcptr) _gr_fmpz_mod_ctx_write},
+    {GR_METHOD_CTX_CLEAR,       (gr_funcptr) _gr_fmpz_mod_ctx_clear},
+    {GR_METHOD_CTX_IS_RING,     (gr_funcptr) gr_generic_ctx_predicate_true},
+    {GR_METHOD_CTX_IS_COMMUTATIVE_RING, (gr_funcptr) gr_generic_ctx_predicate_true},
+    {GR_METHOD_CTX_IS_INTEGRAL_DOMAIN,  (gr_funcptr) _gr_fmpz_mod_ctx_is_field},
+    {GR_METHOD_CTX_IS_FIELD,            (gr_funcptr) _gr_fmpz_mod_ctx_is_field},
+    {GR_METHOD_CTX_IS_UNIQUE_FACTORIZATION_DOMAIN,
+                                (gr_funcptr) _gr_fmpz_mod_ctx_is_field},
+    {GR_METHOD_CTX_IS_FINITE,
+                                (gr_funcptr) gr_generic_ctx_predicate_true},
+    {GR_METHOD_CTX_IS_FINITE_CHARACTERISTIC,
+                                (gr_funcptr) gr_generic_ctx_predicate_false},
+    {GR_METHOD_CTX_IS_EXACT,    (gr_funcptr) gr_generic_ctx_predicate_true},
+    {GR_METHOD_CTX_IS_CANONICAL,
+                                (gr_funcptr) gr_generic_ctx_predicate_true},
+    {GR_METHOD_INIT,            (gr_funcptr) _gr_fmpz_mod_init},
+    {GR_METHOD_CLEAR,           (gr_funcptr) _gr_fmpz_mod_clear},
+    {GR_METHOD_SWAP,            (gr_funcptr) _gr_fmpz_mod_swap},
+    {GR_METHOD_SET_SHALLOW,     (gr_funcptr) _gr_fmpz_mod_set_shallow},
+    {GR_METHOD_RANDTEST,        (gr_funcptr) _gr_fmpz_mod_randtest},
+    {GR_METHOD_WRITE,           (gr_funcptr) _gr_fmpz_mod_write},
+    {GR_METHOD_ZERO,            (gr_funcptr) _gr_fmpz_mod_zero},
+    {GR_METHOD_ONE,             (gr_funcptr) _gr_fmpz_mod_one},
+    {GR_METHOD_IS_ZERO,         (gr_funcptr) _gr_fmpz_mod_is_zero},
+    {GR_METHOD_IS_ONE,          (gr_funcptr) _gr_fmpz_mod_is_one},
+    {GR_METHOD_IS_NEG_ONE,      (gr_funcptr) _gr_fmpz_mod_is_neg_one},
+    {GR_METHOD_EQUAL,           (gr_funcptr) _gr_fmpz_mod_equal},
+    {GR_METHOD_SET,             (gr_funcptr) _gr_fmpz_mod_set},
+    {GR_METHOD_SET_SI,          (gr_funcptr) _gr_fmpz_mod_set_si},
+    {GR_METHOD_SET_UI,          (gr_funcptr) _gr_fmpz_mod_set_ui},
+    {GR_METHOD_SET_FMPZ,        (gr_funcptr) _gr_fmpz_mod_set_fmpz},
+    {GR_METHOD_SET_OTHER,       (gr_funcptr) _gr_fmpz_mod_set_other},
+    {GR_METHOD_NEG,             (gr_funcptr) _gr_fmpz_mod_neg},
+    {GR_METHOD_ADD,             (gr_funcptr) _gr_fmpz_mod_add},
+    {GR_METHOD_ADD_UI,          (gr_funcptr) _gr_fmpz_mod_add_ui},
+    {GR_METHOD_ADD_SI,          (gr_funcptr) _gr_fmpz_mod_add_si},
+    {GR_METHOD_SUB,             (gr_funcptr) _gr_fmpz_mod_sub},
+    {GR_METHOD_MUL,             (gr_funcptr) _gr_fmpz_mod_mul},
+    {GR_METHOD_MUL_SI,          (gr_funcptr) _gr_fmpz_mod_mul_si},
+    {GR_METHOD_ADDMUL,          (gr_funcptr) _gr_fmpz_mod_addmul},
+    {GR_METHOD_SUBMUL,          (gr_funcptr) _gr_fmpz_mod_submul},
+    {GR_METHOD_MUL_TWO,         (gr_funcptr) _gr_fmpz_mod_mul_two},
+    {GR_METHOD_SQR,             (gr_funcptr) _gr_fmpz_mod_sqr},
+    {GR_METHOD_DIV,             (gr_funcptr) _gr_fmpz_mod_div},
+    {GR_METHOD_DIV_NONUNIQUE,   (gr_funcptr) _gr_fmpz_mod_div_nonunique},
+    {GR_METHOD_DIVIDES,         (gr_funcptr) _gr_fmpz_mod_divides},
+    {GR_METHOD_IS_INVERTIBLE,   (gr_funcptr) _gr_fmpz_mod_is_invertible},
+    {GR_METHOD_INV,             (gr_funcptr) _gr_fmpz_mod_inv},
+    {GR_METHOD_POW_UI,          (gr_funcptr) _gr_fmpz_mod_pow_ui},
+    {GR_METHOD_POW_FMPZ,        (gr_funcptr) _gr_fmpz_mod_pow_fmpz},
+    {GR_METHOD_SQRT,            (gr_funcptr) _gr_fmpz_mod_sqrt},
+    {GR_METHOD_IS_SQUARE,       (gr_funcptr) _gr_fmpz_mod_is_square},
+    {GR_METHOD_VEC_DOT,         (gr_funcptr) _gr_fmpz_mod_vec_dot},
+    {GR_METHOD_VEC_DOT_REV,     (gr_funcptr) _gr_fmpz_mod_vec_dot_rev},
+    {GR_METHOD_VEC_ADDMUL_SCALAR,    (gr_funcptr) _gr_fmpz_mod_vec_addmul_scalar},
+    {GR_METHOD_POLY_MULLOW,     (gr_funcptr) _gr_fmpz_mod_poly_mullow},
+    {GR_METHOD_POLY_INV_SERIES, (gr_funcptr) _gr_fmpz_mod_poly_inv_series},
+    {GR_METHOD_POLY_DIV_SERIES, (gr_funcptr) _gr_fmpz_mod_poly_div_series},
+    {GR_METHOD_POLY_DIVREM,     (gr_funcptr) _gr_fmpz_mod_poly_divrem},
+    {GR_METHOD_POLY_ROOTS,      (gr_funcptr) _gr_fmpz_mod_roots_gr_poly},
+    {GR_METHOD_MAT_MUL,         (gr_funcptr) _gr_fmpz_mod_mat_mul},
+    {GR_METHOD_MAT_LU,          (gr_funcptr) _gr_fmpz_mod_mat_lu},
+    {GR_METHOD_MAT_DET,         (gr_funcptr) _gr_fmpz_mod_mat_det},
+    {0,                         (gr_funcptr) NULL},
+};
+
 void
 gr_ctx_init_fmpz_mod(gr_ctx_t ctx, const fmpz_t n)
 {
@@ -799,4 +882,25 @@ void
 gr_ctx_fmpz_mod_set_primality(gr_ctx_t ctx, truth_t is_prime)
 {
     FMPZ_MOD_IS_PRIME(ctx) = is_prime;
+}
+
+
+void
+gr_ctx_init_fmpz_mod_mpoly_q(gr_ctx_t ctx, slong nvars, const ordering_t ord, const fmpz_t modulus)
+{
+    ctx->which_ring = GR_CTX_FMPZ_MPOLY_Q;
+    ctx->sizeof_elem = sizeof(fmpz_mod_mpoly_q_struct);
+    GR_CTX_DATA_AS_PTR(ctx) = flint_malloc(sizeof(_gr_fmpz_mod_mpoly_ctx_t));
+    ctx->size_limit = WORD_MAX;
+
+    fmpz_mod_mpoly_ctx_init(MPOLYNOMIAL_MCTX(ctx), nvars, ord, modulus);
+    MPOLYNOMIAL_CTX(ctx)->vars = NULL;
+
+    ctx->methods = _gr_fmpz_mod_mpoly_q_methods;
+
+    if (!_gr_fmpz_mod_mpoly_q_methods_initialized)
+    {
+        gr_method_tab_init(_gr_fmpz_mod_mpoly_q_methods, _gr_fmpz_mod_mpoly_q_methods_input);
+        _gr_fmpz_mod_mpoly_q_methods_initialized = 1;
+    }
 }
