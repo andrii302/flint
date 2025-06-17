@@ -1,4 +1,4 @@
-.. _fmpz-mpoly-q:
+.. _fmpz-mod-mpoly-q:
 
 **fmpz_mod_mpoly_q.h** -- multivariate rational functions over Q
 ===============================================================================
